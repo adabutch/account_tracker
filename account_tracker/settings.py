@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'account',
+    'request',
+    'service',
+    'action',
 ]
 
 MIDDLEWARE = [
@@ -69,6 +74,37 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'account_tracker.wsgi.application'
 
+# Adapting from Netbox approach for configuring LDAP
+# Attempt to import LDAP configuration if it has been defined
+LDAP_IGNORE_CERT_ERRORS = False
+try:
+    from account_tracker.ldap_config import *
+    LDAP_CONFIGURED = True
+except ImportError:
+    LDAP_CONFIGURED = False
+
+# LDAP configuration (optional)
+if LDAP_CONFIGURED:
+    try:
+        import ldap
+        import django_auth_ldap
+        # Prepend LDAPBackend to the default ModelBackend
+        AUTHENTICATION_BACKENDS = [
+            'django_auth_ldap.backend.LDAPBackend',
+            'django.contrib.auth.backends.ModelBackend',
+        ]
+        # Optionally disable strict certificate checking
+        if LDAP_IGNORE_CERT_ERRORS:
+            ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
+        # Enable logging for django_auth_ldap
+        # ldap_logger = logging.getLogger('django_auth_ldap')
+        # ldap_logger.addHandler(logging.StreamHandler())
+        # ldap_logger.setLevel(logging.DEBUG)
+    except ImportError:
+        raise ImproperlyConfigured(
+            "LDAP authentication has been configured, but django-auth-ldap is not installed. You can remove "
+            "account_tracker/ldap_config.py to disable LDAP."
+        )
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
