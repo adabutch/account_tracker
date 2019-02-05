@@ -5,9 +5,9 @@ Account Tracker manages requests for accounts on systems in use at an organizati
 ## Requirements
 
 ```
-pip install Django
-pip install django-auth-ldap
-pip install djangorestframework
+pip3 install Django
+pip3 install django-auth-ldap
+pip3 install djangorestframework
 ```
 
 ## Migrations
@@ -15,8 +15,8 @@ pip install djangorestframework
 After making changes to the models, generate new database migrations and then apply them:
 
 ```
-python manage.py makemigrations
-python manage.py migrate
+python3 manage.py makemigrations
+python3 manage.py migrate
 ```
 
 ## Dev Server
