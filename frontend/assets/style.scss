@@ -1,0 +1,117 @@
+@import 'cobDS-tokens.scss';
+
+$text-color:        darken($color-grey, 55%);
+
+// these are totaly random, no rhyme or reason
+$color-cycl: #1e5aae;
+$color-rein: #31C77D;
+$color-comp: darken(#F4E554, 20%);
+$color-fire: #F8B137;
+$color-tv:   #DE5B42;
+$color-ee:   darken(#D4DCFF, 20%);
+$color-home: #7D83FF;
+$color-prmt: #007FFF;
+$color-shtr: darken(#1AFFD5, 20%);
+
+body, html {
+  font-family: $font-text;
+}
+
+h1, h2, h3, h4 {
+  color: $text-color;
+}
+
+.page-wrapper {
+  padding: 20px;
+  position: relative;
+  background-color: white;
+}
+
+.finished-wrapper {
+  width: calc(100% - 300px);
+  margin-left: auto;
+  padding: 0 0 0 40px;
+}
+
+form {
+  // background: purple;
+  width: calc(100% - 300px);
+  margin-left: auto;
+  padding: 0 0 0 40px;
+
+  h1 {
+    color: $text-color;
+    font-size: $size-l;
+    line-height: $size-l;
+    margin: 0 0 $space-m 0;
+    padding: 0 0 $space-s 0;
+    border-bottom: 1px solid lighten($text-color, 50%);
+  }
+}
+
+// to-do: move to COBDS
+.field-group {
+  input {
+    box-shadow: none;
+    border: 1px solid lighten($text-color, 50%);
+  }
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: $color-green;
+
+  &.previous {
+    background-color: lighten($text-color, 20%);
+  }
+}
+
+/deep/ label {
+  // background-color: teal;
+  color: $text-color;
+  font-size: 18px;
+  margin-bottom: $space-xs !important;
+  // font-weight: $weight-semi-bold;
+  width: 100%;
+}
+
+.field-group {
+  margin: 0 0 $space-m 0;
+
+  &:last-of-type {
+    display: block;
+    margin: 0 0 $space-s 0;
+  }
+}
+
+.vdp-datepicker__calendar {
+  font-family: $font-text;
+
+  .cell:not(.blank):not(.disabled).day:hover,
+  .cell:not(.blank):not(.disabled).month:hover,
+  .cell:not(.blank):not(.disabled).year:hover,
+  .cell.selected {
+    background: $color-blue !important;
+    color: white !important;
+    border-radius: 50%;
+    border: none !important;
+  }
+}
+
+table {
+  thead {
+    background-color: darken($color-grey, 5%);
+
+
+    th {
+      padding: 16px 8px 8px 8px;
+      text-align: left;
+    }
+  }
+
+  tbody {
+    th, td {
+      text-align: left;
+    }
+  }
+}
