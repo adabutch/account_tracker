@@ -9,6 +9,7 @@ pip3 install Django
 pip3 install django-auth-ldap
 pip3 install djangorestframework
 pip3 install django-cors-headers
+pip3 install djangorestframework-jwt
 ```
 
 ## Migrations
@@ -30,3 +31,4 @@ python3 manage.py runserver
 
 Inspired by:
 https://medium.com/quick-code/crud-app-using-vue-js-and-django-516edf4e4217
+https://www.pydanny.com/drf-jwt-axios-vue.html
