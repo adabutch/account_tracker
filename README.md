@@ -8,6 +8,7 @@ Account Tracker manages requests for accounts on systems in use at an organizati
 pip3 install Django
 pip3 install django-auth-ldap
 pip3 install djangorestframework
+pip3 install django-cors-headers
 ```
 
 ## Migrations
