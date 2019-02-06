@@ -87,13 +87,24 @@ import {api}            from '~/api/api';
 
 import moment           from 'moment'
 
-import { mapFields }    from 'vuex-map-fields';
+import {
+  mapState,
+  mapMutations,
+  mapGetters,
+  mapActions }          from 'vuex'
+import { createHelpers }    from 'vuex-map-fields';
 
-import headerComponent  from '~/components/headerComponent.vue'
+import headerComponent  from '~/components/headerComponent'
 import progressStepper  from '~/components/progressStepper.vue'
 import asideComponent   from '~/components/asideComponent.vue'
 import Datepicker       from 'vuejs-datepicker';
 import exampleSelect    from '~/components/exampleSelect.vue'
+
+
+const { mapFields } = createHelpers({
+  getterType: `getField`,
+  mutationType: `updateField`,
+});
 
 export default {
   components: {

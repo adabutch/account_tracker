@@ -106,10 +106,15 @@ import {
   mapMutations,
   mapGetters,
   mapActions }          from 'vuex'
-import { mapFields }    from 'vuex-map-fields';
+import { createHelpers }    from 'vuex-map-fields';
 
 import headerComponent  from '~/components/headerComponent.vue'
 import adminUsersAside  from '~/components/admin/users/adminUsersAside.vue'
+
+const { mapFields } = createHelpers({
+  getterType: `getField`,
+  mutationType: `updateField`,
+});
 
 export default {
   components: {

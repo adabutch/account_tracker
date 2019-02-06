@@ -44,13 +44,22 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
-import { mapFields } from 'vuex-map-fields';
+import {
+  mapState,
+  mapMutations,
+  mapGetters,
+  mapActions }          from 'vuex'
+import { createHelpers } from 'vuex-map-fields';
 
 import headerComponent from '~/components/headerComponent.vue'
 import progressStepper from '~/components/progressStepper.vue'
 import asideComponent   from '~/components/asideComponent.vue'
 import exampleSelect   from '~/components/exampleSelect.vue'
+
+const { mapFields } = createHelpers({
+  getterType: `getField`,
+  mutationType: `updateField`
+});
 
 export default {
   components: {
