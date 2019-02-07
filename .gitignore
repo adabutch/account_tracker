@@ -5,6 +5,8 @@
 .*.swp
 ._*
 .DS_Store
+*.old
+*.bak
 .Trashes*
 .Spotlight-V100*
 .fseventsd*

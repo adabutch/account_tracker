@@ -28,9 +28,11 @@
       {name: 'Denied',             href: '/admin/users/denied'}
     ]">
 
+    <button @click="logout()">logout</button>
+
     <fn1-dropdown
       slot="dropdown"
-      text="Adam Butcher"
+      text="Adam Bbbbutcher"
       navAlign="right"
       :navItems="[
         {name: 'Settings', href: '/'},
@@ -41,6 +43,12 @@
 
 <script>
 export default {
+  methods: {
+    logout() {
+      Cookie.remove('auth')
+      this.$store.commit('SET_AUTH', null)
+    }
+  }
 }
 </script>
 

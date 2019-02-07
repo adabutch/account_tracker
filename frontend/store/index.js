@@ -1,17 +1,32 @@
-import Vuex           from 'vuex'
-import { api }        from '~/api/api';
+import Vuex         from 'vuex'
+import { api }      from '~/api/api'
+import axios        from 'axios'
 
 import {
   getField,
-  updateField }       from 'vuex-map-fields';
+  updateField }     from 'vuex-map-fields'
 
-import createUser     from './modules/createUser';
-import facilities     from './modules/facilities';
+import createUser   from './modules/createUser'
+import facilities   from './modules/facilities'
+
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+
+const cookieparser = process.server ? require('cookieparser') : undefined
 
 const state = () => ({
-  initAllUsers: [],
-  totalSteps: 4,
-  startDateFormat: "MM / DD / YYYY",
+  auth:             null,
+  authUser:         {},
+  isAuthenticated:  false,
+  endpoints: {
+    // TODO: Remove hardcoding of dev endpoints
+    obtainJWT:       'auth/obtain_token/',
+    refreshJWT:      'auth/refresh_token/',
+    baseUrl:         'http://127.0.0.1:8000/api/'
+  },
+  initAllUsers:     [],
+  totalSteps:       4,
+  startDateFormat:  "MM / DD / YYYY",
   data: [
     {
       "department": "Utilities",
@@ -114,21 +129,55 @@ const state = () => ({
 
 const mutations = {
   updateField,
-  ADD_TO_TOTAL_STEPS (state, payload) {
+  SET_AUTH(state, auth) {
+    state.auth = auth
+  },
+  ADD_TO_TOTAL_STEPS(state, payload) {
     state.totalSteps = payload;
   },
   GET_ALL_USERS(state, payload) {
     state.initAllUsers = payload
   },
+  SET_AUTH_USER(state, payload) {
+    state.authUser = payload
+  },
+  SET_IS_AUTHENTICATED(state, payload) {
+    state.isAuthenticated = payload
+  },
+  // setAuthUser(state, {
+  //   authUser,
+  //   isAuthenticated
+  // }) {
+  //   Vue.set(state, 'authUser', authUser)
+  //   Vue.set(state, 'isAuthenticated', isAuthenticated)
+  // },
+  updateToken(state, newToken) {
+    state.auth = newToken
+  },
+  removeToken(state) {
+    state.auth = null;
+  }
 }
 
 const actions = {
   addToTotalSteps(context, payload) {
     context.commit("ADD_TO_TOTAL_STEPS", payload)
   },
-  async nuxtServerInit ({state, context, commit}) {
-    let {data} = await api.get(`request/?format=json`)
-    commit('GET_ALL_USERS', data)
+  // async nuxtServerInit ({state, context, commit}) {
+  //   let {data} = await api.get(`request/?format=json`)
+  //   commit('GET_ALL_USERS', data)
+  // },
+  nuxtServerInit({ commit }, { req }) {
+    let auth = null
+    if (req.headers.cookie) {
+      const parsed = cookieparser.parse(req.headers.cookie)
+      try {
+        auth = JSON.parse(parsed.auth)
+      } catch (err) {
+        // No valid cookie found
+      }
+    }
+    commit('SET_AUTH', auth)
   }
 }
 
