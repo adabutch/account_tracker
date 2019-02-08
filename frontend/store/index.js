@@ -172,12 +172,17 @@ const actions = {
     if (req.headers.cookie) {
       const parsed = cookieparser.parse(req.headers.cookie)
       try {
-        auth = JSON.parse(parsed.auth)
+        auth = parsed.auth;
+        // authUser = "Yo";
+        // isAuthenticated = true;
+        console.dir('🍪 found');
       } catch (err) {
-        // No valid cookie found
+        console.dir('No 🍪 found 😪');
       }
     }
     commit('SET_AUTH', auth)
+    commit('SET_AUTH_USER')
+    commit('SET_IS_AUTHENTICATED', true)
   }
 }
 

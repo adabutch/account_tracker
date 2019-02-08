@@ -12,6 +12,12 @@
 
     <p v-if="!first">Details of the <strong>User Creation Wizard</strong> will appear here as they become available.</p>
 
+
+    <div class="wrapper">
+      <fn1-button v-if="!first">Batch user creation</fn1-button>
+    </div>
+
+
     <ul>
       <li class="step-title" v-if="first">Step One</li>
       <li v-if="first">
@@ -179,6 +185,15 @@ export default {
       margin: 0;
     }
 
+    button {
+      background-color: lighten($text-color, 10%);
+      margin: 0 0 10px 0;
+
+      &:last-child {
+        margin: 0;
+      }
+    }
+
     ul {
       list-style: none;
       padding: 0;
@@ -210,6 +225,12 @@ export default {
           margin: 0 0 2px -5px;
         }
       }
+    }
+
+    .wrapper {
+      border-top: 1px solid lighten($text-color, 50%);
+      margin: 20px 0 0 0;
+      padding: 20px 0 0 0;
     }
   }
 </style>
