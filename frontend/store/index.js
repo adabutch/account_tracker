@@ -1,5 +1,4 @@
 import Vuex         from 'vuex'
-import { api }      from '~/api/api'
 import axios        from 'axios'
 
 import {

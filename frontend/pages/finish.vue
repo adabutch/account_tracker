@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import { api }        from '~/api/api'
 import {
   mapState,
   mapMutations,
@@ -68,12 +67,40 @@ export default {
   },
   mounted() {
   },
+  computed: {
+    ...mapFields([
+      'endpoints',
+      'data',
+      'totalSteps',
+      'startDateFormat',
+
+      'createUser.name.first',
+      'createUser.name.middle',
+      'createUser.name.last',
+      'createUser.name.suffix',
+      'createUser.startDate',
+      'createUser.department',
+      'createUser.status',
+
+      'createUser.facility',
+      'createUser.division',
+      'createUser.job',
+
+      'createUser.supervisor',
+      'createUser.supervisorPhone',
+      'createUser.employeePhone',
+
+      'createUser.userSoftware',
+
+      'createUser.userComputer'
+    ])
+  },
   methods: {
     ...mapActions([
       'createUser.clearUser'
     ]),
     createUserSubmit() {
-      api.post(`request/`, {
+      this.$axios.post(`${this.endpoints.baseUrl}request/`,{
         "first_name":        this.first,
         "middle_name":       this.middle,
         "last_name":         this.last,
@@ -103,33 +130,6 @@ export default {
     clearStore() {
 
     }
-  },
-  computed: {
-    ...mapFields([
-      'data',
-      'totalSteps',
-      'startDateFormat',
-
-      'createUser.name.first',
-      'createUser.name.middle',
-      'createUser.name.last',
-      'createUser.name.suffix',
-      'createUser.startDate',
-      'createUser.department',
-      'createUser.status',
-
-      'createUser.facility',
-      'createUser.division',
-      'createUser.job',
-
-      'createUser.supervisor',
-      'createUser.supervisorPhone',
-      'createUser.employeePhone',
-
-      'createUser.userSoftware',
-
-      'createUser.userComputer'
-    ])
   }
 }
 </script>

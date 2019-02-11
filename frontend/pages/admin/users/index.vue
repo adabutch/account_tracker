@@ -118,6 +118,7 @@ const { mapFields } = createHelpers({
 });
 
 export default {
+  middleware: 'authenticated',
   components: {
     headerComponent,
     adminUsersAside
@@ -131,7 +132,12 @@ export default {
       launchButtonText: "Batch Approve"
     }
   },
-  mounted() { },
+  mounted() {
+    this.$axios.get(`${this.endpoints.baseUrl}request/?format=json`)
+    .then((res) => {
+      this.$store.commit('GET_ALL_USERS', res.data.results)
+    })
+  },
   watch: { },
   methods: {
     batchRequestButtonAction(e) {
@@ -149,7 +155,8 @@ export default {
   },
   computed: {
     ...mapFields([
-      'initAllUsers'
+      'initAllUsers',
+      'endpoints'
     ]),
     batchApprovalCount() {
       return this.selected.length;

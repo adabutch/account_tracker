@@ -46,8 +46,9 @@
 </template>
 
 <script>
-import { api }      from '~/api/api'
 import axios        from 'axios'
+import {
+  mapFields }       from 'vuex-map-fields';
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
@@ -60,44 +61,21 @@ export default {
       password:     ''
     }
   },
+  computed: {
+    ...mapFields(['endpoints'])
+  },
   methods: {
     postLogin() {
-      // const auth = {
-      //   accessToken: 'newnewCool'
-      // }
-      // this.$store.commit('SET_AUTH', auth)
-      // Cookie.set('auth', auth)
-      // this.$router.push('/')
-
-
       const payload = {
         username: this.username,
         password: this.password
       }
-      api.post(this.$store.state.endpoints.obtainJWT, payload)
+      axios.post(`${this.endpoints.baseUrl}${this.endpoints.obtainJWT}`, payload)
       .then((response) => {
         this.$store.commit('SET_AUTH', response.data.token)
         Cookie.set('auth', response.data.token)
 
-        // Even though the authentication returned a user object that can be
-        // decoded, we fetch it again. This way we aren't super dependant on
-        // JWT and can plug in something else.
-        const base = {
-          baseURL: this.$store.state.endpoints.baseUrl,
-          headers: {
-            Authorization: `JWT ${this.$store.state.auth}`,
-            'Content-Type': 'application/json'
-          },
-          xhrFields: {
-            withCredentials: true
-          }
-        }
-        const axiosInstance = axios.create(base)
-        axiosInstance({
-          url: this.$store.state.endpoints.baseUrl,
-          method: "get",
-          params: {}
-        })
+        this.$axios.get(`${this.endpoints.baseUrl}`)
         .then((response) => {
           console.log(response)
           this.$store.commit("SET_AUTH_USER", response)

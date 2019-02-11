@@ -83,7 +83,6 @@
 </template>
 
 <script>
-import {api}            from '~/api/api';
 
 import moment           from 'moment'
 
@@ -119,7 +118,6 @@ export default {
     return {
       setMonth: 1,
       setYear: 2019,
-      // yocool: this.testing(),
       dateTest: new Date(),
       stepActive: 1,
       suffixOptions: [
@@ -184,15 +182,6 @@ export default {
       errors: []
     }
   },
-  // created() {
-  //   http.get(`request/?format=json`)
-  //   .then(response => {
-  //     this.posts = response.data
-  //   })
-  //   .catch(e => {
-  //     this.errors.push(e)
-  //   })
-  // },
   methods: {
     customFormatter(date) {
       return moment(date).format(this.startDateFormat);

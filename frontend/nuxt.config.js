@@ -48,6 +48,10 @@ module.exports = {
     { src: '@nuxtjs/axios' }
   ],
 
+  // axios: {
+  //   withCredentials: true
+  // },
+
   /*
   ** Build configuration
   */
