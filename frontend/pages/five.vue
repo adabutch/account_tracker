@@ -55,6 +55,7 @@ import asideComponent   from '~/components/asideComponent.vue'
 import exampleCheckbox from '~/components/exampleCheckbox.vue'
 
 export default {
+  middleware: 'authenticated',
   components: {
     headerComponent,
     progressStepper,

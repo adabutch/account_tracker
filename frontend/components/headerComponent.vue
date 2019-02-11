@@ -1,6 +1,5 @@
 <template>
   <span>
-    <button @click="logout()">logout</button>
     <fn1-header
       :logo="{
         url:          'https://bloomington.in.gov/',
@@ -30,14 +29,31 @@
         {name: 'Denied',             href: '/admin/users/denied'}
       ]">
 
-      <fn1-dropdown
+      <!-- <fn1-dropdown
         slot="dropdown"
         text="Adam Bbbbutcher"
         navAlign="right"
         :navItems="[
-          {name: 'Settings', href: '/'},
-          {name: 'Log Out',  href: '/'}]
-      "/>
+          {name: 'Logout', href: '/login'}
+        ]
+      "/> -->
+
+      <!-- to-do: wire up click methods inside json v-for
+      so we can use things like the above component -->
+      <nav slot="dropdown"
+           role="navigation dropdown"
+           aria-label="navigation dropdown"
+           class="navigation-dropdown">
+        <details>
+          <summary>Adam Butcher</summary>
+          <ul class="right">
+            <li>
+              <a href="" @click="logout()" title="Logout">Logout</a>
+            </li>
+          </ul>
+        </details>
+      </nav>
+
     </fn1-header>
 
   </span>
@@ -45,6 +61,7 @@
 
 <script>
 const Cookie = process.client ? require('js-cookie') : undefined
+
 export default {
   methods: {
     logout() {
@@ -53,7 +70,7 @@ export default {
       this.$store.commit("SET_AUTH_USER", null)
       this.$store.commit("SET_IS_AUTHENTICATED", false)
       this.$router.push('/login')
-    }
+    },
   }
 }
 </script>

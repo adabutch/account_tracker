@@ -62,7 +62,7 @@ const { mapFields } = createHelpers({
 });
 
 export default {
-   middleware: 'authenticated',
+  middleware: 'authenticated',
   components: {
     headerComponent,
     progressStepper,

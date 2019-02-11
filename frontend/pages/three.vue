@@ -53,6 +53,7 @@ import asideComponent   from '~/components/asideComponent.vue'
 import exampleSelect    from '~/components/exampleSelect.vue'
 
 export default {
+  middleware: 'authenticated',
   components: {
     headerComponent,
     progressStepper,
