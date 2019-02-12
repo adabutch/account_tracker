@@ -11,5 +11,9 @@ export default function ({ $axios, app, store, redirect, route }) {
     if (code === 400) {
       redirect('/400')
     }
+
+    if (code === 401) {
+      redirect('/login')
+    }
   })
 }

@@ -1,10 +1,21 @@
 <template>
   <aside>
     <h1>Admin User Aside</h1>
-    <fn1-search buttonValue="Go"
-                placeholder="Search for it"
-                name="search"
-                id="search"/>
+
+    <div class="field-group">
+      <input v-model="searchUsers"
+             id="search"
+             type="search"
+             name="search"
+             placeholder="Search for it">
+      <!-- <button for="search" type="submit">Go</button> -->
+    </div>
+
+    <!-- <exampleSearch v-model="searchUsers"
+                   buttonValue="Go"
+                   placeholder="Search for it"
+                   name="searchUsers"
+                   id="searchUsers"/> -->
 
     <exampleSelect
                    label="Type"
@@ -15,6 +26,9 @@
 </template>
 
 <script>
+import exampleSelect from '~/components/exampleSelect.vue'
+import exampleSearch from '~/components/exampleSearch.vue'
+
 import {
   mapState,
   mapMutations,
@@ -22,20 +36,48 @@ import {
   mapActions }        from 'vuex'
 import { mapFields }  from 'vuex-map-fields';
 
-import exampleSelect  from '~/components/exampleSelect.vue'
+
 
 export default {
   components: {
+    exampleSearch,
     exampleSelect
   },
   data() {
     return {
+      searchUsers:  '',
       requestTypes: [
         { value: 'new', text: 'New' },
         { value: 'deactivate', text: 'Deactivate' }
       ],
-
     }
+  },
+  computed: {
+    ...mapFields([
+      'initAllUsers'
+    ]),
+    filteredList() {
+      return this.initAllUsers.filter(user => {
+        return user.toLowerCase().includes(this.searchUsers.toLowerCase())
+      })
+    }
+  },
+  watch: {
+    'searchUsers': function(val, oldVal){
+      if(val.length >= 1) {
+        // alert('we got data')
+        // this.focused = true
+        // this.showClearBtn = true
+      } else {
+        // alert('we got nothin')
+        // this.focused = false
+        // this.showClearBtn = false
+      }
+    }
+  },
+  updated() {
+    // alert('input updated')
+    this.$emit('input', this.searchUsers)
   }
 }
 </script>

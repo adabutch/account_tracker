@@ -21,7 +21,31 @@
             </template>
           </div>
 
-          <table>
+          <div class="field-group" style="width: 400px;">
+            <input v-model="searchUsers"
+                   id="search"
+                   type="search"
+                   name="search"
+                   placeholder="Search by Name or Department">
+          </div>
+
+          <exampleSelect v-model="requestTypeFilter"
+                         label="Type"
+                         name="request-type"
+                         id="request-type"
+                         :options="requestTypes" />
+
+          <!-- {{initAllUsers}}
+
+          <br><br><br><br><br><br> -->
+
+          <!-- {{filteredList}} -->
+
+          <template v-if="!filteredList.length">
+            <h1>Sorry, no results.</h1>
+          </template>
+
+          <table v-if="filteredList.length">
             <caption class="sr-only">All User Requests</caption>
             <thead>
               <tr>
@@ -41,7 +65,7 @@
             </thead>
 
             <tbody>
-              <tr v-for="(item, index) in initAllUsers" :key="index">
+              <tr v-for="(item, index) in filteredList" :key="index">
                 <th scope="row">
                   <input v-model="selected"
                          :key="index"
@@ -111,6 +135,7 @@ import {
 
 import headerComponent  from '~/components/headerComponent.vue'
 import adminUsersAside  from '~/components/admin/users/adminUsersAside.vue'
+import exampleSelect from '~/components/exampleSelect.vue'
 
 const { mapFields } = createHelpers({
   getterType: `getField`,
@@ -121,10 +146,17 @@ export default {
   middleware: 'authenticated',
   components: {
     headerComponent,
-    adminUsersAside
+    adminUsersAside,
+    exampleSelect
   },
   data() {
     return {
+      requestTypeFilter: '',
+      searchUsers:  '',
+      requestTypes: [
+        { value: 'ready', text: 'Ready' },
+        { value: 'deactivate', text: 'Deactivate' }
+      ],
       rows: [],
       // batchRequestApproval: [],
       batchRequestIDs: [],
@@ -133,7 +165,7 @@ export default {
     }
   },
   mounted() {
-    this.$axios.get(`${this.endpoints.baseUrl}request/?format=json`)
+    this.$axios.get(`${this.endpoints.baseUrl}request/?format=json&limit=1000`)
     .then((res) => {
       this.$store.commit('GET_ALL_USERS', res.data.results)
     })
@@ -175,6 +207,29 @@ export default {
         }
         this.selected = selected;
       }
+    },
+    fullNames() {
+      return this.initAllUsers;
+    },
+    filteredList() {
+      return this.initAllUsers
+      .filter(user => {
+        let firstName  = user.first_name.toLowerCase();
+        let middleName = user.middle_name.toLowerCase();
+        let lastName   = user.last_name.toLowerCase();
+        let userDept   = user.department.toLowerCase();
+        let userDivi   = user.division.toLowerCase();
+
+        return firstName.includes(this.searchUsers.toLowerCase()) ||
+               middleName.includes(this.searchUsers.toLowerCase()) ||
+               lastName.includes(this.searchUsers.toLowerCase()) ||
+               userDept.includes(this.searchUsers.toLowerCase()) ||
+               userDivi.includes(this.searchUsers.toLowerCase())
+      })
+      .filter(user => {
+        let requestType = user.request_status.toLowerCase();
+        return requestType.includes(this.requestTypeFilter.toLowerCase())
+      })
     }
   }
 }

@@ -72,6 +72,7 @@ export default {
       }
       axios.post(`${this.endpoints.baseUrl}${this.endpoints.obtainJWT}`, payload)
       .then((response) => {
+        console.log(response);
         this.$store.commit('SET_AUTH', response.data.token)
         Cookie.set('auth', response.data.token)
 
