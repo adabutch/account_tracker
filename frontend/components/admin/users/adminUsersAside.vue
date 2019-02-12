@@ -7,17 +7,10 @@
              id="search"
              type="search"
              name="search"
-             placeholder="Search for it">
-      <!-- <button for="search" type="submit">Go</button> -->
+             placeholder="Search by Name or Dept.">
     </div>
 
-    <!-- <exampleSearch v-model="searchUsers"
-                   buttonValue="Go"
-                   placeholder="Search for it"
-                   name="searchUsers"
-                   id="searchUsers"/> -->
-
-    <exampleSelect
+    <exampleSelect v-model="selectFilter"
                    label="Type"
                    name="request-type"
                    id="request-type"
@@ -39,15 +32,17 @@ import { mapFields }  from 'vuex-map-fields';
 
 
 export default {
+  props: ['searchUsersProp', 'selectFilterProp'],
   components: {
     exampleSearch,
     exampleSelect
   },
   data() {
     return {
-      searchUsers:  '',
+      selectFilter: this.selectFilter,
+      searchUsers: this.searchUsers,
       requestTypes: [
-        { value: 'new', text: 'New' },
+        { value: 'ready', text: 'Ready' },
         { value: 'deactivate', text: 'Deactivate' }
       ],
     }
@@ -56,29 +51,35 @@ export default {
     ...mapFields([
       'initAllUsers'
     ]),
-    filteredList() {
-      return this.initAllUsers.filter(user => {
-        return user.toLowerCase().includes(this.searchUsers.toLowerCase())
-      })
-    }
+    // filteredList() {
+    //   return this.initAllUsers
+    //   .filter(user => {
+    //     let firstName  = user.first_name.toLowerCase();
+    //     let middleName = user.middle_name.toLowerCase();
+    //     let lastName   = user.last_name.toLowerCase();
+    //     let userDept   = user.department.toLowerCase();
+    //     let userDivi   = user.division.toLowerCase();
+
+    //     return firstName.includes(this.searchUsers.toLowerCase()) ||
+    //            middleName.includes(this.searchUsers.toLowerCase()) ||
+    //            lastName.includes(this.searchUsers.toLowerCase()) ||
+    //            userDept.includes(this.searchUsers.toLowerCase()) ||
+    //            userDivi.includes(this.searchUsers.toLowerCase())
+    //   })
+    //   .filter(user => {
+    //     let requestType = user.request_status.toLowerCase();
+    //     return requestType.includes(this.requestTypeFilter.toLowerCase())
+    //   })
+    // }
   },
   watch: {
-    'searchUsers': function(val, oldVal){
-      if(val.length >= 1) {
-        // alert('we got data')
-        // this.focused = true
-        // this.showClearBtn = true
-      } else {
-        // alert('we got nothin')
-        // this.focused = false
-        // this.showClearBtn = false
-      }
-    }
+    searchUsers(val) {
+      this.$emit('inputChange', this.searchUsers);
+    },
+    selectFilter(val) {
+      this.$emit('selectChange', this.selectFilter);
+    },
   },
-  updated() {
-    // alert('input updated')
-    this.$emit('input', this.searchUsers)
-  }
 }
 </script>
 
@@ -86,7 +87,7 @@ export default {
   @import '@/assets/style.scss';
   aside {
     color: $text-color;
-    width: 275px;
+    width: 300px;
     // background-color: lighten($color-grey, 5%);
 
     // h1 {

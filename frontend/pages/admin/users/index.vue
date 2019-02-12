@@ -4,7 +4,10 @@
 
     <div class="page-wrapper">
 
-      <adminUsersAside />
+      <adminUsersAside :searchUsersProp="searchUsers"
+                       :selectFilterProp="selectFilter"
+                       @inputChange="watchInput"
+                       @selectChange="watchSelect" />
 
       <fn1-tabs>
         <fn1-tab name="Ready" :selected="true">
@@ -21,19 +24,11 @@
             </template>
           </div>
 
-          <div class="field-group" style="width: 400px;">
-            <input v-model="searchUsers"
-                   id="search"
-                   type="search"
-                   name="search"
-                   placeholder="Search by Name or Department">
-          </div>
-
-          <exampleSelect v-model="requestTypeFilter"
+          <!-- <exampleSelect v-model="selectFilter"
                          label="Type"
                          name="request-type"
                          id="request-type"
-                         :options="requestTypes" />
+                         :options="requestTypes" /> -->
 
           <!-- {{initAllUsers}}
 
@@ -151,7 +146,7 @@ export default {
   },
   data() {
     return {
-      requestTypeFilter: '',
+      selectFilter: '',
       searchUsers:  '',
       requestTypes: [
         { value: 'ready', text: 'Ready' },
@@ -170,7 +165,14 @@ export default {
       this.$store.commit('GET_ALL_USERS', res.data.results)
     })
   },
-  watch: { },
+  watch: {
+    // searchUsers: function(newVal, oldVal) { // watch it
+    //   console.log('searchUsers changed: ', newVal, ' | was: ', oldVal)
+    // },
+    // selectFilter: function(newVal, oldVal) { // watch it
+    //   console.log('selectFilter changed: ', newVal, ' | was: ', oldVal)
+    // },
+  },
   methods: {
     batchRequestButtonAction(e) {
       alert('we got here');
@@ -184,6 +186,14 @@ export default {
     userInitial(name) {
       return name.charAt(0);
     },
+    watchInput(payload) {
+      console.log(`WI :: PAYLOAD ::: ${payload}`)
+      this.searchUsers = payload;
+    },
+    watchSelect(payload) {
+      console.log(`WS :: PAYLOAD ::: ${payload}`)
+      this.selectFilter = payload;
+    }
   },
   computed: {
     ...mapFields([
@@ -228,7 +238,7 @@ export default {
       })
       .filter(user => {
         let requestType = user.request_status.toLowerCase();
-        return requestType.includes(this.requestTypeFilter.toLowerCase())
+        return requestType.includes(this.selectFilter.toLowerCase())
       })
     }
   }
