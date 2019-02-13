@@ -15,7 +15,7 @@
           <div class="title-row">
             <h4>User account requests <strong>ready</strong> for review.</h4>
 
-            <template v-if="batchApprovalCount >= 1">
+            <template v-if="batchApprovalCount > 1">
               <fn1-modal title="Ready Request Batch Confirmation"
                          :launchButtonText="launchButtonText">
                 <p slot="body">Approve all <strong>({{ batchApprovalCount }})</strong> requests?</p>
@@ -94,13 +94,41 @@
                   <div>4 days ago</div>
                 </th>
                 <th>
-                  <fn1-dropdown text=". . ."
-                                navAlign="right"
-                                :navItems="[
-                                  {name: 'Details',       href: '#'},
-                                  {name: 'Approve',       href: '#'},
-                                  {name: 'Deny',          href: '#'}
-                                ]" />
+                  <!-- <nav ref="navigationDropdown"
+                       role="navigation dropdown"
+                       aria-label="navigation dropdown"
+                       class="navigation-dropdown">
+                    <details ref="dropdownDetails">
+                      <summary>. . .</summary>
+                      <ul class="right">
+                        <li>
+                          <a href="#" @click="showDetails(item)" title="Details">Details</a>
+                        </li>
+
+                        <li>
+                          <a href="#" title="Approve">Approve</a>
+                        </li>
+
+                        <li>
+                          <a href="#" title="Deny">Deny</a>
+                        </li>
+                      </ul>
+                    </details>
+                  </nav> -->
+
+                  <exampleDropdown text=". . ." navAlign="right">
+                    <li>
+                      <a href="#" @click="showDetails(item)" title="Details">Details</a>
+                    </li>
+
+                    <li>
+                      <a href="#" title="Approve">Approve</a>
+                    </li>
+
+                    <li>
+                      <a href="#" title="Deny">Deny</a>
+                    </li>
+                  </exampleDropdown>
                 </th>
               </tr>
             </tbody>
@@ -116,6 +144,69 @@
         </fn1-tab>
       </fn1-tabs>
     </div>
+
+    <div class="slideover" v-if="showingUserDetails">
+      <button @click="hideDetails">x close</button>
+      <h4>Detailed Information</h4>
+      <ul>
+        <li>
+          <span>Name</span>
+          - {{showDetailsFor.first_name}}
+          {{showDetailsFor.middle_name}}
+          {{showDetailsFor.last_name}}
+          {{showDetailsFor.suffix}}
+        </li>
+
+        <li>
+          <span>Supervisor</span>
+          - {{showDetailsFor.supervisor}} ({{showDetailsFor.supervisor_phone}})
+        </li>
+
+        <li>
+          <span>Facility</span>
+          - {{showDetailsFor.facility}}
+        </li>
+
+        <li>
+          <span>Department</span>
+          - {{showDetailsFor.department}}
+        </li>
+
+        <li>
+          <span>Division</span>
+          - {{showDetailsFor.division}}
+        </li>
+
+        <li>
+          <span>Group</span>
+          - {{showDetailsFor.group}}
+        </li>
+
+        <li>
+          <span>Job</span>
+          - {{showDetailsFor.job}}
+        </li>
+
+        <li>
+          <span>Employee Status</span>
+          - {{showDetailsFor.employee_status}}
+        </li>
+
+        <li>
+          <span>Start Date</span>
+          - {{showDetailsFor.start_date}}
+        </li>
+
+        <li>
+          <span>Request Status</span>
+            <fn1-badge
+              :class="{'ready': (showDetailsFor.request_status === 'ready')}">
+              {{ showDetailsFor.request_status }}
+            </fn1-badge>
+        </li>
+      </ul>
+
+    </div>
   </div>
 </template>
 
@@ -130,7 +221,8 @@ import {
 
 import headerComponent  from '~/components/headerComponent.vue'
 import adminUsersAside  from '~/components/admin/users/adminUsersAside.vue'
-import exampleSelect from '~/components/exampleSelect.vue'
+import exampleSelect    from '~/components/exampleSelect.vue'
+import exampleDropdown  from '~/components/exampleDropdown.vue'
 
 const { mapFields } = createHelpers({
   getterType: `getField`,
@@ -142,10 +234,13 @@ export default {
   components: {
     headerComponent,
     adminUsersAside,
-    exampleSelect
+    exampleSelect,
+    exampleDropdown
   },
   data() {
     return {
+      showDetailsFor: null,
+      showingUserDetails: false,
       selectFilter: '',
       searchUsers:  '',
       requestTypes: [
@@ -182,6 +277,14 @@ export default {
     },
     confirmModal() {
       // this.showModal = false
+    },
+    showDetails(item) {
+      this.showDetailsFor = item;
+      this.showingUserDetails = true;
+    },
+    hideDetails() {
+      this.showDetailsFor = null;
+      this.showingUserDetails = false;
     },
     userInitial(name) {
       return name.charAt(0);
@@ -335,17 +438,6 @@ export default {
       }
     }
   }
-
-  .badge {
-    text-transform: uppercase;
-    font-size: 14px;
-    margin: 0;
-
-    &.ready {
-      background-color: $color-green;
-    }
-  }
-
   /deep/ .navigation-dropdown {
     summary {
       background-color: darken($color-silver, 10%);
@@ -407,6 +499,61 @@ export default {
             white-space: nowrap;
           }
         }
+      }
+    }
+  }
+}
+
+.badge {
+  text-transform: uppercase;
+  font-size: 14px;
+  margin: 0;
+
+  &.ready {
+    background-color: $color-green;
+  }
+}
+
+.slideover {
+  position: fixed;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  top: 0;
+  right: 0;
+  margin-left: auto;
+  padding: 20px;
+  width: 400px;
+  height: 100vh;
+  background-color: lighten($text-color, 65%);
+  border-left: 1px solid lighten($text-color, 50%);
+  color: $text-color;
+
+  button {
+    background-color: darken($color-silver, 10%);
+    margin-left: auto;
+  }
+
+  h4 {
+    padding: 20px 0 5px 0;
+    border-bottom: 1px solid lighten($text-color, 50%);
+    font-weight: $weight-semi-bold;
+  }
+
+  ul {
+    margin: 15px 0 0 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      margin: 0 0 10px 10px;
+
+      span:not(.badge) {
+        display: block;
+        margin: 0 0 5px -10px;
+        font-weight: $weight-semi-bold;
+        font-size: $size-m;
       }
     }
   }
