@@ -40,9 +40,13 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
-    'account',
-    'request',
+    'employee',
     'service',
+    'service_manager',
+    'service_request',
+    'account_request',
+    'change_request',
+    'termination_request',
     'action',
 ]
 
@@ -88,7 +92,7 @@ DATABASES = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ORIGIN_ALLOW_ALL = False
+#CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_WHITELIST = (
