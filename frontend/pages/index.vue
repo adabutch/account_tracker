@@ -9,8 +9,8 @@
           <!-- <h1>{{ setMonth }} - {{ setYear }}</h1>
           <h1>{{ getDaysInMonth(setMonth, setYear) }}</h1>
           <h1>{{ getAllDays(setMonth, setYear) }}</h1> -->
+          <h1>{{ testing() }}</h1>
 
-          <!-- <h1>{{ yocool() }}</h1> -->
 
 
           <h1><strong>Step One:</strong> User information</h1>
@@ -171,9 +171,9 @@ export default {
       ],
       startDatesDisabled: {
         // days: [0, 2, 3, 4, 5, 6, 7],
-        // dates: [2019-02-04T05:00:00.000Z, 2019-02-18T05:00:00.000Z],
+        dates: [],
         // customPredictor: function(date) {
-        //   if(date.getDate() % 5 == 0){
+        //   if(date.getDate() % 14 == 0){
         //     return true
         //   }
         // },
@@ -227,9 +227,19 @@ export default {
       array1 = array1.filter(val => !array2.includes(val));
       return array1;
     },
-    // testing() {
-    //   this.pluckDates(this.getAllDays(this.setMonth, this.setYear), this.getDaysInMonth(this.setMonth, this.setYear));
-    // },
+    testing() {
+      let dates = this.pluckDates(this.getAllDays(this.setMonth, this.setYear), this.getDaysInMonth(this.setMonth, this.setYear));
+
+      let formatedDates = [];
+
+      dates.forEach((item, index) => {
+        formatedDates.push(
+          new Date(item)
+        );
+      });
+
+      return formatedDates;
+    }
   },
   computed: {
     ...mapFields([
@@ -258,7 +268,7 @@ export default {
         });
       });
       return deptSelectArray;
-    },
+    }
   },
 }
 </script>
