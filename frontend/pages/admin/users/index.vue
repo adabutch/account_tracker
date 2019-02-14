@@ -90,32 +90,10 @@
                   <div>{{ item.division }}</div>
                 </th>
                 <th>
-                  <div>02/01/2019</div>
-                  <div>4 days ago</div>
+                  <div>{{ requestedDateFormat(item.requested) }}</div>
+                  <div>{{ requestedTimeAgo(item.requested) }}</div>
                 </th>
                 <th>
-                  <!-- <nav ref="navigationDropdown"
-                       role="navigation dropdown"
-                       aria-label="navigation dropdown"
-                       class="navigation-dropdown">
-                    <details ref="dropdownDetails">
-                      <summary>. . .</summary>
-                      <ul class="right">
-                        <li>
-                          <a href="#" @click="showDetails(item)" title="Details">Details</a>
-                        </li>
-
-                        <li>
-                          <a href="#" title="Approve">Approve</a>
-                        </li>
-
-                        <li>
-                          <a href="#" title="Deny">Deny</a>
-                        </li>
-                      </ul>
-                    </details>
-                  </nav> -->
-
                   <exampleDropdown text=". . ." navAlign="right">
                     <li>
                       <a href="#" @click="showDetails(item)" title="Details">Details</a>
@@ -211,6 +189,7 @@
 </template>
 
 <script>
+import moment           from 'moment'
 import {
   mapState,
   mapMutations,
@@ -255,7 +234,7 @@ export default {
     }
   },
   mounted() {
-    this.$axios.get(`${this.endpoints.baseUrl}request/?format=json&limit=1000`)
+    this.$axios.get(`${this.endpoints.baseUrl}account-request/?format=json&limit=1000`)
     .then((res) => {
       this.$store.commit('GET_ALL_USERS', res.data.results)
     })
@@ -296,6 +275,12 @@ export default {
     watchSelect(payload) {
       console.log(`WS :: PAYLOAD ::: ${payload}`)
       this.selectFilter = payload;
+    },
+    requestedDateFormat(requestedDate) {
+      return moment(requestedDate).format('MM/D/YYYY');
+    },
+    requestedTimeAgo(requestedDate) {
+      return moment(requestedDate).fromNow();
     }
   },
   computed: {

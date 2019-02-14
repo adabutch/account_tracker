@@ -66,8 +66,7 @@ export default {
       asideHeader: "Review & Create"
     }
   },
-  mounted() {
-  },
+  mounted() {},
   computed: {
     ...mapFields([
       'endpoints',
@@ -101,7 +100,7 @@ export default {
       'createUser.clearUser'
     ]),
     createUserSubmit() {
-      this.$axios.post(`${this.endpoints.baseUrl}request/`,{
+      this.$axios.post(`${this.endpoints.baseUrl}account-request/`,{
         "first_name":        this.first,
         "middle_name":       this.middle,
         "last_name":         this.last,

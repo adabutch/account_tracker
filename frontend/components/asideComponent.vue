@@ -13,8 +13,8 @@
     <p v-if="!first">Details of the <strong>User Creation Wizard</strong> will appear here as they become available.</p>
 
 
-    <div class="wrapper">
-      <fn1-button v-if="!first">Batch user creation</fn1-button>
+    <div class="wrapper" v-if="!first">
+      <fn1-button>Batch user creation</fn1-button>
     </div>
 
 

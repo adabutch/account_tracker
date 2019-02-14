@@ -29,48 +29,62 @@
         {name: 'Denied',             href: '/admin/users/denied'}
       ]">
 
-      <!-- <fn1-dropdown
-        slot="dropdown"
-        text="Adam Bbbbutcher"
-        navAlign="right"
-        :navItems="[
-          {name: 'Logout', href: '/login'}
-        ]
-      "/> -->
-
-      <!-- to-do: wire up click methods inside json v-for
-      so we can use things like the above component -->
       <nav slot="dropdown"
            role="navigation dropdown"
            aria-label="navigation dropdown"
            class="navigation-dropdown">
         <details>
-          <summary>Adam Butcher</summary>
+          <summary>{{authUser}}</summary>
           <ul class="right">
-            <li>
-              <a href="" @click="logout()" title="Logout">Logout</a>
+            <li @click="logout()">
+              Logout
             </li>
           </ul>
         </details>
       </nav>
+      <!-- <exampleDropdown :text="authUser.first_name" navAlign="right">
+        <li>
+          <a href="" @click="logout()" title="Logout">Logout</a>
+        </li>
+      </exampleDropdown> -->
 
     </fn1-header>
-
   </span>
 </template>
 
 <script>
+import { mapFields }   from 'vuex-map-fields';
+import exampleDropdown from '~/components/exampleDropdown'
+
 const Cookie = process.client ? require('js-cookie') : undefined
 
+
+// const { mapFields } = createHelpers({
+//   getterType: `getField`,
+//   mutationType: `updateField`,
+// });
+
 export default {
+  components: {
+    exampleDropdown
+  },
   methods: {
     logout() {
+      localStorage.clear('vuex');
       Cookie.remove('auth')
       this.$store.commit('SET_AUTH', null)
       this.$store.commit("SET_AUTH_USER", null)
       this.$store.commit("SET_IS_AUTHENTICATED", false)
       this.$router.push('/login')
     },
+  },
+  computed: {
+    ...mapFields([
+      'authUser'
+    ]),
+    fullName() {
+      return `${JSON.stringify(this.authUser)}`
+    }
   }
 }
 </script>

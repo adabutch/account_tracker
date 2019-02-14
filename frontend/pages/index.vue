@@ -9,8 +9,9 @@
           <!-- <h1>{{ setMonth }} - {{ setYear }}</h1>
           <h1>{{ getDaysInMonth(setMonth, setYear) }}</h1>
           <h1>{{ getAllDays(setMonth, setYear) }}</h1> -->
-          <h1>{{ testing() }}</h1>
+          <!-- <h1>{{ testing() }}</h1> -->
 
+          <!-- {{departments}} -->
 
 
           <h1><strong>Step One:</strong> User information</h1>
@@ -41,38 +42,11 @@
           </div>
 
           <div class="fields-wrapper">
-
-            <div class="field-group">
-              <label for="start-date">Start Date</label>
-               <datepicker v-model="startDate"
-                           :format="customFormatter"
-                           :disabledDates="startDatesDisabled"
-                           ref="datepicker"
-                           @focus="showDatepicker"
-                           name="start-date"
-                           id="start-date" />
-            </div>
-
-
-            <!-- <fn1-date v-model="startDate"
-                      label="Start Date"
-                      name="start-date"
-                      id="start-date"
-                      type="date"
-                      placeholder="YYYY-MM-DD"
-                      pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" /> -->
-
             <exampleSelect v-model="department"
                            label="Department"
                            name="department"
                            id="department"
                            :options="getDepts" />
-
-            <exampleSelect v-model="status"
-                           label="Status"
-                           name="status"
-                           id="status"
-                           :options="statusOptions" />
           </div>
           <nuxt-link class="button"
                      :to="{ name: 'two'}">Next</nuxt-link>
@@ -83,20 +57,17 @@
 </template>
 
 <script>
-
-import moment           from 'moment'
-
 import {
   mapState,
   mapMutations,
   mapGetters,
   mapActions }          from 'vuex'
-import { createHelpers }    from 'vuex-map-fields';
+import {
+  createHelpers }       from 'vuex-map-fields';
 
 import headerComponent  from '~/components/headerComponent'
 import progressStepper  from '~/components/progressStepper.vue'
 import asideComponent   from '~/components/asideComponent.vue'
-import Datepicker       from 'vuejs-datepicker';
 import exampleSelect    from '~/components/exampleSelect.vue'
 
 
@@ -111,14 +82,17 @@ export default {
     headerComponent,
     progressStepper,
     asideComponent,
-    exampleSelect,
-    Datepicker
+    exampleSelect
+  },
+  mounted() {
+    // this.$axios.get(`https://timetrack.bloomington.in.gov/timetrack/DepartmentService`)
+    // .then((res) => {
+    //   console.log(res);
+    //   // this.$store.commit('GET_ALL_USERS', res.data.results)
+    // })
   },
   data() {
     return {
-      setMonth: 1,
-      setYear: 2019,
-      dateTest: new Date(),
       stepActive: 1,
       suffixOptions: [
         { value: 'Jr.', text: 'Jr.' },
@@ -131,134 +105,30 @@ export default {
         { value: 'V',   text: 'V' },
         { value: 'VI',  text: 'VI' }
       ],
-      statusOptions: [
-        {
-          value: 'Full-Time',
-          text: 'Full-Time'
-        },
-        {
-          value: 'Part-Time',
-          text: 'Part-Time'
-        },
-        {
-          value: 'Intern',
-          text: 'Intern'
-        },
-        {
-          value: 'SPEA Intern',
-          text: 'SPEA Intern'
-        },
-        {
-          value: 'Volunteer',
-          text: 'Volunteer'
-        },
-        {
-          value: 'Seasonal',
-          text: 'Seasonal'
-        },
-        {
-          value: 'Temp. Full-Time',
-          text: 'Temp. Full-Time'
-        },
-        {
-          value: 'Temp. Part-Time',
-          text: 'Temp. Part-Time'
-        },
-        {
-          value: 'Part-Time',
-          text: 'Part-Time'
-        }
-      ],
-      startDatesDisabled: {
-        // days: [0, 2, 3, 4, 5, 6, 7],
-        dates: [],
-        // customPredictor: function(date) {
-        //   if(date.getDate() % 14 == 0){
-        //     return true
-        //   }
-        // },
-      },
+
       posts: [],
       errors: []
     }
   },
-  methods: {
-    customFormatter(date) {
-      return moment(date).format(this.startDateFormat);
-    },
-    showDatepicker() {
-      return this.$refs.datepicker.$children[0].$emit('showCalendar');
-    },
-    getDaysInMonth(month, year) {
-      let date = new Date(year, month, 1);
-      let allDays = [];
-      let wantedDays = [];
-
-      // Get the first Monday in the month
-      while (date.getDay() != 1) {
-        date.setDate(date.getDate() + 1);
-      }
-
-      while (date.getMonth() === month) {
-        allDays.push(
-          new Date(date)
-          .toISOString().split('T')[0]
-        );
-        date.setDate(date.getDate() + 14);
-      }
-
-      return allDays;
-    },
-    getAllDays(month, year) {
-      let date = new Date(year, month);
-      let days = [];
-
-      while (date.getMonth() === month) {
-        days.push(
-          new Date(date)
-          .toISOString().split('T')[0]
-        );
-        date.setDate(date.getDate() + 1);
-      }
-
-      return days;
-    },
-    pluckDates(array1, array2) {
-      array1 = array1.filter(val => !array2.includes(val));
-      return array1;
-    },
-    testing() {
-      let dates = this.pluckDates(this.getAllDays(this.setMonth, this.setYear), this.getDaysInMonth(this.setMonth, this.setYear));
-
-      let formatedDates = [];
-
-      dates.forEach((item, index) => {
-        formatedDates.push(
-          new Date(item)
-        );
-      });
-
-      return formatedDates;
-    }
-  },
+  methods: {},
   computed: {
     ...mapFields([
       'data',
       'totalSteps',
-      'startDateFormat',
+
       'createUser.name.first',
       'createUser.name.middle',
       'createUser.name.last',
       'createUser.name.suffix',
-      'createUser.startDate',
+
       'createUser.department',
-      'createUser.status',
+      'departments.departments'
     ]),
     getDepts() {
       let deptSelectArray = [];
 
-      let depts = this.data.map(
-        value => value.department
+      let depts = this.departments.map(
+        value => value.name
       );
 
       depts.forEach(function(dept) {

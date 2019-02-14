@@ -76,10 +76,10 @@ export default {
         this.$store.commit('SET_AUTH', response.data.token)
         Cookie.set('auth', response.data.token)
 
-        this.$axios.get(`${this.endpoints.baseUrl}`)
+        this.$axios.get(`${this.endpoints.baseUrl}user/`)
         .then((response) => {
-          console.log(response)
-          this.$store.commit("SET_AUTH_USER", response)
+          console.log(response.data)
+          this.$store.commit("SET_AUTH_USER", response.data)
           this.$store.commit("SET_IS_AUTHENTICATED", true)
           this.$router.push('/')
         })

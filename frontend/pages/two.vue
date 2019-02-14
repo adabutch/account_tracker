@@ -26,10 +26,27 @@
 
           <exampleSelect v-model="job"
                          v-if="showJob"
-                          label="Job"
-                          name="job"
-                          id="job"
-                          :options="divisionJobs()" />
+                         label="Job"
+                         name="job"
+                         id="job"
+                         :options="divisionJobs()" />
+
+          <exampleSelect v-model="status"
+                         label="Status"
+                         name="status"
+                         id="status"
+                         :options="statusOptions" />
+
+          <div class="field-group">
+            <label for="start-date">Start Date</label>
+            <datepicker v-model="startDate"
+                        :format="customFormatter"
+                        :disabledDates="startDatesDisabled"
+                        ref="datepicker"
+                        @focus="showDatepicker"
+                        name="start-date"
+                        id="start-date" />
+          </div>
 
           <nuxt-link class="button previous"
                      :to="{ name: 'index'}"
@@ -44,17 +61,19 @@
 </template>
 
 <script>
+import moment           from 'moment'
 import {
   mapState,
   mapMutations,
   mapGetters,
   mapActions }          from 'vuex'
-import { createHelpers } from 'vuex-map-fields';
+import { createHelpers }from 'vuex-map-fields';
 
-import headerComponent from '~/components/headerComponent.vue'
-import progressStepper from '~/components/progressStepper.vue'
+import headerComponent  from '~/components/headerComponent.vue'
+import progressStepper  from '~/components/progressStepper.vue'
 import asideComponent   from '~/components/asideComponent.vue'
-import exampleSelect   from '~/components/exampleSelect.vue'
+import exampleSelect    from '~/components/exampleSelect.vue'
+import Datepicker       from 'vuejs-datepicker';
 
 const { mapFields } = createHelpers({
   getterType: `getField`,
@@ -67,13 +86,52 @@ export default {
     headerComponent,
     progressStepper,
     asideComponent,
-    exampleSelect
+    exampleSelect,
+    Datepicker
   },
   data() {
     return {
       stepActive: 2,
       showDivision: false,
       showJob: false,
+      statusOptions: [
+        {
+          value: 'Full-Time',
+          text: 'Full-Time'
+        },
+        {
+          value: 'Part-Time',
+          text: 'Part-Time'
+        },
+        {
+          value: 'Intern',
+          text: 'Intern'
+        },
+        {
+          value: 'SPEA Intern',
+          text: 'SPEA Intern'
+        },
+        {
+          value: 'Volunteer',
+          text: 'Volunteer'
+        },
+        {
+          value: 'Seasonal',
+          text: 'Seasonal'
+        },
+        {
+          value: 'Temp. Full-Time',
+          text: 'Temp. Full-Time'
+        },
+        {
+          value: 'Temp. Part-Time',
+          text: 'Temp. Part-Time'
+        },
+        {
+          value: 'Part-Time',
+          text: 'Part-Time'
+        }
+      ],
       jobOptions: [
         { value: null,
           text: 'none',
@@ -90,6 +148,17 @@ export default {
           text: 'Front-End Developer'
         }
       ],
+      setMonth: 1,
+      setYear: 2019,
+      startDatesDisabled: {
+        // days: [0, 2, 3, 4, 5, 6, 7],
+        dates: [],
+        // customPredictor: function(date) {
+        //   if(date.getDate() % 14 == 0){
+        //     return true
+        //   }
+        // },
+      },
     }
   },
   mounted() {
@@ -190,6 +259,63 @@ export default {
       });
       return jobsByDivision;
     },
+    customFormatter(date) {
+      return moment(date).format(this.startDateFormat);
+    },
+    showDatepicker() {
+      return this.$refs.datepicker.$children[0].$emit('showCalendar');
+    },
+    getDaysInMonth(month, year) {
+      let date = new Date(year, month, 1);
+      let allDays = [];
+      let wantedDays = [];
+
+      // Get the first Monday in the month
+      while (date.getDay() != 1) {
+        date.setDate(date.getDate() + 1);
+      }
+
+      while (date.getMonth() === month) {
+        allDays.push(
+          new Date(date)
+          .toISOString().split('T')[0]
+        );
+        date.setDate(date.getDate() + 14);
+      }
+
+      return allDays;
+    },
+    getAllDays(month, year) {
+      let date = new Date(year, month);
+      let days = [];
+
+      while (date.getMonth() === month) {
+        days.push(
+          new Date(date)
+          .toISOString().split('T')[0]
+        );
+        date.setDate(date.getDate() + 1);
+      }
+
+      return days;
+    },
+    pluckDates(array1, array2) {
+      array1 = array1.filter(val => !array2.includes(val));
+      return array1;
+    },
+    testing() {
+      let dates = this.pluckDates(this.getAllDays(this.setMonth, this.setYear), this.getDaysInMonth(this.setMonth, this.setYear));
+
+      let formatedDates = [];
+
+      dates.forEach((item, index) => {
+        formatedDates.push(
+          new Date(item)
+        );
+      });
+
+      return formatedDates;
+    }
   },
   computed: {
     ...mapFields([
@@ -198,6 +324,9 @@ export default {
       'createUser.facility',
       'createUser.division',
       'createUser.job',
+      'createUser.status',
+      'startDateFormat',
+      'createUser.startDate',
     ]),
     deptFacilities() {
       let facilitiesByDept = [];

@@ -7,6 +7,7 @@ import {
 
 import createUser   from './modules/createUser'
 import facilities   from './modules/facilities'
+import departments  from './modules/departments'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -193,7 +194,8 @@ export default {
   namespaced: true,
   modules: {
     createUser: createUser,
-    facilities: facilities
+    facilities: facilities,
+    departments: departments
   },
   mutations,
   actions,
