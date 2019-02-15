@@ -1,18 +1,18 @@
-import createPersistedState from 'vuex-persistedstate';
-import Cookies from 'js-cookie'
+// import createPersistedState from 'vuex-persistedstate';
+// // import Cookies from 'js-cookie'
 
 
-export default ({store, isHMR}) => {
-  if (isHMR) return;
+// export default ({store, isHMR}) => {
+//   if (isHMR) return;
 
-  if (process.client) {
-    window.onNuxtReady((nuxt) => {
-      createPersistedState({
-        // storage: window.localStorage
-      })(store)
-    });
-  }
-}
+//   if (process.client) {
+//     window.onNuxtReady((nuxt) => {
+//       createPersistedState({
+//         // storage: window.localStorage
+//       })(store)
+//     });
+//   }
+// }
 
 // export default ({store, isHMR}) => {
 //   // In case of HMR, mutation occurs before nuxReady, so previously saved state

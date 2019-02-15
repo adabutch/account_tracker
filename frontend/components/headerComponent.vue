@@ -35,6 +35,7 @@
            class="navigation-dropdown">
         <details>
           <summary>{{authUser}}</summary>
+          <!-- <summary>{{fullName}}</summary> -->
           <ul class="right">
             <li @click="logout()">
               Logout
@@ -53,16 +54,21 @@
 </template>
 
 <script>
-import { mapFields }   from 'vuex-map-fields';
+import {
+  mapState,
+  mapMutations,
+  mapGetters,
+  mapActions }         from 'vuex'
+import { createHelpers }   from 'vuex-map-fields'
 import exampleDropdown from '~/components/exampleDropdown'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
 
-// const { mapFields } = createHelpers({
-//   getterType: `getField`,
-//   mutationType: `updateField`,
-// });
+const { mapFields } = createHelpers({
+  getterType: `getField`,
+  mutationType: `updateField`,
+});
 
 export default {
   components: {
@@ -80,11 +86,12 @@ export default {
   },
   computed: {
     ...mapFields([
-      'authUser'
+      'authUser',
+      'authUserTwo'
     ]),
-    fullName() {
-      return `${JSON.stringify(this.authUser)}`
-    }
+    // fullName() {
+    //   return this.$store.state.authUser.first_name
+    // }
   }
 }
 </script>

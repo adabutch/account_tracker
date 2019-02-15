@@ -10,26 +10,24 @@
 
         <form>
           <h1><strong>Step Two:</strong> Facility specific information</h1>
-          <!-- {{facilityDivisions()}} -->
+
           <exampleSelect v-model="facility"
                           label="Facility"
                           name="facility"
                           id="facility"
                           :options="deptFacilities" />
 
-          <exampleSelect v-model="division"
-                         v-if="showDivision"
-                          label="Division"
-                          name="division"
-                          id="division"
-                          :options="facilityDivisions()" />
+          <exampleSelect v-model="group"
+                          label="Group"
+                          name="group"
+                          id="group"
+                          :options="deptGroups" />
 
           <exampleSelect v-model="job"
-                         v-if="showJob"
                          label="Job"
                          name="job"
                          id="job"
-                         :options="divisionJobs()" />
+                         :options="groupJobs" />
 
           <exampleSelect v-model="status"
                          label="Status"
@@ -61,19 +59,20 @@
 </template>
 
 <script>
+import axios            from 'axios'
 import moment           from 'moment'
 import {
   mapState,
   mapMutations,
   mapGetters,
   mapActions }          from 'vuex'
-import { createHelpers }from 'vuex-map-fields';
+import { createHelpers }from 'vuex-map-fields'
 
 import headerComponent  from '~/components/headerComponent.vue'
 import progressStepper  from '~/components/progressStepper.vue'
 import asideComponent   from '~/components/asideComponent.vue'
 import exampleSelect    from '~/components/exampleSelect.vue'
-import Datepicker       from 'vuejs-datepicker';
+import Datepicker       from 'vuejs-datepicker'
 
 const { mapFields } = createHelpers({
   getterType: `getField`,
@@ -159,106 +158,26 @@ export default {
         //   }
         // },
       },
+      groups: [],
+      jobs: [],
     }
   },
   mounted() {
-    if(this.facility) {
-      this.showDivision = true;
-    }
-
-    if(this.division) {
-      this.showJob = true;
+    if(this.department) {
+      this.getGroups;
     }
   },
   watch: {
-    facility: function(val, oldVal) {
-      if(val === "Service Center") {
-        this.addToTotalSteps(5);
-      } else {
-        this.addToTotalSteps(4);
+    group: function(val) {
+      if(val) {
+        this.getJobs();
       }
-      this.facilityDivisions();
-      this.showDivision = true;
-      this.division = "";
-    },
-    division: function(val, oldVal) {
-      this.divisionJobs();
-      this.showJob = true;
-      this.job = "";
     }
   },
   methods: {
     ...mapActions([
       'addToTotalSteps'
     ]),
-    facilityDivisions() {
-      let divisionsByFacility = [];
-
-      let deptFacilities = this.data.filter(
-        value => value.department === this.department
-      );
-
-      let facilities = deptFacilities.map(
-        value => value.facilities
-      );
-
-      let facility = facilities[0].filter(
-        value => value.name === this.facility
-      );
-
-      let divisions = facility.map(
-        value => value.divisions
-      );
-
-      let divisionNames = divisions[0].map(
-        value => value.name
-      );
-
-      divisionNames.forEach(function(facility) {
-        divisionsByFacility.push({
-          "text": facility,
-          "value": facility
-        });
-      });
-      return divisionsByFacility;
-    },
-    divisionJobs() {
-      let jobsByDivision = [];
-
-      let deptFacilities = this.data.filter(
-        value => value.department === this.department
-      );
-
-      let facilities = deptFacilities.map(
-        value => value.facilities
-      );
-
-      let facility = facilities[0].filter(
-        value => value.name === this.facility
-      );
-
-      let divisions = facility.map(
-        value => value.divisions
-      );
-
-      let division = divisions[0].filter(
-        value => value.name === this.division
-      );
-
-      let jobNames = division.map(
-        value => value.jobs
-      );
-
-      jobNames.forEach(function(job) {
-        job.forEach(function(item) {
-          jobsByDivision.push({
-            "text": item,
-            "value": item
-          });
-        });
-      });
-      return jobsByDivision;
-    },
     customFormatter(date) {
       return moment(date).format(this.startDateFormat);
     },
@@ -315,14 +234,27 @@ export default {
       });
 
       return formatedDates;
+    },
+    getJobs() {
+      console.log('actual getJobs');
+      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/JobTitleService?group_id=${this.group}`)
+      .then((res) => {
+        console.log(res.data);
+        this.jobs = res.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      })
     }
   },
   computed: {
     ...mapFields([
       'data',
+      'facilities.facilities',
       'createUser.department',
       'createUser.facility',
       'createUser.division',
+      'createUser.group',
       'createUser.job',
       'createUser.status',
       'startDateFormat',
@@ -331,25 +263,64 @@ export default {
     deptFacilities() {
       let facilitiesByDept = [];
 
-      let deptFacilities = this.data.filter(
-        value => value.department === this.department
+      let facilities = this.facilities.map(
+        value => {
+          return {
+            id: value.text,
+            name: value.value
+          }
+        }
       );
 
-      let facility = deptFacilities.map(
-        value => value.facilities
-      );
-
-      facility.forEach(function(facility) {
-        facility.forEach(function(item){
-          facilitiesByDept.push({
-            "text": item.name,
-            "value": item.name
-          });
+      facilities.forEach(function(facility) {
+        facilitiesByDept.push({
+          "text": facility.id,
+          "value": facility.name
         });
       });
 
       return facilitiesByDept;
     },
+    getGroups() {
+      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupService?department_id=${this.department}`)
+      .then((res) => {
+        console.log(res.data);
+        this.groups = res.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    },
+    deptGroups() {
+      let groupSelectArray = [];
+
+      let groups = this.groups.map(
+        value => { return {id: value.id, name: value.name}}
+      );
+
+      groups.forEach(function(group) {
+        groupSelectArray.push({
+          "text": group.name,
+          "value": group.id
+        });
+      });
+      return groupSelectArray;
+    },
+    groupJobs() {
+      let jobSelectArray = [];
+
+      let jobs = this.jobs.map(
+        value => { return {id: value.id, name: value.name}}
+      );
+
+      jobs.forEach(function(job) {
+        jobSelectArray.push({
+          "text": job.name,
+          "value": job.id
+        });
+      });
+      return jobSelectArray;
+    }
   },
 }
 </script>

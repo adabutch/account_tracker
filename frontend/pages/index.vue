@@ -11,9 +11,6 @@
           <h1>{{ getAllDays(setMonth, setYear) }}</h1> -->
           <!-- <h1>{{ testing() }}</h1> -->
 
-          <!-- {{departments}} -->
-
-
           <h1><strong>Step One:</strong> User information</h1>
           <div class="fields-wrapper">
             <fn1-input v-model="first"
@@ -61,20 +58,21 @@ import {
   mapState,
   mapMutations,
   mapGetters,
-  mapActions }          from 'vuex'
-import {
-  createHelpers }       from 'vuex-map-fields';
+  mapActions }         from 'vuex'
+import { mapFields }   from 'vuex-map-fields'
 
 import headerComponent  from '~/components/headerComponent'
 import progressStepper  from '~/components/progressStepper.vue'
 import asideComponent   from '~/components/asideComponent.vue'
 import exampleSelect    from '~/components/exampleSelect.vue'
 
+import axios from 'axios'
 
-const { mapFields } = createHelpers({
-  getterType: `getField`,
-  mutationType: `updateField`,
-});
+
+// const { mapFields } = createHelpers({
+//   getterType: `getField`,
+//   mutationType: `updateField`,
+// });
 
 export default {
   middleware: 'authenticated',
@@ -85,11 +83,15 @@ export default {
     exampleSelect
   },
   mounted() {
-    // this.$axios.get(`https://timetrack.bloomington.in.gov/timetrack/DepartmentService`)
-    // .then((res) => {
-    //   console.log(res);
-    //   // this.$store.commit('GET_ALL_USERS', res.data.results)
-    // })
+    // this.$axios.get(`https://jsonplaceholder.typicode.com/todos/1`)
+    axios.get(`https://tomcat2.bloomington.in.gov/timetrack/DepartmentService`)
+    .then((res) => {
+      console.log(res);
+      this.$store.dispatch('depts/setDepartments', res.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   },
   data() {
     return {
@@ -110,11 +112,16 @@ export default {
       errors: []
     }
   },
-  methods: {},
+  methods: {
+    ...mapActions([
+      'depts.setDepartments'
+    ])
+  },
   computed: {
     ...mapFields([
       'data',
       'totalSteps',
+      'endpoints',
 
       'createUser.name.first',
       'createUser.name.middle',
@@ -122,19 +129,21 @@ export default {
       'createUser.name.suffix',
 
       'createUser.department',
-      'departments.departments'
+
+      'depts.departments'
     ]),
     getDepts() {
       let deptSelectArray = [];
 
       let depts = this.departments.map(
-        value => value.name
+        value => { return {id: value.id, name: value.name}}
+
       );
 
       depts.forEach(function(dept) {
         deptSelectArray.push({
-          "text": dept,
-          "value": dept
+          "text": dept.name,
+          "value": dept.id
         });
       });
       return deptSelectArray;

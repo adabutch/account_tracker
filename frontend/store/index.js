@@ -7,7 +7,7 @@ import {
 
 import createUser   from './modules/createUser'
 import facilities   from './modules/facilities'
-import departments  from './modules/departments'
+import depts  from './modules/depts'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -16,7 +16,20 @@ const cookieparser = process.server ? require('cookieparser') : undefined
 
 const state = () => ({
   auth:             null,
-  authUser:         {},
+  authUser: {
+    email:          "",
+    first_name:     "",
+    groups:         [],
+    last_name:      "",
+    username:       ""
+  },
+  authUserTwo: {
+    email:          "butcherad@bloomington.in.gov",
+    first_name:     "Adam",
+    groups:         [],
+    last_name:      "Butcher",
+    username:       "butcherad"
+  },
   isAuthenticated:  false,
   endpoints: {
     // TODO: Remove hardcoding of dev endpoints
@@ -195,7 +208,7 @@ export default {
   modules: {
     createUser: createUser,
     facilities: facilities,
-    departments: departments
+    depts: depts
   },
   mutations,
   actions,

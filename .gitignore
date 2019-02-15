@@ -13,6 +13,7 @@
 db.sqlite3
 mysql.cnf
 account_tracker/ldap_config.py
+frontend/certs
 
 # Service worker
 sw.*

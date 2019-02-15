@@ -10,10 +10,17 @@ const state = () => ({
     suffix:           "",
   },
   startDate:          "",
-  department:         "",
+  department:       {
+    id:               "",
+    name:             "",
+  },
   status:             "",
   facility:           "",
   division:           "",
+  group:            {
+    id:               "",
+    name:             "",
+  },
   job:                "",
   supervisor:         "",
   supervisorPhone:    "",
