@@ -13,9 +13,9 @@ class AccountRequest(models.Model):
                                   blank=True, null=True)
 
     first_name = models.CharField(max_length=50)
-    middle_name = models.CharField(max_length=50)
+    middle_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50)
-    suffix = models.CharField(max_length=10)
+    suffix = models.CharField(max_length=10, blank=True, null=True)
 
     # strip out dashes and periods
     employee_phone = models.CharField(max_length=10)
@@ -25,9 +25,11 @@ class AccountRequest(models.Model):
     supervisor_phone = models.CharField(max_length=50)
 
     department = models.CharField(max_length=50)
-    division = models.CharField(max_length=50)
     group = models.CharField(max_length=50)
-    facility = models.CharField(max_length=50)
+
+    # can these be determined from the group?
+    division = models.CharField(max_length=50, blank=True, null=True)
+    facility = models.CharField(max_length=50, blank=True, null=True)
 
     # Some employees are only allowed to keep time with a punch clock...
     clock_entry_only = models.BooleanField(default=False)
