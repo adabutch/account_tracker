@@ -29,6 +29,9 @@
             </fieldset>
           </div>
 
+          <button @click.prevent="resetForm"
+                  class="reset-form">reset</button>
+
           <nuxt-link class="button previous"
                      :to="{ name: 'four'}">Previous</nuxt-link>
 

@@ -52,7 +52,17 @@
             </select>
           </div>
 
-          <button @click.prevent="resetForm">reset</button>
+          <!-- <fn1-modal title="Clear/Reset Form"
+                     launchButtonText="reset form">
+            <p slot="body">This will clear all form values. Are you sure?</p>
+            <fn1-button slot="footerBtnConfirm"
+                        @click.native="resetForm"
+                        class="reset-form">I Understand</fn1-button>
+          </fn1-modal> -->
+
+          <button @click.prevent="resetForm"
+                  class="reset-form">reset form</button>
+
           <nuxt-link class="button"
                      :to="{ name: 'two'}">Next</nuxt-link>
         </form>
@@ -129,13 +139,7 @@ export default {
       }
     }
   },
-  methods: {
-    resetForm() {
-      localStorage.clear('vuex');
-      this.$store.dispatch('createUser/resetState');
-      this.$router.push('/')
-    }
-  },
+  methods: {},
   computed: {
     ...mapFields([
       'data',

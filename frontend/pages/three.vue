@@ -38,6 +38,9 @@
                      name="employee-phone"
                      id="employee-phone" />
 
+          <button @click.prevent="resetForm"
+                  class="reset-form">reset</button>
+
           <nuxt-link class="button previous"
                      :to="{ name: 'two'}">Previous</nuxt-link>
 

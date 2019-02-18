@@ -66,6 +66,9 @@
                         id="start-date" />
           </div>
 
+          <button @click.prevent="resetForm"
+                  class="reset-form">reset</button>
+
           <nuxt-link class="button previous"
                      :to="{ name: 'index'}"
                      @click.native="">Previous</nuxt-link>
