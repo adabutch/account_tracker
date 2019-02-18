@@ -172,6 +172,10 @@ export default {
       if(this.department.id) {
         this.getGroups;
       }
+
+      if(this.group.id) {
+        this.getJobs();
+      }
     });
   },
   watch: {
@@ -183,14 +187,14 @@ export default {
       }
     }
   },
-  updated() {
-    if(this.department.id) {
-        this.getGroups;
-      }
+  beforeUpdate() {
+    // if(this.department.id) {
+    //     this.getGroups;
+    //   }
 
-    if(this.group.id) {
-      this.getJobs();
-    }
+    // if(this.group.id) {
+    //   this.getJobs();
+    // }
   },
   methods: {
     ...mapActions([

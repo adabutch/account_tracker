@@ -41,12 +41,24 @@ const mutations = {
   updateField,
   RESET_STATE(state) {
     Object.assign(state, getDefaultState())
+  },
+  RESET_GROUP(state) {
+    state.group = {id: "", name: ""}
+  },
+  RESET_JOB(state) {
+    state.job = {id: "", name: ""}
   }
 }
 
 const actions = {
   resetState({ commit }) {
     commit('RESET_STATE')
+  },
+  resetGroup({ commit }) {
+    commit('RESET_GROUP')
+  },
+  resetJob({ commit }) {
+    commit('RESET_JOB')
   },
 }
 

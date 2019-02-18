@@ -118,11 +118,18 @@ export default {
       errors: []
     }
   },
+  watch: {
+    department: function(val, oldVal) {
+      let newVal      = JSON.stringify(val.id);
+      let previousVal = JSON.stringify(oldVal.id);
+
+      if(newVal != previousVal) {
+        this.$store.dispatch('createUser/resetGroup');
+        this.$store.dispatch('createUser/resetJob');
+      }
+    }
+  },
   methods: {
-    // ...mapActions(
-    //   'depts', ['setDepartments'],
-    //   'createUser', ['clearUser']
-    // ),
     resetForm() {
       localStorage.clear('vuex');
       this.$store.dispatch('createUser/resetState');
