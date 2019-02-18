@@ -18,8 +18,12 @@ class TerminationRequest(models.Model):
     # is it new? approved? completed? denied?
     request_status = models.CharField(max_length=50)
 
+    # will the employee be coming back at a later date? i.e. seasonal?
+    returning = models.BooleanField(default=False)
+    return_date = models.DateField(blank=True, null=True)
+
     requested = models.DateTimeField(auto_now_add=True)
     # any associated logged actions could trigger an update to updated
     updated = models.DateTimeField(auto_now=True)
-    # when the account was created -- job's finished
-    created = models.DateTimeField(blank=True, null=True)
+    # when the account was closed -- job's finished
+    terminated = models.DateTimeField(blank=True, null=True)
