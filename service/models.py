@@ -1,4 +1,5 @@
 from django.db import models
+# from default_profile.models import DefaultProfile
 
 
 class Service(models.Model):
@@ -8,6 +9,8 @@ class Service(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     url = models.URLField(blank=True, null=True)
+
+    # profiles = models.ManyToManyField(DefaultProfile)
 
     active = models.BooleanField(default=True)
     # cloud, desktop, server
