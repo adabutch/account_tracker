@@ -44,7 +44,7 @@
                     id="department"
                     type="select"
                     v-model="department">
-              <option :value="null">---</option>
+              <option>---</option>
               <option v-for="(item, index) in getDepts"
                       :value="{id: item.value, name: item.text}">
                 {{ item.text }}
@@ -91,7 +91,6 @@ export default {
     exampleSelect
   },
   mounted() {
-    // this.$axios.get(`https://jsonplaceholder.typicode.com/todos/1`)
     axios.get(`https://tomcat2.bloomington.in.gov/timetrack/DepartmentService`)
     .then((res) => {
       console.log(res);

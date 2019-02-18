@@ -23,7 +23,6 @@
                     id="group"
                     type="select"
                     v-model="group">
-              <option value="">---</option>
               <option v-for="(item, index) in deptGroups"
                       :value="{id: item.value, name: item.text}">
                 {{ item.text }}
@@ -37,7 +36,6 @@
                     id="job"
                     type="select"
                     v-model="job">
-              <option value="">---</option>
               <option v-for="(item, index) in groupJobs"
                       :value="{id: item.value, name: item.text}">
                 {{ item.text }}
@@ -169,15 +167,29 @@ export default {
     }
   },
   mounted() {
-    if(this.department.id) {
-      this.getGroups;
-    }
+    this.$nextTick(() => {
+      console.log(`NTICK :: ${this.department.name}`);
+      if(this.department.id) {
+        this.getGroups;
+      }
+    });
   },
   watch: {
     group: function(val) {
+      // alert(val)
+      // this.getJobs();
       if(val) {
         this.getJobs();
       }
+    }
+  },
+  updated() {
+    if(this.department.id) {
+        this.getGroups;
+      }
+
+    if(this.group.id) {
+      this.getJobs();
     }
   },
   methods: {
