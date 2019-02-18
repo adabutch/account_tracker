@@ -6,10 +6,12 @@ from termination_request.viewsets import TerminationRequestViewSet
 from service_request.viewsets import ServiceRequestViewSet
 from service.viewsets import ServiceViewSet
 from service_manager.viewsets import ServiceManagerViewSet
+from default_profile.viewsets import DefaultProfileViewSet
 
 router = routers.DefaultRouter()
 router.register(r'employee', UserViewSet, basename='employee')
 router.register(r'user', CurrentUserViewSet, basename='user')
+router.register(r'profile', DefaultProfileViewSet)
 router.register(r'account-request', AccountRequestViewSet)
 router.register(r'change-request', ChangeRequestViewSet)
 router.register(r'termination-request', TerminationRequestViewSet)
