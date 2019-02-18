@@ -10,6 +10,13 @@
 
         <form>
           <h1><strong>Step Three:</strong> Supervisor information</h1>
+
+          {{ supervisors }}<br><br> - - - - <br><br>
+
+          {{ supPhones() }}<br><br> - - - - <br><br>
+
+          {{ divisionSupervisors }}
+
           <exampleSelect v-model="supervisor"
                          label="Supervisor"
                          name="supervisor"
@@ -17,7 +24,6 @@
                          :options="divisionSupervisors" />
 
           <exampleSelect v-model="supervisorPhone"
-                         v-if="showSupPhone"
                          label="Supervisor Phone"
                          name="supervisor-phone"
                          id="supervisor-phone"
@@ -64,68 +70,56 @@ export default {
     return {
       stepActive: 3,
       showSupPhone: false,
+
+      supervisors: [
+        {
+          "name":  "Charles Brandt",
+          "phone": "123-888-8888",
+          "email": "brand tc @ gov"
+        },
+        {
+          "name":  "Adam Butcher",
+          "phone": "456-222-8888",
+          "email": "butcher ad @ gov"
+        }
+      ],
     }
   },
   mounted() {
-    if(this.supervisor) {
+    // if(this.supervisor) {
 
-      this.showSupPhone = true;
-    }
-    if(!this.supervisor) {
-      this.divisionSupervisors;
-    }
+    //   this.showSupPhone = true;
+    // }
+    // if(!this.supervisor) {
+    //   this.divisionSupervisors;
+    // }
   },
   watch: {
-    supervisor: function(val, oldVal) {
-      this.showSupPhone = true;
-      this.supervisorPhones = "";
-    }
+    // supervisor: function(val, oldVal) {
+    //   this.showSupPhone = true;
+    //   this.supervisorPhones = "";
+    // }
   },
   methods: {
     supPhones() {
-      let supervisorsByDivision = [];
+      let supervisorPhones = [];
 
-      let deptFacilities = this.data.filter(
-        value => value.department === this.department
+      let supPhoneMatch = this.supervisors.filter(
+        value => value.name == this.supervisor
       );
 
-      let facilities = deptFacilities.map(
-        value => value.facilities
-      );
-
-      let facility = facilities[0].filter(
-        value => value.name === this.facility
-      );
-
-      let divisions = facility.map(
-        value => value.divisions
-      );
-
-      let division = divisions[0].filter(
-        value => value.name === this.division
-      );
-
-      let divisionSupervisors = division.map(
-        value => value.supervisors
-      );
-
-      let supervisorz = divisionSupervisors[0].filter(
-        value => value.name === this.supervisor
-      );
-
-      let coool = supervisorz.map(
+      let supPhone = supPhoneMatch.map(
         value => value.phone
       );
 
-      coool.forEach(function(supervisors) {
-        supervisors.forEach(function(supervisor) {
-          supervisorsByDivision.push({
-            "text": supervisor,
-            "value": supervisor
-          });
+      supPhone.forEach(function(phone) {
+        supervisorPhones.push({
+          "text": phone,
+          "value": phone
         });
       });
-      return supervisorsByDivision;
+
+      return supervisorPhones;
     },
   },
   computed: {
@@ -142,38 +136,17 @@ export default {
     divisionSupervisors() {
       let supervisorsByDivision = [];
 
-      let deptFacilities = this.data.filter(
-        value => value.department === this.department
+      let deptFacilities = this.supervisors.map(
+        value => value.name
       );
 
-      let facilities = deptFacilities.map(
-        value => value.facilities
-      );
-
-      let facility = facilities[0].filter(
-        value => value.name === this.facility
-      );
-
-      let divisions = facility.map(
-        value => value.divisions
-      );
-
-      let division = divisions[0].filter(
-        value => value.name === this.division
-      );
-
-      let divisionSupervisors = division.map(
-        value => value.supervisors
-      );
-
-      divisionSupervisors.forEach(function(supervisors) {
-        supervisors.forEach(function(supervisor) {
-          supervisorsByDivision.push({
-            "text": supervisor.name,
-            "value": supervisor.name
-          });
+      deptFacilities.forEach((supervisor) => {
+        supervisorsByDivision.push({
+          "text": supervisor,
+          "value": supervisor
         });
       });
+
       return supervisorsByDivision;
     },
   }
@@ -186,7 +159,6 @@ export default {
     &:nth-of-type(2) {
       display: flex;
       flex-wrap: wrap;
-      // background-color: red;
     }
   }
 </style>

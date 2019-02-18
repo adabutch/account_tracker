@@ -38,13 +38,21 @@
                           :options="suffixOptions" />
           </div>
 
-          <div class="fields-wrapper">
-            <exampleSelect v-model="department"
-                           label="Department"
-                           name="department"
-                           id="department"
-                           :options="getDepts" />
+          <div class="field-group">
+            <label for="department">Department</label>
+            <select name="department"
+                    id="department"
+                    type="select"
+                    v-model="department">
+              <option :value="null">---</option>
+              <option v-for="(item, index) in getDepts"
+                      :value="{id: item.value, name: item.text}">
+                {{ item.text }}
+              </option>
+            </select>
           </div>
+
+          <button @click.prevent="resetForm">reset</button>
           <nuxt-link class="button"
                      :to="{ name: 'two'}">Next</nuxt-link>
         </form>
@@ -58,8 +66,8 @@ import {
   mapState,
   mapMutations,
   mapGetters,
-  mapActions }         from 'vuex'
-import { mapFields }   from 'vuex-map-fields'
+  mapActions }        from 'vuex'
+import { createHelpers }  from 'vuex-map-fields';
 
 import headerComponent  from '~/components/headerComponent'
 import progressStepper  from '~/components/progressStepper.vue'
@@ -69,10 +77,10 @@ import exampleSelect    from '~/components/exampleSelect.vue'
 import axios from 'axios'
 
 
-// const { mapFields } = createHelpers({
-//   getterType: `getField`,
-//   mutationType: `updateField`,
-// });
+const { mapFields } = createHelpers({
+  getterType: `getField`,
+  mutationType: `updateField`,
+});
 
 export default {
   middleware: 'authenticated',
@@ -107,15 +115,20 @@ export default {
         { value: 'V',   text: 'V' },
         { value: 'VI',  text: 'VI' }
       ],
-
       posts: [],
       errors: []
     }
   },
   methods: {
-    ...mapActions([
-      'depts.setDepartments'
-    ])
+    // ...mapActions(
+    //   'depts', ['setDepartments'],
+    //   'createUser', ['clearUser']
+    // ),
+    resetForm() {
+      localStorage.clear('vuex');
+      this.$store.dispatch('createUser/resetState');
+      this.$router.push('/')
+    }
   },
   computed: {
     ...mapFields([
@@ -137,15 +150,15 @@ export default {
 
       let depts = this.departments.map(
         value => { return {id: value.id, name: value.name}}
-
       );
 
       depts.forEach(function(dept) {
         deptSelectArray.push({
-          "text": dept.name,
-          "value": dept.id
+          "value": dept.id,
+          "text": dept.name
         });
       });
+
       return deptSelectArray;
     }
   },

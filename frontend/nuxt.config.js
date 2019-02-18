@@ -39,7 +39,8 @@ module.exports = {
     { src: '~/plugins/design-system' },
     { src: '~/plugins/axios' },
     { src: '~/plugins/filters' },
-    { src: '~/plugins/localStorage.js', ssr: false }
+    { src: '~/plugins/localStorage.js', ssr: false },
+    { src: '~/plugins/emptyObjTest' }
   ],
 
   /*

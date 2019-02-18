@@ -1,7 +1,5 @@
 <template>
   <aside>
-
-
     <template v-if="asideHeader">
       <h1><strong>Finished :</strong> {{asideHeader}}</h1>
     </template>
@@ -28,19 +26,9 @@
         --><span v-if="(suffix)">, {{suffix}}</span>
       </li>
 
-      <li v-if="startDate">
-        <strong>Start Date: </strong>
-        <span v-html="dateFormatted"></span>
-      </li>
-
-      <li v-if="department">
+      <li v-if="!isObjEmpty(department)">
         <strong>Dept.: </strong>
-        <span v-html="department"></span>
-      </li>
-
-      <li v-if="status">
-        <strong>Status: </strong>
-        <span v-html="status"></span>
+        <span v-html="department.name"></span>
       </li>
 
       <li class="step-title" v-if="facility">Step Two</li>
@@ -50,14 +38,24 @@
         <span v-html="facility"></span>
       </li>
 
-      <li v-if="division">
-        <strong>Division: </strong>
-        <span v-html="division"></span>
+      <li v-if="group.name">
+        <strong>Group: </strong>
+        <span v-html="group.name"></span>
       </li>
 
-      <li v-if="job">
+      <li v-if="job.name">
         <strong>Job: </strong>
-        <span v-html="job"></span>
+        <span v-html="job.name"></span>
+      </li>
+
+      <li v-if="status">
+        <strong>Status: </strong>
+        <span v-html="status"></span>
+      </li>
+
+      <li v-if="startDate">
+        <strong>Start Date: </strong>
+        <span v-html="dateFormatted"></span>
       </li>
 
       <li class="step-title" v-if="supervisor">Step Three</li>
@@ -139,6 +137,7 @@ export default {
 
       'createUser.facility',
       'createUser.division',
+      'createUser.group',
       'createUser.job',
 
       'createUser.supervisor',
@@ -149,6 +148,15 @@ export default {
 
       'createUser.userComputer'
     ])
+  },
+  methods: {
+    isObjEmpty(obj) {
+      for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+          return false;
+      }
+      return true;
+    }
   }
 }
 </script>

@@ -17,17 +17,39 @@
                           id="facility"
                           :options="deptFacilities" />
 
-          <exampleSelect v-model="group"
-                          label="Group"
-                          name="group"
-                          id="group"
-                          :options="deptGroups" />
+          <div class="field-group">
+            <label for="group">Group</label>
+            <select name="group"
+                    id="group"
+                    type="select"
+                    v-model="group">
+              <option value="">---</option>
+              <option v-for="(item, index) in deptGroups"
+                      :value="{id: item.value, name: item.text}">
+                {{ item.text }}
+              </option>
+            </select>
+          </div>
 
-          <exampleSelect v-model="job"
+          <div class="field-group">
+            <label for="job">Job</label>
+            <select name="job"
+                    id="job"
+                    type="select"
+                    v-model="job">
+              <option value="">---</option>
+              <option v-for="(item, index) in groupJobs"
+                      :value="{id: item.value, name: item.text}">
+                {{ item.text }}
+              </option>
+            </select>
+          </div>
+
+          <!-- <exampleSelect v-model="job"
                          label="Job"
                          name="job"
                          id="job"
-                         :options="groupJobs" />
+                         :options="groupJobs" /> -->
 
           <exampleSelect v-model="status"
                          label="Status"
@@ -131,22 +153,6 @@ export default {
           text: 'Part-Time'
         }
       ],
-      jobOptions: [
-        { value: null,
-          text: 'none',
-          selected: true
-        },
-        { value: 'GIS',
-          text: 'GIS'
-        },
-        { value: 'Systems & App Manager',
-          text: 'Systems & App Manager'
-        },
-        {
-          value: 'Front-End Developer',
-          text: 'Front-End Developer'
-        }
-      ],
       setMonth: 1,
       setYear: 2019,
       startDatesDisabled: {
@@ -163,7 +169,7 @@ export default {
     }
   },
   mounted() {
-    if(this.department) {
+    if(this.department.id) {
       this.getGroups;
     }
   },
@@ -237,7 +243,7 @@ export default {
     },
     getJobs() {
       console.log('actual getJobs');
-      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/JobTitleService?group_id=${this.group}`)
+      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/JobTitleService?group_id=${this.group.id}`)
       .then((res) => {
         console.log(res.data);
         this.jobs = res.data;
@@ -282,7 +288,7 @@ export default {
       return facilitiesByDept;
     },
     getGroups() {
-      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupService?department_id=${this.department}`)
+      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupService?department_id=${this.department.id}`)
       .then((res) => {
         console.log(res.data);
         this.groups = res.data;

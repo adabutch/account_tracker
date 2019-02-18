@@ -43,6 +43,7 @@ import {
   mapGetters,
   mapActions }         from 'vuex'
 import { mapFields }   from 'vuex-map-fields'
+import moment          from 'moment'
 
 import headerComponent from '~/components/headerComponent.vue'
 import progressStepper from '~/components/progressStepper.vue'
@@ -68,6 +69,11 @@ export default {
   },
   mounted() {},
   computed: {
+    dateFormatted() {
+      let formatted = moment(this.startDate)
+                      .format('YYYY-MM-DD');
+      return formatted;
+    },
     ...mapFields([
       'endpoints',
       'data',
@@ -84,6 +90,7 @@ export default {
 
       'createUser.facility',
       'createUser.division',
+      'createUser.group',
       'createUser.job',
 
       'createUser.supervisor',
@@ -108,19 +115,19 @@ export default {
         "employee_phone":    this.employeePhone,
         "supervisor":        this.supervisor,
         "supervisor_phone":  this.supervisorPhone,
-        "department":        this.department,
+        "department":        this.department.name,
         "division":          this.division,
-        "group":             this.division,
+        "group":             this.group.name,
         "facility":          this.facility,
-        "job":               this.job,
+        "job":               this.job.name,
         "employee_status":   this.status,
-        "start_date":        this.startDate.toISOString().split('T')[0],
+        "start_date":        this.dateFormatted,
         "request_status":    "ready"
       })
       .then(response => {
         this.responseMsg = response.data
         this.showSuccessMsg = true;
-        this.$store.dispatch('createUser/clearUser');
+        this.$store.dispatch('createUser/resetState');
       })
       .catch(e => {
         this.errorMsg.push(e)

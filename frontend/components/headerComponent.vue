@@ -14,7 +14,7 @@
 
       :application="{
         name:         'Account Track',
-        url:          'http://localhost:3000/'
+        url:          'https://dhcp-cityhall-101-164.bloomington.in.gov:8080'
       }"
 
       :navItems="[
@@ -35,7 +35,8 @@
            class="navigation-dropdown">
         <details>
           <summary>{{authUser}}</summary>
-          <!-- <summary>{{fullName}}</summary> -->
+          <!-- <summary>{{endpoints.obtainJWT}}</summary> -->
+          <!-- <summary>Auth</summary> -->
           <ul class="right">
             <li @click="logout()">
               Logout
@@ -87,7 +88,8 @@ export default {
   computed: {
     ...mapFields([
       'authUser',
-      'authUserTwo'
+      'authUserTwo',
+      'endpoints'
     ]),
     // fullName() {
     //   return this.$store.state.authUser.first_name
