@@ -1,0 +1,38 @@
+# @copyright 2019 City of Bloomington, Indiana
+# @license https://opensource.org/licenses/MIT MIT, see LICENSE
+---
+- hosts: "account_tracker"
+  become: "yes"
+  roles:
+    - "City-of-Bloomington.apache"
+    - "City-of-Bloomington.mysql"
+
+  tasks:
+   - name: "Install python3 dependencies"
+     apt:
+       name: "{{ item }}"
+       state: "present"
+     with_items:
+       - "python3-pip"
+       - "python3-virtualenv"
+       - "libapache2-mod-wsgi-py3"
+     when: "ansible_python_version is version_compare('3', '>=')"
+
+     # Account Tracker only supports python3
+#    - name: "Install python dependencies"
+#      apt:
+#        name: "{{ packages }}"
+#        state: "present"
+#      vars:
+#        packages:
+#          - "python-pip"
+#          - "python-virtualenv"
+#          - "libapache2-mod-wsgi"
+#      when: "ansible_python_version is version_compare('3', '<')"
+
+    - name: "Enable apache wsgi"
+      apache2_module:
+        name: "wsgi"
+        state: "present"
+      notify: "apache_restart"
+...

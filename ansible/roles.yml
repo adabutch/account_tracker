@@ -1,0 +1,7 @@
+# @copyright 2019 City of Bloomington, Indiana
+# @license https://opensource.org/licenses/MIT MIT, see LICENSE
+---
+- src: "City-of-Bloomington.linux"
+- src: "City-of-Bloomington.apache"
+- src: "City-of-Bloomington.mysql"
+...
