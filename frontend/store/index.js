@@ -30,7 +30,7 @@ const state = () => ({
     refreshJWT:      'auth/refresh_token/',
     baseUrl:         'http://127.0.0.1:8000/api/'
   },
-  initAllUsers:     [],
+  getReadyUsers:    [],
   totalSteps:       4,
   startDateFormat:  "MM / DD / YYYY"
 })
@@ -43,8 +43,8 @@ const mutations = {
   ADD_TO_TOTAL_STEPS(state, payload) {
     state.totalSteps = payload;
   },
-  GET_ALL_USERS(state, payload) {
-    state.initAllUsers = payload
+  GET_READY_USERS(state, payload) {
+    state.getReadyUsers = payload
   },
   SET_AUTH_USER(state, payload) {
     state.authUser = payload
@@ -52,13 +52,6 @@ const mutations = {
   SET_IS_AUTHENTICATED(state, payload) {
     state.isAuthenticated = payload
   },
-  // setAuthUser(state, {
-  //   authUser,
-  //   isAuthenticated
-  // }) {
-  //   Vue.set(state, 'authUser', authUser)
-  //   Vue.set(state, 'isAuthenticated', isAuthenticated)
-  // },
   updateToken(state, newToken) {
     state.auth = newToken
   },
@@ -71,10 +64,6 @@ const actions = {
   addToTotalSteps(context, payload) {
     context.commit("ADD_TO_TOTAL_STEPS", payload)
   },
-  // async nuxtServerInit ({state, context, commit}) {
-  //   let {data} = await api.get(`request/?format=json`)
-  //   commit('GET_ALL_USERS', data)
-  // },
   nuxtServerInit({ commit }, { req }) {
     let auth = null
     if (req.headers.cookie) {

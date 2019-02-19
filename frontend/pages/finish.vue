@@ -79,6 +79,7 @@ export default {
       'data',
       'totalSteps',
       'startDateFormat',
+      'authUser',
 
       'createUser.name.first',
       'createUser.name.middle',
@@ -122,7 +123,8 @@ export default {
         "job":               this.job.name,
         "employee_status":   this.status,
         "start_date":        this.dateFormatted,
-        "request_status":    "ready"
+        "request_status":    "ready",
+        "requester":         this.authUser.id
       })
       .then(response => {
         this.responseMsg = response.data

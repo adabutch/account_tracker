@@ -88,6 +88,11 @@
         <span v-html="userComputer"></span>
       </li>
 
+      <li v-if="asideHeader">
+        <strong>Requester: </strong>
+        <span v-html="authUser.username"></span>
+      </li>
+
     </ul>
   </aside>
 </template>
@@ -126,6 +131,7 @@ export default {
       'data',
       'totalSteps',
       'startDateFormat',
+      'authUser',
 
       'createUser.name.first',
       'createUser.name.middle',

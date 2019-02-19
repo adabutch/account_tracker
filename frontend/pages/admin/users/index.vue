@@ -24,18 +24,6 @@
             </template>
           </div>
 
-          <!-- <exampleSelect v-model="selectFilter"
-                         label="Type"
-                         name="request-type"
-                         id="request-type"
-                         :options="requestTypes" /> -->
-
-          <!-- {{initAllUsers}}
-
-          <br><br><br><br><br><br> -->
-
-          <!-- {{filteredList}} -->
-
           <template v-if="!filteredList.length">
             <h1>Sorry, no results.</h1>
           </template>
@@ -87,14 +75,15 @@
                 </th>
                 <th>
                   <div>{{ item.department }}</div>
-                  <div>{{ item.division }}</div>
+                  <div>{{ item.group }}</div>
                 </th>
                 <th>
                   <div>{{ requestedDateFormat(item.requested) }}</div>
                   <div>{{ requestedTimeAgo(item.requested) }}</div>
                 </th>
                 <th>
-                  <exampleDropdown text=". . ." navAlign="right">
+                  <fn1-button @click.native="showDetails(item)">view</fn1-button>
+                  <!-- <exampleDropdown text=". . ." navAlign="right">
                     <li>
                       <a href="#" @click="showDetails(item)" title="Details">Details</a>
                     </li>
@@ -106,7 +95,7 @@
                     <li>
                       <a href="#" title="Deny">Deny</a>
                     </li>
-                  </exampleDropdown>
+                  </exampleDropdown> -->
                 </th>
               </tr>
             </tbody>
@@ -124,9 +113,17 @@
     </div>
 
     <div class="slideover" v-if="showingUserDetails">
-      <button @click="hideDetails">x close</button>
+      <button @click="hideDetails" class="close">close</button>
       <h4>Detailed Information</h4>
       <ul>
+        <li>
+          <span>Request Status</span>
+            <fn1-badge
+              :class="{'ready': (showDetailsFor.request_status === 'ready')}">
+              {{ showDetailsFor.request_status }}
+            </fn1-badge>
+        </li>
+
         <li>
           <span>Name</span>
           - {{showDetailsFor.first_name}}
@@ -151,11 +148,6 @@
         </li>
 
         <li>
-          <span>Division</span>
-          - {{showDetailsFor.division}}
-        </li>
-
-        <li>
           <span>Group</span>
           - {{showDetailsFor.group}}
         </li>
@@ -174,15 +166,22 @@
           <span>Start Date</span>
           - {{showDetailsFor.start_date}}
         </li>
-
-        <li>
-          <span>Request Status</span>
-            <fn1-badge
-              :class="{'ready': (showDetailsFor.request_status === 'ready')}">
-              {{ showDetailsFor.request_status }}
-            </fn1-badge>
-        </li>
       </ul>
+
+      <fn1-button-group>
+        <fn1-button @click.native="approveUserAccountRequest">
+          <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path fill="currentColor" d="M435.848 83.466L172.804 346.51l-96.652-96.652c-4.686-4.686-12.284-4.686-16.971 0l-28.284 28.284c-4.686 4.686-4.686 12.284 0 16.971l133.421 133.421c4.686 4.686 12.284 4.686 16.971 0l299.813-299.813c4.686-4.686 4.686-12.284 0-16.971l-28.284-28.284c-4.686-4.686-12.284-4.686-16.97 0z"></path>
+          </svg>
+          Approve
+        </fn1-button>
+        <fn1-button @click.native="denyUserAccountRequest">
+          <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+            <path fill="currentColor" d="M207.6 256l107.72-107.72c6.23-6.23 6.23-16.34 0-22.58l-25.03-25.03c-6.23-6.23-16.34-6.23-22.58 0L160 208.4 52.28 100.68c-6.23-6.23-16.34-6.23-22.58 0L4.68 125.7c-6.23 6.23-6.23 16.34 0 22.58L112.4 256 4.68 363.72c-6.23 6.23-6.23 16.34 0 22.58l25.03 25.03c6.23 6.23 16.34 6.23 22.58 0L160 303.6l107.72 107.72c6.23 6.23 16.34 6.23 22.58 0l25.03-25.03c6.23-6.23 6.23-16.34 0-22.58L207.6 256z"></path>
+          </svg>
+          Deny
+        </fn1-button>
+      </fn1-button-group>
 
     </div>
   </div>
@@ -236,17 +235,10 @@ export default {
   mounted() {
     this.$axios.get(`${this.endpoints.baseUrl}account-request/?format=json&limit=1000`)
     .then((res) => {
-      this.$store.commit('GET_ALL_USERS', res.data.results)
+      this.$store.commit('GET_READY_USERS', res.data.results)
     })
   },
-  watch: {
-    // searchUsers: function(newVal, oldVal) { // watch it
-    //   console.log('searchUsers changed: ', newVal, ' | was: ', oldVal)
-    // },
-    // selectFilter: function(newVal, oldVal) { // watch it
-    //   console.log('selectFilter changed: ', newVal, ' | was: ', oldVal)
-    // },
-  },
+  watch: {},
   methods: {
     batchRequestButtonAction(e) {
       alert('we got here');
@@ -281,11 +273,17 @@ export default {
     },
     requestedTimeAgo(requestedDate) {
       return moment(requestedDate).fromNow();
+    },
+    approveUserAccountRequest() {
+      alert('approve Account Request')
+    },
+    denyUserAccountRequest() {
+      alert('deny Account Request')
     }
   },
   computed: {
     ...mapFields([
-      'initAllUsers',
+      'getReadyUsers',
       'endpoints'
     ]),
     batchApprovalCount() {
@@ -293,13 +291,13 @@ export default {
     },
     batchRequestApproval: {
       get: function () {
-        return this.initAllUsers ? this.selected.length == this.initAllUsers.length : false;
+        return this.getReadyUsers ? this.selected.length == this.getReadyUsers.length : false;
       },
       set: function (value) {
         var selected = [];
 
         if (value) {
-          this.initAllUsers.forEach(function (item) {
+          this.getReadyUsers.forEach(function (item) {
             selected.push(item.id);
           });
         }
@@ -307,22 +305,22 @@ export default {
       }
     },
     fullNames() {
-      return this.initAllUsers;
+      return this.getReadyUsers;
     },
     filteredList() {
-      return this.initAllUsers
+      return this.getReadyUsers
       .filter(user => {
         let firstName  = user.first_name.toLowerCase();
         let middleName = user.middle_name.toLowerCase();
         let lastName   = user.last_name.toLowerCase();
         let userDept   = user.department.toLowerCase();
-        let userDivi   = user.division.toLowerCase();
+        let userGroup  = user.group.toLowerCase();
 
         return firstName.includes(this.searchUsers.toLowerCase()) ||
                middleName.includes(this.searchUsers.toLowerCase()) ||
                lastName.includes(this.searchUsers.toLowerCase()) ||
                userDept.includes(this.searchUsers.toLowerCase()) ||
-               userDivi.includes(this.searchUsers.toLowerCase())
+               userGroup.includes(this.searchUsers.toLowerCase())
       })
       .filter(user => {
         let requestType = user.request_status.toLowerCase();
@@ -419,10 +417,16 @@ export default {
               }
             }
           }
+
+          button {
+            background-color: darken($color-silver, 10%);
+            padding: 0 10px;
+          }
         }
       }
     }
   }
+
   /deep/ .navigation-dropdown {
     summary {
       background-color: darken($color-silver, 10%);
@@ -511,13 +515,57 @@ export default {
   padding: 20px;
   width: 400px;
   height: 100vh;
-  background-color: lighten($text-color, 65%);
+  background-color: lighten($text-color, 60%);
   border-left: 1px solid lighten($text-color, 50%);
   color: $text-color;
 
   button {
-    background-color: darken($color-silver, 10%);
-    margin-left: auto;
+    padding: 5px 10px;
+
+    &.close {
+      background-color: darken($color-silver, 10%);
+      width: 100px;
+      margin-left: auto;
+
+      &:hover {
+        background-color: darken($color-silver, 15%);
+      }
+    }
+  }
+
+  .button-group {
+    display: block;
+    margin: 15px 0 0 0;
+    padding: 15px 0;
+    border-top: 1px solid lighten($text-color, 50%);
+    border-bottom: 1px solid lighten($text-color, 50%);
+
+    button,
+    .button {
+      margin: 0;
+      border-radius: $radius-default;
+      background-color: $color-orange-darker;
+      border: none;
+
+      &:hover {
+        background-color: darken($color-orange-darker, 5%);
+      }
+
+      &:first-child {
+        background-color: $color-green;
+
+        &:hover {
+          background-color: darken($color-green, 5%);
+        }
+      }
+
+      svg {
+        display: block;
+        width: 20px;
+        height: 20px;
+        margin: 0 10px 0 0;
+      }
+    }
   }
 
   h4 {
@@ -533,11 +581,14 @@ export default {
 
     li {
       margin: 0 0 10px 10px;
+      font-weight: $weight-semi-bold;
+      color: lighten($text-color, 15%);
+      font-size: 14px;
 
       span:not(.badge) {
         display: block;
         margin: 0 0 5px -10px;
-        font-weight: $weight-semi-bold;
+        color: $text-color;
         font-size: $size-m;
       }
     }
