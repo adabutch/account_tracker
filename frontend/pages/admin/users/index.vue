@@ -228,14 +228,35 @@
           </svg>
           Approve
         </fn1-button>
-        <fn1-button @click.native="denyUserAccountRequest">
-          <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-            <path fill="currentColor" d="M207.6 256l107.72-107.72c6.23-6.23 6.23-16.34 0-22.58l-25.03-25.03c-6.23-6.23-16.34-6.23-22.58 0L160 208.4 52.28 100.68c-6.23-6.23-16.34-6.23-22.58 0L4.68 125.7c-6.23 6.23-6.23 16.34 0 22.58L112.4 256 4.68 363.72c-6.23 6.23-6.23 16.34 0 22.58l25.03 25.03c6.23 6.23 16.34 6.23 22.58 0L160 303.6l107.72 107.72c6.23 6.23 16.34 6.23 22.58 0l25.03-25.03c6.23-6.23 6.23-16.34 0-22.58L207.6 256z"></path>
-          </svg>
-          Deny
-        </fn1-button>
-      </fn1-button-group>
 
+        <exampleModal title="Deny Account Request Confirmation"
+                      :launchButtonText="denyModalButtonText">
+          <p slot="body"><strong>Deny this Account Request?</strong></p>
+          <ul slot="body">
+            <li>
+              <span>Name:</span>-
+              {{showDetailsFor.first_name}}
+              {{showDetailsFor.middle_name}}
+              {{showDetailsFor.last_name}}
+              {{showDetailsFor.suffix}}
+              ({{showDetailsFor.department}})
+            </li>
+          </ul>
+
+          <fn1-textarea slot="body"
+                        label="Leave a comment or reason."
+                        placeholder="Text here ..."
+                        id="denial-comment" />
+
+          <fn1-button slot="footer"
+                      @click.native="confirmModal">Deny
+          </fn1-button>
+
+          <fn1-button slot="footer"
+                      @click.native="cancelModal">Cancel
+          </fn1-button>
+        </exampleModal>
+      </fn1-button-group>
     </div>
   </div>
 </template>
@@ -250,10 +271,11 @@ import {
 import {
   createHelpers }       from 'vuex-map-fields';
 
-import headerComponent  from '~/components/headerComponent.vue'
-import adminUsersAside  from '~/components/admin/users/adminUsersAside.vue'
-import exampleSelect    from '~/components/exampleSelect.vue'
-import exampleDropdown  from '~/components/exampleDropdown.vue'
+import headerComponent  from '~/components/headerComponent'
+import adminUsersAside  from '~/components/admin/users/adminUsersAside'
+import exampleSelect    from '~/components/exampleSelect'
+import exampleDropdown  from '~/components/exampleDropdown'
+import exampleModal     from '~/components/exampleModal'
 
 const { mapFields } = createHelpers({
   getterType: `getField`,
@@ -266,10 +288,12 @@ export default {
     headerComponent,
     adminUsersAside,
     exampleSelect,
-    exampleDropdown
+    exampleDropdown,
+    exampleModal
   },
   data() {
     return {
+      denyModalButtonText:    "Deny",
       showDetailsFor: null,
       showingUserDetails: false,
       selectFilter: '',
@@ -282,7 +306,7 @@ export default {
       // batchRequestApproval: [],
       batchRequestIDs: [],
       selected: [],
-      launchButtonText: "Batch Approve"
+      launchButtonText: "Batch Approve",
     }
   },
   mounted() {
@@ -301,9 +325,12 @@ export default {
     },
     cancelModal() {
       alert('clicked cancel')
+      this.showModal = false
     },
     confirmModal() {
-      // this.showModal = false
+
+      alert('clicked confirm')
+      this.showModal = false
     },
     showDetails(item) {
       this.showDetailsFor = item;
@@ -624,15 +651,24 @@ export default {
   }
 
   .button-group {
-    display: block;
+    display: flex;
     margin: 15px 0 0 0;
     padding: 15px 0;
     border-top: 1px solid lighten($text-color, 50%);
     border-bottom: 1px solid lighten($text-color, 50%);
 
-    button,
-    .button {
+    div {
       margin: 0;
+      padding: 0;
+      display: inline-block;
+    }
+
+    button,
+    .button,
+    /deep/ div > button,
+    /deep/ div > .button {
+      margin: 0 10px 0 0;
+      padding: 5px 10px;
       border-radius: $radius-default;
       background-color: $color-orange-darker;
       border: none;
@@ -647,6 +683,10 @@ export default {
         &:hover {
           background-color: darken($color-green, 5%);
         }
+      }
+
+      &:last-child {
+
       }
 
       svg {
