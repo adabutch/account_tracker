@@ -18,7 +18,8 @@
       }"
 
       :navItems="[
-        {name: 'Users',     href: '/admin/users'}
+        {name: 'Users',            href: '/admin/users'},
+        {name: 'Profiles',         href: '/profiles'}
       ]"
 
       :subNavItems="[
@@ -34,9 +35,9 @@
            aria-label="navigation dropdown"
            class="navigation-dropdown">
         <details>
-          <summary>{{authUser}}</summary>
+          <!-- <summary>{{authUser}}</summary> -->
           <!-- <summary>{{endpoints.obtainJWT}}</summary> -->
-          <!-- <summary>Auth</summary> -->
+          <summary>User</summary>
           <ul class="right">
             <li @click="logout()">
               Logout
@@ -51,6 +52,8 @@
       </exampleDropdown> -->
 
     </fn1-header>
+
+<!--     {{user}} -->
   </span>
 </template>
 
@@ -74,6 +77,11 @@ const { mapFields } = createHelpers({
 export default {
   components: {
     exampleDropdown
+  },
+  data() {
+    return {
+      user: this.$store.state.authUser
+    }
   },
   methods: {
     logout() {

@@ -49,28 +49,8 @@ export default {
   },
   computed: {
     ...mapFields([
-      'initAllUsers'
+      'getReadyUsers'
     ]),
-    // filteredList() {
-    //   return this.initAllUsers
-    //   .filter(user => {
-    //     let firstName  = user.first_name.toLowerCase();
-    //     let middleName = user.middle_name.toLowerCase();
-    //     let lastName   = user.last_name.toLowerCase();
-    //     let userDept   = user.department.toLowerCase();
-    //     let userDivi   = user.division.toLowerCase();
-
-    //     return firstName.includes(this.searchUsers.toLowerCase()) ||
-    //            middleName.includes(this.searchUsers.toLowerCase()) ||
-    //            lastName.includes(this.searchUsers.toLowerCase()) ||
-    //            userDept.includes(this.searchUsers.toLowerCase()) ||
-    //            userDivi.includes(this.searchUsers.toLowerCase())
-    //   })
-    //   .filter(user => {
-    //     let requestType = user.request_status.toLowerCase();
-    //     return requestType.includes(this.requestTypeFilter.toLowerCase())
-    //   })
-    // }
   },
   watch: {
     searchUsers(val) {
