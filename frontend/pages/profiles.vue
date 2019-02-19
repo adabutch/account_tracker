@@ -6,7 +6,7 @@
       <h3>Service Profile Builder</h3>
 
       <div class="builder-layout">
-        <div>
+        <div class="first">
           <h4><span>1</span> Select the Department</h4>
           <div class="field-group">
             <label for="department">Department</label>
@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <div>
+        <div class="second">
           <h4><span>2</span> Select the Group</h4>
           <div class="field-group">
             <label for="group">Group</label>
@@ -39,7 +39,7 @@
           </div>
         </div>
 
-        <div>
+        <div class="third">
           <h4><span>3</span> Select the Services</h4>
         </div>
       </div>
@@ -173,13 +173,13 @@ export default {
   }
 
   div {
-    &:nth-of-type(1),
-    &:nth-of-type(2) {
+    &.first,
+    &.second {
       flex-basis: 50%;
       background-color: orange;
     }
 
-    &:nth-of-type(3) {
+    &.third {
       margin: 20px 0 0 0;
       flex-basis: 100%;
       background-color: green;
