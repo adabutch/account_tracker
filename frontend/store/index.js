@@ -30,7 +30,7 @@ const state = () => ({
     refreshJWT:      'auth/refresh_token/',
     baseUrl:         'http://127.0.0.1:8000/api/'
   },
-  getReadyUsers:    [],
+  accountRequests:    [],
   totalSteps:       4,
   startDateFormat:  "MM / DD / YYYY"
 })
@@ -43,8 +43,8 @@ const mutations = {
   ADD_TO_TOTAL_STEPS(state, payload) {
     state.totalSteps = payload;
   },
-  GET_READY_USERS(state, payload) {
-    state.getReadyUsers = payload
+  ACCOUNT_REQUESTS(state, payload) {
+    state.accountRequests = payload
   },
   SET_AUTH_USER(state, payload) {
     state.authUser = payload
@@ -61,6 +61,9 @@ const mutations = {
 }
 
 const actions = {
+  accountRequests(context, payload) {
+    context.commit('ACCOUNT_REQUESTS', payload)
+  },
   addToTotalSteps(context, payload) {
     context.commit("ADD_TO_TOTAL_STEPS", payload)
   },

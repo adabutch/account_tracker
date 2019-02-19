@@ -10,11 +10,11 @@
              placeholder="Search by Name or Dept.">
     </div>
 
-    <exampleSelect v-model="selectFilter"
+    <!-- <exampleSelect v-model="selectFilter"
                    label="Type"
                    name="request-type"
                    id="request-type"
-                   :options="requestTypes" />
+                   :options="requestTypes" /> -->
   </aside>
 </template>
 

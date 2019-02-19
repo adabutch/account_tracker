@@ -99,6 +99,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = (
     # TODO - set this properly for production
     'http://localhost:3000/',
+    'https://dhcp-cityhall-101-164.bloomington.in.gov:8080/'
 )
 
 # Adapting from Netbox approach for configuring LDAP

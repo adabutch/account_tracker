@@ -24,11 +24,11 @@
             </template>
           </div>
 
-          <template v-if="!filteredList.length">
+          <template v-if="!readyAccounts.length">
             <h1>Sorry, no results.</h1>
           </template>
 
-          <table v-if="filteredList.length">
+          <table v-if="readyAccounts.length">
             <caption class="sr-only">All User Requests</caption>
             <thead>
               <tr>
@@ -48,7 +48,7 @@
             </thead>
 
             <tbody>
-              <tr v-for="(item, index) in filteredList" :key="index">
+              <tr v-for="(item, index) in readyAccounts" :key="index">
                 <th scope="row">
                   <input v-model="selected"
                          :key="index"
@@ -83,19 +83,6 @@
                 </th>
                 <th>
                   <fn1-button @click.native="showDetails(item)">view</fn1-button>
-                  <!-- <exampleDropdown text=". . ." navAlign="right">
-                    <li>
-                      <a href="#" @click="showDetails(item)" title="Details">Details</a>
-                    </li>
-
-                    <li>
-                      <a href="#" title="Approve">Approve</a>
-                    </li>
-
-                    <li>
-                      <a href="#" title="Deny">Deny</a>
-                    </li>
-                  </exampleDropdown> -->
                 </th>
               </tr>
             </tbody>
@@ -103,7 +90,73 @@
         </fn1-tab>
 
         <fn1-tab name="Pending">
-          <h1>Requests Pending</h1>
+          <div class="title-row">
+            <h4>User account requests <strong>ready</strong> for review.</h4>
+          </div>
+
+          <template v-if="!pendingAccounts.length">
+            <h1>Sorry, no results.</h1>
+          </template>
+
+          <table v-if="pendingAccounts.length">
+            <caption class="sr-only">All User Requests</caption>
+            <thead>
+              <tr>
+                <th scope="col">
+                  <input v-model="batchRequestApproval"
+                         id="select-all-requests"
+                         value="select-all-requests"
+                         type="checkbox"
+                         name="select-all-requests">
+                </th>
+                <th scope="col">Name</th>
+                <th scope="col">Type</th>
+                <th scope="col">Dept.</th>
+                <th scope="col">Created</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="(item, index) in pendingAccounts" :key="index">
+                <th scope="row">
+                  <input v-model="selected"
+                         :key="index"
+                         id="select-all-requests"
+                         :value="item.id"
+                         type="checkbox"
+                         name="select-all-requests">
+                </th>
+                <th>
+                  <div class="avatar">
+                    {{ userInitial(item.first_name) }}{{ userInitial(item.last_name) }}
+                  </div>
+                  <div class="name">
+                    <div>
+                      {{ item.first_name }} {{ item.middle_name }} {{ item.last_name }}<template v-if="item.suffix">, {{ item.suffix }}</template>
+                    </div>
+                    <div>{{ item.job }}</div>
+                  </div>
+                </th>
+                <th>
+                  <fn1-badge :class="{'ready': (item.request_status === 'ready')}">
+                    {{ item.request_status }}
+                  </fn1-badge>
+                </th>
+                <th>
+                  <div>{{ item.department }}</div>
+                  <div>{{ item.group }}</div>
+                </th>
+                <th>
+                  <div>{{ requestedDateFormat(item.requested) }}</div>
+                  <div>{{ requestedTimeAgo(item.requested) }}</div>
+                </th>
+                <th>
+                  <fn1-button @click.native="showDetails(item)">view</fn1-button>
+                </th>
+              </tr>
+            </tbody>
+          </table>
         </fn1-tab>
 
         <fn1-tab name="Created">
@@ -169,7 +222,7 @@
       </ul>
 
       <fn1-button-group>
-        <fn1-button @click.native="approveUserAccountRequest">
+        <fn1-button @click.native="approveUserAccountRequest(showDetailsFor)">
           <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
             <path fill="currentColor" d="M435.848 83.466L172.804 346.51l-96.652-96.652c-4.686-4.686-12.284-4.686-16.971 0l-28.284 28.284c-4.686 4.686-4.686 12.284 0 16.971l133.421 133.421c4.686 4.686 12.284 4.686 16.971 0l299.813-299.813c4.686-4.686 4.686-12.284 0-16.971l-28.284-28.284c-4.686-4.686-12.284-4.686-16.97 0z"></path>
           </svg>
@@ -233,13 +286,16 @@ export default {
     }
   },
   mounted() {
-    this.$axios.get(`${this.endpoints.baseUrl}account-request/?format=json&limit=1000`)
-    .then((res) => {
-      this.$store.commit('GET_READY_USERS', res.data.results)
-    })
+    this.getAccountRequests();
   },
   watch: {},
   methods: {
+    getAccountRequests() {
+      this.$axios.get(`${this.endpoints.baseUrl}account-request/`)
+      .then((res) => {
+        this.$store.dispatch('accountRequests', res.data.results)
+      })
+    },
     batchRequestButtonAction(e) {
       alert('we got here');
     },
@@ -274,30 +330,44 @@ export default {
     requestedTimeAgo(requestedDate) {
       return moment(requestedDate).fromNow();
     },
-    approveUserAccountRequest() {
-      alert('approve Account Request')
+    approveUserAccountRequest(account) {
+      this.$axios
+      .patch(`${this.endpoints.baseUrl}account-request/${account.id}/`,{
+        "request_status": "pending"
+      })
+      .then(response => {
+        console.log(response)
+        this.showDetailsFor = null;
+        this.showingUserDetails = false;
+        this.getAccountRequests();
+      })
+      .catch(e => {
+        console.log(e)
+      })
+      // alert(JSON.stringify(account.id))
     },
-    denyUserAccountRequest() {
-      alert('deny Account Request')
+    denyUserAccountRequest(account) {
+      // alert('deny Account Request')
     }
   },
   computed: {
     ...mapFields([
-      'getReadyUsers',
-      'endpoints'
+      'accountRequests',
+      'endpoints',
+      'authUser'
     ]),
     batchApprovalCount() {
       return this.selected.length;
     },
     batchRequestApproval: {
       get: function () {
-        return this.getReadyUsers ? this.selected.length == this.getReadyUsers.length : false;
+        return this.accountRequests ? this.selected.length == this.accountRequests.length : false;
       },
       set: function (value) {
         var selected = [];
 
         if (value) {
-          this.getReadyUsers.forEach(function (item) {
+          this.accountRequests.forEach(function (item) {
             selected.push(item.id);
           });
         }
@@ -305,10 +375,10 @@ export default {
       }
     },
     fullNames() {
-      return this.getReadyUsers;
+      return this.accountRequests;
     },
-    filteredList() {
-      return this.getReadyUsers
+    readyAccounts() {
+      return this.accountRequests
       .filter(user => {
         let firstName  = user.first_name.toLowerCase();
         let middleName = user.middle_name.toLowerCase();
@@ -322,9 +392,29 @@ export default {
                userDept.includes(this.searchUsers.toLowerCase()) ||
                userGroup.includes(this.searchUsers.toLowerCase())
       })
+      .filter(status => {
+        let requestType = status.request_status.toLowerCase();
+        return requestType === "ready"
+      })
+    },
+    pendingAccounts() {
+      return this.accountRequests
       .filter(user => {
-        let requestType = user.request_status.toLowerCase();
-        return requestType.includes(this.selectFilter.toLowerCase())
+        let firstName  = user.first_name.toLowerCase();
+        let middleName = user.middle_name.toLowerCase();
+        let lastName   = user.last_name.toLowerCase();
+        let userDept   = user.department.toLowerCase();
+        let userGroup  = user.group.toLowerCase();
+
+        return firstName.includes(this.searchUsers.toLowerCase()) ||
+               middleName.includes(this.searchUsers.toLowerCase()) ||
+               lastName.includes(this.searchUsers.toLowerCase()) ||
+               userDept.includes(this.searchUsers.toLowerCase()) ||
+               userGroup.includes(this.searchUsers.toLowerCase())
+      })
+      .filter(status => {
+        let requestType = status.request_status.toLowerCase();
+        return requestType === "pending"
       })
     }
   }
