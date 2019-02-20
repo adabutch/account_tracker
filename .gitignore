@@ -13,6 +13,7 @@
 db.sqlite3
 mysql.cnf
 account_tracker/ldap_config.py
+scripts/services.csv
 
 # Service worker
 sw.*
