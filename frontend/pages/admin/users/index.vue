@@ -230,7 +230,8 @@
         </fn1-button>
 
         <exampleModal title="Deny Account Request Confirmation"
-                      :launchButtonText="denyModalButtonText">
+                      :launchButtonText="denyModalButtonText"
+                      :showModal="showModal">
           <p slot="body"><strong>Deny this Account Request?</strong></p>
           <ul slot="body">
             <li>
@@ -249,7 +250,7 @@
                         id="denial-comment" />
 
           <fn1-button slot="footer"
-                      @click.native="confirmModal">Deny
+                      @click.native="confirmModal">Confirm
           </fn1-button>
 
           <fn1-button slot="footer"

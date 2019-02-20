@@ -160,7 +160,7 @@ body.showing-modal {
       overflow: auto;
 
       .field-group {
-        margin: 20px 0 0 0;
+        margin: 10px 0 0 0;
 
         label {
           font-size: 16px;
