@@ -86,6 +86,7 @@ export default {
   methods: {
     logout() {
       localStorage.clear('vuex');
+      sessionStorage.clear('vuex');
       Cookie.remove('auth')
       this.$store.commit('SET_AUTH', null)
       this.$store.commit("SET_AUTH_USER", null)
