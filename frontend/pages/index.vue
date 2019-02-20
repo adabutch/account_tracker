@@ -9,9 +9,7 @@
           <!-- <h1>{{ setMonth }} - {{ setYear }}</h1>
           <h1>{{ getDaysInMonth(setMonth, setYear) }}</h1>
           <h1>{{ getAllDays(setMonth, setYear) }}</h1> -->
-
-          <!-- <h1>{{ yocool() }}</h1> -->
-
+          <!-- <h1>{{ testing() }}</h1> -->
 
           <h1><strong>Step One:</strong> User information</h1>
           <div class="fields-wrapper">
@@ -40,40 +38,31 @@
                           :options="suffixOptions" />
           </div>
 
-          <div class="fields-wrapper">
-
-            <div class="field-group">
-              <label for="start-date">Start Date</label>
-               <datepicker v-model="startDate"
-                           :format="customFormatter"
-                           :disabledDates="startDatesDisabled"
-                           ref="datepicker"
-                           @focus="showDatepicker"
-                           name="start-date"
-                           id="start-date" />
-            </div>
-
-
-            <!-- <fn1-date v-model="startDate"
-                      label="Start Date"
-                      name="start-date"
-                      id="start-date"
-                      type="date"
-                      placeholder="YYYY-MM-DD"
-                      pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" /> -->
-
-            <exampleSelect v-model="department"
-                           label="Department"
-                           name="department"
-                           id="department"
-                           :options="getDepts" />
-
-            <exampleSelect v-model="status"
-                           label="Status"
-                           name="status"
-                           id="status"
-                           :options="statusOptions" />
+          <div class="field-group">
+            <label for="department">Department</label>
+            <select name="department"
+                    id="department"
+                    type="select"
+                    v-model="department">
+              <option>---</option>
+              <option v-for="(item, index) in getDepts"
+                      :value="{id: item.value, name: item.text}">
+                {{ item.text }}
+              </option>
+            </select>
           </div>
+
+          <!-- <fn1-modal title="Clear/Reset Form"
+                     launchButtonText="reset form">
+            <p slot="body">This will clear all form values. Are you sure?</p>
+            <fn1-button slot="footerBtnConfirm"
+                        @click.native="resetForm"
+                        class="reset-form">I Understand</fn1-button>
+          </fn1-modal> -->
+
+          <button @click.prevent="resetForm"
+                  class="reset-form">reset form</button>
+
           <nuxt-link class="button"
                      :to="{ name: 'two'}">Next</nuxt-link>
         </form>
@@ -83,21 +72,19 @@
 </template>
 
 <script>
-
-import moment           from 'moment'
-
 import {
   mapState,
   mapMutations,
   mapGetters,
-  mapActions }          from 'vuex'
-import { createHelpers }    from 'vuex-map-fields';
+  mapActions }        from 'vuex'
+import { createHelpers }  from 'vuex-map-fields';
 
 import headerComponent  from '~/components/headerComponent'
 import progressStepper  from '~/components/progressStepper.vue'
 import asideComponent   from '~/components/asideComponent.vue'
-import Datepicker       from 'vuejs-datepicker';
 import exampleSelect    from '~/components/exampleSelect.vue'
+
+import axios from 'axios'
 
 
 const { mapFields } = createHelpers({
@@ -111,14 +98,20 @@ export default {
     headerComponent,
     progressStepper,
     asideComponent,
-    exampleSelect,
-    Datepicker
+    exampleSelect
+  },
+  mounted() {
+    axios.get(`https://tomcat2.bloomington.in.gov/timetrack/DepartmentService`)
+    .then((res) => {
+      console.log(res);
+      this.$store.dispatch('depts/setDepartments', res.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   },
   data() {
     return {
-      setMonth: 1,
-      setYear: 2019,
-      dateTest: new Date(),
       stepActive: 1,
       suffixOptions: [
         { value: 'Jr.', text: 'Jr.' },
@@ -131,134 +124,53 @@ export default {
         { value: 'V',   text: 'V' },
         { value: 'VI',  text: 'VI' }
       ],
-      statusOptions: [
-        {
-          value: 'Full-Time',
-          text: 'Full-Time'
-        },
-        {
-          value: 'Part-Time',
-          text: 'Part-Time'
-        },
-        {
-          value: 'Intern',
-          text: 'Intern'
-        },
-        {
-          value: 'SPEA Intern',
-          text: 'SPEA Intern'
-        },
-        {
-          value: 'Volunteer',
-          text: 'Volunteer'
-        },
-        {
-          value: 'Seasonal',
-          text: 'Seasonal'
-        },
-        {
-          value: 'Temp. Full-Time',
-          text: 'Temp. Full-Time'
-        },
-        {
-          value: 'Temp. Part-Time',
-          text: 'Temp. Part-Time'
-        },
-        {
-          value: 'Part-Time',
-          text: 'Part-Time'
-        }
-      ],
-      startDatesDisabled: {
-        // days: [0, 2, 3, 4, 5, 6, 7],
-        // dates: [2019-02-04T05:00:00.000Z, 2019-02-18T05:00:00.000Z],
-        // customPredictor: function(date) {
-        //   if(date.getDate() % 5 == 0){
-        //     return true
-        //   }
-        // },
-      },
       posts: [],
       errors: []
     }
   },
-  methods: {
-    customFormatter(date) {
-      return moment(date).format(this.startDateFormat);
-    },
-    showDatepicker() {
-      return this.$refs.datepicker.$children[0].$emit('showCalendar');
-    },
-    getDaysInMonth(month, year) {
-      let date = new Date(year, month, 1);
-      let allDays = [];
-      let wantedDays = [];
+  watch: {
+    department: function(val, oldVal) {
+      let newVal      = JSON.stringify(val.id);
+      let previousVal = JSON.stringify(oldVal.id);
 
-      // Get the first Monday in the month
-      while (date.getDay() != 1) {
-        date.setDate(date.getDate() + 1);
+      if(newVal != previousVal) {
+        this.$store.dispatch('createUser/resetGroup');
+        this.$store.dispatch('createUser/resetJob');
       }
-
-      while (date.getMonth() === month) {
-        allDays.push(
-          new Date(date)
-          .toISOString().split('T')[0]
-        );
-        date.setDate(date.getDate() + 14);
-      }
-
-      return allDays;
-    },
-    getAllDays(month, year) {
-      let date = new Date(year, month);
-      let days = [];
-
-      while (date.getMonth() === month) {
-        days.push(
-          new Date(date)
-          .toISOString().split('T')[0]
-        );
-        date.setDate(date.getDate() + 1);
-      }
-
-      return days;
-    },
-    pluckDates(array1, array2) {
-      array1 = array1.filter(val => !array2.includes(val));
-      return array1;
-    },
-    // testing() {
-    //   this.pluckDates(this.getAllDays(this.setMonth, this.setYear), this.getDaysInMonth(this.setMonth, this.setYear));
-    // },
+    }
   },
+  methods: {},
   computed: {
     ...mapFields([
       'data',
       'totalSteps',
-      'startDateFormat',
+      'endpoints',
+
       'createUser.name.first',
       'createUser.name.middle',
       'createUser.name.last',
       'createUser.name.suffix',
-      'createUser.startDate',
+
       'createUser.department',
-      'createUser.status',
+
+      'depts.departments'
     ]),
     getDepts() {
       let deptSelectArray = [];
 
-      let depts = this.data.map(
-        value => value.department
+      let depts = this.departments.map(
+        value => { return {id: value.id, name: value.name}}
       );
 
       depts.forEach(function(dept) {
         deptSelectArray.push({
-          "text": dept,
-          "value": dept
+          "value": dept.id,
+          "text": dept.name
         });
       });
+
       return deptSelectArray;
-    },
+    }
   },
 }
 </script>

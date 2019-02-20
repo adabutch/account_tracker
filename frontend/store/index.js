@@ -7,6 +7,7 @@ import {
 
 import createUser   from './modules/createUser'
 import facilities   from './modules/facilities'
+import depts  from './modules/depts'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -15,7 +16,13 @@ const cookieparser = process.server ? require('cookieparser') : undefined
 
 const state = () => ({
   auth:             null,
-  authUser:         {},
+  authUser: {
+    email:          "",
+    first_name:     "",
+    groups:         [],
+    last_name:      "",
+    username:       ""
+  },
   isAuthenticated:  false,
   endpoints: {
     // TODO: Remove hardcoding of dev endpoints
@@ -25,105 +32,7 @@ const state = () => ({
   },
   initAllUsers:     [],
   totalSteps:       4,
-  startDateFormat:  "MM / DD / YYYY",
-  data: [
-    {
-      "department": "Utilities",
-      "facilities": [
-        {
-          "name": "Service Center",
-          "divisions": [
-            {
-              "name": "Accounting",
-              "supervisors": [
-                { "name": "Charles Brandt", "phone": ["888-888-8888", "888-111-8888"], "email": "brand tc @ gov"},
-                { "name": "Adam Butcher", "phone": ["888-222-8888"], "email": "butcher ad @ gov"}
-              ],
-              "jobs": ["SC Account Job One", "SC Account Job Two"]
-            },
-            {
-              "name": "Administration",
-              "supervisors": [
-                { "name": "Charles Brandt", "phone": ["123-888-8888", "888-111-8888"], "email": "brand tc @ gov"},
-                { "name": "Adam Butcher", "phone": ["456-222-8888"], "email": "butcher ad @ gov"}
-              ],
-              "jobs": ["SC Administration Job One", "SC Administration Job Two"]
-            }
-          ],
-        },
-        { "name": "Blucher Poole",
-          "divisions": [
-            {
-              "name": "BP Accounting Dept.",
-              "supervisors": [
-                { "name": "Charles Brandt", "phone": ["123-888-8888", "888-111-8888"], "email": "brand tc @ gov"},
-                { "name": "Adam Butcher", "phone": ["456-222-8888"], "email": "butcher ad @ gov"}
-              ],
-              "jobs": ["Blucher Poole Account Job One", "Blucher Poole Account Job Two"]
-            },
-          ],
-        },
-        { "name": "Dillman Plant",
-          "divisions": [
-            {
-              "name": "DP Accounting Dept.",
-              "supervisors": [
-                { "name": "Charles Brandt", "phone": ["123-888-8888", "888-111-8888"], "email": "brand tc @ gov"},
-                { "name": "Adam Butcher", "phone": ["456-222-8888"], "email": "butcher ad @ gov"}
-              ],
-              "jobs": ["Dillman Plant Account Job One", "Dillman Plant Account Job Two"]
-            },
-          ],
-        },
-        { "name": "Monroe Plant",
-          "divisions": [
-            {
-              "name": "MP Accounting Dept.",
-              "supervisors": [
-                { "name": "Charles Brandt", "phone": ["123-888-8888", "888-111-8888"], "email": "brand tc @ gov"},
-                { "name": "Adam Butcher", "phone": ["456-222-8888"], "email": "butcher ad @ gov"}
-              ],
-              "jobs": ["Monroe Plant Account Job One", "Monroe Plant Account Job Two"]
-            },
-          ],
-        },
-      ],
-    },
-    {
-      "department": "ITS",
-      "facilities": [
-        {
-          "name": "City Hall",
-          "divisions": [
-            {
-              "name": "Systems & Development",
-              "supervisors": [
-                { "name": "Charles Brandt", "phone": ["888-888-8888", "888-111-8888"], "email": "brand tc @ gov"},
-                { "name": "Adam Butcher", "phone": ["888-222-8888"], "email": "butcher ad @ gov"}
-              ],
-              "jobs": ["S&D Job One", "S&D Job Two"]
-            },
-            {
-              "name": "GIS",
-              "supervisors": [
-                { "name": "Charles Brandt", "phone": ["123-888-8888", "888-111-8888"], "email": "brand tc @ gov"},
-                { "name": "Adam Butcher", "phone": ["456-222-8888"], "email": "butcher ad @ gov"}
-              ],
-              "jobs": ["GIS Job One", "GIS Job Two"]
-            },
-            {
-              "name": "Support",
-              "supervisors": [
-                { "name": "Charles Brandt", "phone": ["123-888-8888", "888-111-8888"], "email": "brand tc @ gov"},
-                { "name": "Adam Butcher", "phone": ["456-222-8888"], "email": "butcher ad @ gov"}
-              ],
-              "jobs": []
-            }
-          ],
-        },
-      ],
-    }
-  ]
+  startDateFormat:  "MM / DD / YYYY"
 })
 
 const mutations = {
@@ -193,7 +102,8 @@ export default {
   namespaced: true,
   modules: {
     createUser: createUser,
-    facilities: facilities
+    facilities: facilities,
+    depts: depts
   },
   mutations,
   actions,

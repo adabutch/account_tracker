@@ -39,6 +39,9 @@
                           { text: 'uReport',        value: 'uReport' }
                         ]" /> -->
 
+          <button @click.prevent="resetForm"
+                  class="reset-form">reset</button>
+
           <nuxt-link class="button previous"
                      :to="{ name: 'three'}">Previous</nuxt-link>
 

@@ -36,9 +36,12 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    {  src: '~/plugins/design-system' },
-    {  src: '~/plugins/axios' },
-    {  src: '~/plugins/filters' }
+    { src: '~/plugins/design-system' },
+    { src: '~/plugins/axios' },
+    { src: '~/plugins/filters' },
+    { src: '~/plugins/localStorage', ssr: false },
+    { src: '~/plugins/emptyObjTest' },
+    { src: '~/plugins/resetForm' }
   ],
 
   /*

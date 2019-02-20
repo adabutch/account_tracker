@@ -1,12 +1,16 @@
 <template>
   <aside>
     <h1>Admin User Aside</h1>
-    <fn1-search buttonValue="Go"
-                placeholder="Search for it"
-                name="search"
-                id="search"/>
 
-    <exampleSelect
+    <div class="field-group">
+      <input v-model="searchUsers"
+             id="search"
+             type="search"
+             name="search"
+             placeholder="Search by Name or Dept.">
+    </div>
+
+    <exampleSelect v-model="selectFilter"
                    label="Type"
                    name="request-type"
                    id="request-type"
@@ -15,6 +19,9 @@
 </template>
 
 <script>
+import exampleSelect from '~/components/exampleSelect.vue'
+import exampleSearch from '~/components/exampleSearch.vue'
+
 import {
   mapState,
   mapMutations,
@@ -22,21 +29,57 @@ import {
   mapActions }        from 'vuex'
 import { mapFields }  from 'vuex-map-fields';
 
-import exampleSelect  from '~/components/exampleSelect.vue'
+
 
 export default {
+  props: ['searchUsersProp', 'selectFilterProp'],
   components: {
+    exampleSearch,
     exampleSelect
   },
   data() {
     return {
+      selectFilter: this.selectFilter,
+      searchUsers: this.searchUsers,
       requestTypes: [
-        { value: 'new', text: 'New' },
+        { value: 'ready', text: 'Ready' },
         { value: 'deactivate', text: 'Deactivate' }
       ],
-
     }
-  }
+  },
+  computed: {
+    ...mapFields([
+      'initAllUsers'
+    ]),
+    // filteredList() {
+    //   return this.initAllUsers
+    //   .filter(user => {
+    //     let firstName  = user.first_name.toLowerCase();
+    //     let middleName = user.middle_name.toLowerCase();
+    //     let lastName   = user.last_name.toLowerCase();
+    //     let userDept   = user.department.toLowerCase();
+    //     let userDivi   = user.division.toLowerCase();
+
+    //     return firstName.includes(this.searchUsers.toLowerCase()) ||
+    //            middleName.includes(this.searchUsers.toLowerCase()) ||
+    //            lastName.includes(this.searchUsers.toLowerCase()) ||
+    //            userDept.includes(this.searchUsers.toLowerCase()) ||
+    //            userDivi.includes(this.searchUsers.toLowerCase())
+    //   })
+    //   .filter(user => {
+    //     let requestType = user.request_status.toLowerCase();
+    //     return requestType.includes(this.requestTypeFilter.toLowerCase())
+    //   })
+    // }
+  },
+  watch: {
+    searchUsers(val) {
+      this.$emit('inputChange', this.searchUsers);
+    },
+    selectFilter(val) {
+      this.$emit('selectChange', this.selectFilter);
+    },
+  },
 }
 </script>
 
@@ -44,7 +87,7 @@ export default {
   @import '@/assets/style.scss';
   aside {
     color: $text-color;
-    width: 275px;
+    width: 300px;
     // background-color: lighten($color-grey, 5%);
 
     // h1 {

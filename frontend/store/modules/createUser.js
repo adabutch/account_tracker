@@ -2,19 +2,29 @@ import {
   getField,
   updateField }     from 'vuex-map-fields';
 
-const state = () => ({
-  name: {
+const getDefaultState = () => ({
+  name:             {
     first:            "",
     middle:           "",
     last:             "",
     suffix:           "",
   },
   startDate:          "",
-  department:         "",
+  department:       {
+    id:               "",
+    name:             "",
+  },
   status:             "",
   facility:           "",
   division:           "",
-  job:                "",
+  group:            {
+    id:               "",
+    name:             "",
+  },
+  job:              {
+    id:               "",
+    name:             "",
+  },
   supervisor:         "",
   supervisorPhone:    "",
   employeePhone:      "",
@@ -25,19 +35,31 @@ const state = () => ({
   userComputer:       ""
 })
 
+const state = () => getDefaultState();
+
 const mutations = {
   updateField,
-  CLEAR_USER(state) {
-    Object.keys(state).forEach(function (key){
-      state[key] = ''
-    });
+  RESET_STATE(state) {
+    Object.assign(state, getDefaultState())
+  },
+  RESET_GROUP(state) {
+    state.group = {id: "", name: ""}
+  },
+  RESET_JOB(state) {
+    state.job = {id: "", name: ""}
   }
 }
 
 const actions = {
-  clearUser(context) {
-    context.commit("CLEAR_USER")
-  }
+  resetState({ commit }) {
+    commit('RESET_STATE')
+  },
+  resetGroup({ commit }) {
+    commit('RESET_GROUP')
+  },
+  resetJob({ commit }) {
+    commit('RESET_JOB')
+  },
 }
 
 const getters = {

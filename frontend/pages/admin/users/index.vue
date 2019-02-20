@@ -4,7 +4,10 @@
 
     <div class="page-wrapper">
 
-      <adminUsersAside />
+      <adminUsersAside :searchUsersProp="searchUsers"
+                       :selectFilterProp="selectFilter"
+                       @inputChange="watchInput"
+                       @selectChange="watchSelect" />
 
       <fn1-tabs>
         <fn1-tab name="Ready" :selected="true">
@@ -12,7 +15,7 @@
           <div class="title-row">
             <h4>User account requests <strong>ready</strong> for review.</h4>
 
-            <template v-if="batchApprovalCount >= 1">
+            <template v-if="batchApprovalCount > 1">
               <fn1-modal title="Ready Request Batch Confirmation"
                          :launchButtonText="launchButtonText">
                 <p slot="body">Approve all <strong>({{ batchApprovalCount }})</strong> requests?</p>
@@ -21,7 +24,23 @@
             </template>
           </div>
 
-          <table>
+          <!-- <exampleSelect v-model="selectFilter"
+                         label="Type"
+                         name="request-type"
+                         id="request-type"
+                         :options="requestTypes" /> -->
+
+          <!-- {{initAllUsers}}
+
+          <br><br><br><br><br><br> -->
+
+          <!-- {{filteredList}} -->
+
+          <template v-if="!filteredList.length">
+            <h1>Sorry, no results.</h1>
+          </template>
+
+          <table v-if="filteredList.length">
             <caption class="sr-only">All User Requests</caption>
             <thead>
               <tr>
@@ -41,7 +60,7 @@
             </thead>
 
             <tbody>
-              <tr v-for="(item, index) in initAllUsers" :key="index">
+              <tr v-for="(item, index) in filteredList" :key="index">
                 <th scope="row">
                   <input v-model="selected"
                          :key="index"
@@ -71,17 +90,23 @@
                   <div>{{ item.division }}</div>
                 </th>
                 <th>
-                  <div>02/01/2019</div>
-                  <div>4 days ago</div>
+                  <div>{{ requestedDateFormat(item.requested) }}</div>
+                  <div>{{ requestedTimeAgo(item.requested) }}</div>
                 </th>
                 <th>
-                  <fn1-dropdown text=". . ."
-                                navAlign="right"
-                                :navItems="[
-                                  {name: 'Details',       href: '#'},
-                                  {name: 'Approve',       href: '#'},
-                                  {name: 'Deny',          href: '#'}
-                                ]" />
+                  <exampleDropdown text=". . ." navAlign="right">
+                    <li>
+                      <a href="#" @click="showDetails(item)" title="Details">Details</a>
+                    </li>
+
+                    <li>
+                      <a href="#" title="Approve">Approve</a>
+                    </li>
+
+                    <li>
+                      <a href="#" title="Deny">Deny</a>
+                    </li>
+                  </exampleDropdown>
                 </th>
               </tr>
             </tbody>
@@ -97,10 +122,74 @@
         </fn1-tab>
       </fn1-tabs>
     </div>
+
+    <div class="slideover" v-if="showingUserDetails">
+      <button @click="hideDetails">x close</button>
+      <h4>Detailed Information</h4>
+      <ul>
+        <li>
+          <span>Name</span>
+          - {{showDetailsFor.first_name}}
+          {{showDetailsFor.middle_name}}
+          {{showDetailsFor.last_name}}
+          {{showDetailsFor.suffix}}
+        </li>
+
+        <li>
+          <span>Supervisor</span>
+          - {{showDetailsFor.supervisor}} ({{showDetailsFor.supervisor_phone}})
+        </li>
+
+        <li>
+          <span>Facility</span>
+          - {{showDetailsFor.facility}}
+        </li>
+
+        <li>
+          <span>Department</span>
+          - {{showDetailsFor.department}}
+        </li>
+
+        <li>
+          <span>Division</span>
+          - {{showDetailsFor.division}}
+        </li>
+
+        <li>
+          <span>Group</span>
+          - {{showDetailsFor.group}}
+        </li>
+
+        <li>
+          <span>Job</span>
+          - {{showDetailsFor.job}}
+        </li>
+
+        <li>
+          <span>Employee Status</span>
+          - {{showDetailsFor.employee_status}}
+        </li>
+
+        <li>
+          <span>Start Date</span>
+          - {{showDetailsFor.start_date}}
+        </li>
+
+        <li>
+          <span>Request Status</span>
+            <fn1-badge
+              :class="{'ready': (showDetailsFor.request_status === 'ready')}">
+              {{ showDetailsFor.request_status }}
+            </fn1-badge>
+        </li>
+      </ul>
+
+    </div>
   </div>
 </template>
 
 <script>
+import moment           from 'moment'
 import {
   mapState,
   mapMutations,
@@ -111,6 +200,8 @@ import {
 
 import headerComponent  from '~/components/headerComponent.vue'
 import adminUsersAside  from '~/components/admin/users/adminUsersAside.vue'
+import exampleSelect    from '~/components/exampleSelect.vue'
+import exampleDropdown  from '~/components/exampleDropdown.vue'
 
 const { mapFields } = createHelpers({
   getterType: `getField`,
@@ -121,10 +212,20 @@ export default {
   middleware: 'authenticated',
   components: {
     headerComponent,
-    adminUsersAside
+    adminUsersAside,
+    exampleSelect,
+    exampleDropdown
   },
   data() {
     return {
+      showDetailsFor: null,
+      showingUserDetails: false,
+      selectFilter: '',
+      searchUsers:  '',
+      requestTypes: [
+        { value: 'ready', text: 'Ready' },
+        { value: 'deactivate', text: 'Deactivate' }
+      ],
       rows: [],
       // batchRequestApproval: [],
       batchRequestIDs: [],
@@ -133,12 +234,19 @@ export default {
     }
   },
   mounted() {
-    this.$axios.get(`${this.endpoints.baseUrl}request/?format=json`)
+    this.$axios.get(`${this.endpoints.baseUrl}account-request/?format=json&limit=1000`)
     .then((res) => {
       this.$store.commit('GET_ALL_USERS', res.data.results)
     })
   },
-  watch: { },
+  watch: {
+    // searchUsers: function(newVal, oldVal) { // watch it
+    //   console.log('searchUsers changed: ', newVal, ' | was: ', oldVal)
+    // },
+    // selectFilter: function(newVal, oldVal) { // watch it
+    //   console.log('selectFilter changed: ', newVal, ' | was: ', oldVal)
+    // },
+  },
   methods: {
     batchRequestButtonAction(e) {
       alert('we got here');
@@ -149,9 +257,31 @@ export default {
     confirmModal() {
       // this.showModal = false
     },
+    showDetails(item) {
+      this.showDetailsFor = item;
+      this.showingUserDetails = true;
+    },
+    hideDetails() {
+      this.showDetailsFor = null;
+      this.showingUserDetails = false;
+    },
     userInitial(name) {
       return name.charAt(0);
     },
+    watchInput(payload) {
+      console.log(`WI :: PAYLOAD ::: ${payload}`)
+      this.searchUsers = payload;
+    },
+    watchSelect(payload) {
+      console.log(`WS :: PAYLOAD ::: ${payload}`)
+      this.selectFilter = payload;
+    },
+    requestedDateFormat(requestedDate) {
+      return moment(requestedDate).format('MM/D/YYYY');
+    },
+    requestedTimeAgo(requestedDate) {
+      return moment(requestedDate).fromNow();
+    }
   },
   computed: {
     ...mapFields([
@@ -175,6 +305,29 @@ export default {
         }
         this.selected = selected;
       }
+    },
+    fullNames() {
+      return this.initAllUsers;
+    },
+    filteredList() {
+      return this.initAllUsers
+      .filter(user => {
+        let firstName  = user.first_name.toLowerCase();
+        let middleName = user.middle_name.toLowerCase();
+        let lastName   = user.last_name.toLowerCase();
+        let userDept   = user.department.toLowerCase();
+        let userDivi   = user.division.toLowerCase();
+
+        return firstName.includes(this.searchUsers.toLowerCase()) ||
+               middleName.includes(this.searchUsers.toLowerCase()) ||
+               lastName.includes(this.searchUsers.toLowerCase()) ||
+               userDept.includes(this.searchUsers.toLowerCase()) ||
+               userDivi.includes(this.searchUsers.toLowerCase())
+      })
+      .filter(user => {
+        let requestType = user.request_status.toLowerCase();
+        return requestType.includes(this.selectFilter.toLowerCase())
+      })
     }
   }
 }
@@ -270,17 +423,6 @@ export default {
       }
     }
   }
-
-  .badge {
-    text-transform: uppercase;
-    font-size: 14px;
-    margin: 0;
-
-    &.ready {
-      background-color: $color-green;
-    }
-  }
-
   /deep/ .navigation-dropdown {
     summary {
       background-color: darken($color-silver, 10%);
@@ -342,6 +484,61 @@ export default {
             white-space: nowrap;
           }
         }
+      }
+    }
+  }
+}
+
+.badge {
+  text-transform: uppercase;
+  font-size: 14px;
+  margin: 0;
+
+  &.ready {
+    background-color: $color-green;
+  }
+}
+
+.slideover {
+  position: fixed;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  top: 0;
+  right: 0;
+  margin-left: auto;
+  padding: 20px;
+  width: 400px;
+  height: 100vh;
+  background-color: lighten($text-color, 65%);
+  border-left: 1px solid lighten($text-color, 50%);
+  color: $text-color;
+
+  button {
+    background-color: darken($color-silver, 10%);
+    margin-left: auto;
+  }
+
+  h4 {
+    padding: 20px 0 5px 0;
+    border-bottom: 1px solid lighten($text-color, 50%);
+    font-weight: $weight-semi-bold;
+  }
+
+  ul {
+    margin: 15px 0 0 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      margin: 0 0 10px 10px;
+
+      span:not(.badge) {
+        display: block;
+        margin: 0 0 5px -10px;
+        font-weight: $weight-semi-bold;
+        font-size: $size-m;
       }
     }
   }
