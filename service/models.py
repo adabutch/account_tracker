@@ -21,9 +21,14 @@ class Service(models.Model):
 
     standard_build = models.BooleanField(default=False)
     public = models.BooleanField(default=False)
+    internal = models.BooleanField(default=False)
+
+    version = models.CharField(max_length=50, blank=True, null=True)
 
     # point of contact (PoC)
-    # internal support will be tracked via ServiceManager
+    # eventually internal support will be tracked via ServiceManager
+    primary_poc = models.CharField(max_length=200, blank=True, null=True)
+    secondary_poc = models.CharField(max_length=200, blank=True, null=True)
 
     # TODO: this could be its own model / foreignkey
     # who develops / maintains the software?
