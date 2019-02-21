@@ -186,7 +186,6 @@ export default {
     }
   },
   mounted() {
-    alert('mounted')
     axios.get(`https://tomcat2.bloomington.in.gov/timetrack/DepartmentService`)
     .then((res) => {
       this.$store.dispatch('depts/setDepartments', res.data);
@@ -195,18 +194,16 @@ export default {
       console.log(error);
     })
 
+    this.$nextTick(() => {
+      console.log(`NTICK :: ${this.department.name}`);
+      if(this.department.id) {
+        this.getGroups;
+      }
 
-
-    // this.$nextTick(() => {
-    //   console.log(`NTICK :: ${this.department.name}`);
-    //   if(this.department.id) {
-    //     this.getGroups;
-    //   }
-
-    //   if(this.group.id) {
-    //     this.getJobs();
-    //   }
-    // });
+      if(this.group.id) {
+        this.getJobs();
+      }
+    });
   },
   watch: {
     department: function(val, oldVal) {
@@ -222,22 +219,18 @@ export default {
         this.getGroups;
       }
     },
-    group: function(val) {
-      // alert(val)
-      // this.getJobs();
+    group: function(val, oldVal) {
       if(val) {
+        let newVal      = JSON.stringify(val.id);
+        let previousVal = JSON.stringify(oldVal.id);
+
+        if(newVal != previousVal) {
+          this.$store.dispatch('createUser/resetJob');
+        }
+
         this.getJobs();
       }
     }
-  },
-  beforeUpdate() {
-    // if(this.department.id) {
-    //     this.getGroups;
-    //   }
-
-    // if(this.group.id) {
-    //   this.getJobs();
-    // }
   },
   computed: {
     ...mapFields([
@@ -419,20 +412,7 @@ export default {
     &:nth-of-type(2) {
       display: flex;
       flex-wrap: wrap;
-      // background-color: red;
     }
-  }
-
-
-  form {}
-
-  /deep/ label {
-    // background-color: teal;
-    color: $text-color;
-    font-size: $size-l;
-    margin-bottom: $space-xs !important;
-    // font-weight: $weight-semi-bold;
-    width: 100%;
   }
 
   .field-group {
