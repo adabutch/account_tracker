@@ -74,18 +74,11 @@
         <span v-html="employeePhone"></span>
       </li>
 
-      <li class="step-title" v-if="userSoftware.length">Step Four</li>
-      <li v-if="userSoftware.length">
-        <strong>Software: </strong>
-        <span v-for="(item, index) in userSoftware">
-          <span><template v-if="index >= 1">, </template>{{item}}</span>
-        </span>
-      </li>
+      <li class="step-title" v-if="requestedServices.length">Step Four</li>
 
-      <li class="step-title" v-if="userComputer">Step Five</li>
-      <li v-if="userComputer">
-        <strong>Computer: </strong>
-        <span v-html="userComputer"></span>
+      <li v-if="requestedServices.length">
+        <strong>Requested Services: </strong>
+        <span v-html="requestedServices"></span>
       </li>
 
       <li v-if="asideHeader">
@@ -152,9 +145,7 @@ export default {
       'createUser.supervisorPhone',
       'createUser.employeePhone',
 
-      'createUser.userSoftware',
-
-      'createUser.userComputer'
+      'createUser.requestedServices'
     ])
   },
   methods: {

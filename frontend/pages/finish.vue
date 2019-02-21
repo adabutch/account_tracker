@@ -99,9 +99,7 @@ export default {
       'createUser.supervisorPhone',
       'createUser.employeePhone',
 
-      'createUser.userSoftware',
-
-      'createUser.userComputer'
+      'createUser.requestedServices',
     ])
   },
   methods: {
@@ -126,7 +124,8 @@ export default {
         "employee_status":   this.status,
         "start_date":        this.dateFormatted,
         "request_status":    "ready",
-        "requester":         this.authUser.id
+        "requester":         this.authUser.id,
+        "requested_services": this.requestedServices,
       })
       .then(response => {
         this.responseMsg = response.data

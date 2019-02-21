@@ -32,8 +32,7 @@ const getDefaultState = () => ({
   supervisor:         "",
   supervisorPhone:    "",
   employeePhone:      "",
-  userSoftware:       [],
-  userComputer:       ""
+  requestedServices:  [],
 })
 
 const state = () => getDefaultState();

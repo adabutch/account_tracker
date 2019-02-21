@@ -45,6 +45,9 @@ class AccountRequest(models.Model):
     # store as JSON object
     dynamic_options = models.TextField(blank=True, null=True)
 
+    # Temp. placeholder for services associated w/ an account request
+    #requested_services = models.ManyToManyField(blank=True, null=True)
+
     # is it new? approved? completed? denied?
     request_status = models.CharField(max_length=50)
 
