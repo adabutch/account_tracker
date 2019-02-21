@@ -311,8 +311,9 @@ export default {
   watch: {},
   methods: {
     getAccountRequests() {
-      this.$axios.get(`${this.endpoints.baseUrl}account-request/`)
+      this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000`)
       .then((res) => {
+        console.log(res.data.results)
         this.$store.dispatch('accountRequests', res.data.results)
       })
     },
