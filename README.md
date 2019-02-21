@@ -10,6 +10,7 @@ pip3 install django-auth-ldap
 pip3 install djangorestframework
 pip3 install django-cors-headers
 pip3 install djangorestframework-jwt
+pip3 install django-filter
 ```
 
 ## Migrations
