@@ -68,19 +68,10 @@ export default {
   aside {
     color: $text-color;
     width: 300px;
-    // background-color: lighten($color-grey, 5%);
-
-    // h1 {
-    //   color: $text-color;
-    //   border-bottom: 1px solid lighten($text-color, 40%);
-    //   margin: 0 0 10px 0;
-    //   padding: 0 0 10px 0;
-    // }
 
     h1 {
       color: $text-color;
       font-size: $size-l;
-      // font-weight: $weight-semi-bold;
       line-height: $size-l;
       margin: 0 0 $space-m 0;
       padding: 0 0 $space-s 0;
@@ -88,6 +79,7 @@ export default {
     }
 
     .field-group {
+      width: 100%;
       display: flex !important;
     }
   }
