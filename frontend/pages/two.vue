@@ -102,7 +102,7 @@ import {
   mapGetters,
   mapActions }          from 'vuex'
 import {
-  createHelpers }       from 'vuex-map-fields'
+  mapFields }       from 'vuex-map-fields'
 
 import axios            from 'axios'
 import moment           from 'moment'
@@ -112,11 +112,6 @@ import progressStepper  from '~/components/progressStepper'
 import asideComponent   from '~/components/asideComponent'
 import exampleSelect    from '~/components/exampleSelect'
 import Datepicker       from 'vuejs-datepicker'
-
-const { mapFields } = createHelpers({
-  getterType: `getField`,
-  mutationType: `updateField`
-});
 
 export default {
   middleware: 'authenticated',

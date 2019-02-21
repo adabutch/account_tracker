@@ -63,6 +63,10 @@ form {
 
 // to-do: move to COBDS
 .field-group {
+  width: 400px;
+  display: flex;
+  flex-wrap: wrap;
+
   input {
     box-shadow: none;
     border: 1px solid lighten($text-color, 50%);

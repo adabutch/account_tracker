@@ -9,21 +9,33 @@
         <asideComponent />
 
         <form>
-          <h1><strong>Step Three:</strong> Supervisor information</h1>
+          <h1><strong>Step Three:</strong>&nbsp; Supervisor information</h1>
 
-          <!-- {{groupManagers}} -->
+          <div class="field-group">
+            <label for="supervisor">Supervisor</label>
+            <select name="supervisor"
+                    id="supervisor"
+                    type="select"
+                    v-model="supervisor">
+              <option v-for="(item, index) in groupManagers"
+                      :value="item.value">
+                {{ item.text }}
+              </option>
+            </select>
+          </div>
 
-          <exampleSelect v-model="supervisor"
-                         label="Supervisor"
-                         name="supervisor"
-                         id="supervisor"
-                         :options="groupManagers" />
-
-          <exampleSelect v-model="supervisorPhone"
-                         label="Supervisor Phone"
-                         name="supervisor-phone"
-                         id="supervisor-phone"
-                         :options="managersPhone" />
+          <div class="field-group">
+            <label for="supervisor-phone">Supervisor Phone</label>
+            <select name="supervisor-phone"
+                    id="supervisor-phone"
+                    type="select"
+                    v-model="supervisorPhone">
+              <option v-for="(item, index) in managersPhone"
+                      :value="item.value">
+                {{ item.text }}
+              </option>
+            </select>
+          </div>
 
           <fn1-input v-model="employeePhone"
                      label="Employee Phone"
@@ -34,14 +46,16 @@
                      name="employee-phone"
                      id="employee-phone" />
 
-          <button @click.prevent="resetForm"
-                  class="reset-form">reset</button>
+          <div class="button-wrapper">
+            <button @click.prevent="resetForm"
+                    class="reset-form">reset</button>
 
-          <nuxt-link class="button previous"
-                     :to="{ name: 'two'}">Previous</nuxt-link>
+            <nuxt-link class="button previous"
+                       :to="{ name: 'two'}">Previous</nuxt-link>
 
-          <nuxt-link class="button"
-                     :to="{ name: 'four'}">Next</nuxt-link>
+            <nuxt-link class="button"
+                       :to="{ name: 'four'}">Next</nuxt-link>
+          </div>
         </form>
       </div>
     </div>
@@ -49,8 +63,13 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
-import { mapFields } from 'vuex-map-fields';
+import {
+  mapState,
+  mapMutations,
+  mapGetters,
+  mapActions }          from 'vuex'
+import {
+  mapFields }           from 'vuex-map-fields';
 
 import axios            from 'axios'
 
@@ -78,11 +97,14 @@ export default {
     }
   },
   mounted() {
-    if(this.group) {
-      this.getGroupManagers();
-    }
+    this.$nextTick(() => {
+      if(this.group.id) {
+        this.getGroupManagers();
+      }
+    });
   },
-  watch: {},
+  watch: {
+  },
   methods: {
     getGroupManagers() {
       axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupManagerService?group_id=${this.group.id}`)
@@ -92,7 +114,7 @@ export default {
       .catch((error) => {
         console.log(error);
       })
-    },
+    }
   },
   computed: {
 
