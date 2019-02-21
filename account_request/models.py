@@ -16,6 +16,7 @@ class AccountRequest(models.Model):
     middle_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50)
     suffix = models.CharField(max_length=10, blank=True, null=True)
+    nickname = models.CharField(max_length=50, blank=True, null=True)
 
     # strip out dashes and periods
     employee_phone = models.CharField(max_length=10)

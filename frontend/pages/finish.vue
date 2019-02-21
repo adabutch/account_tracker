@@ -45,10 +45,10 @@ import {
 import { mapFields }   from 'vuex-map-fields'
 import moment          from 'moment'
 
-import headerComponent from '~/components/headerComponent.vue'
-import progressStepper from '~/components/progressStepper.vue'
-import asideComponent  from '~/components/asideComponent.vue'
-import exampleCheckbox from '~/components/exampleCheckbox.vue'
+import headerComponent from '~/components/headerComponent'
+import progressStepper from '~/components/progressStepper'
+import asideComponent  from '~/components/asideComponent'
+import exampleCheckbox from '~/components/exampleCheckbox'
 
 export default {
   middleware: 'authenticated',
@@ -85,6 +85,7 @@ export default {
       'createUser.name.middle',
       'createUser.name.last',
       'createUser.name.suffix',
+      'createUser.name.nickname',
       'createUser.startDate',
       'createUser.department',
       'createUser.status',
@@ -113,6 +114,7 @@ export default {
         "middle_name":       this.middle,
         "last_name":         this.last,
         "suffix":            this.suffix,
+        "nickname":          this.nickname,
         "employee_phone":    this.employeePhone,
         "supervisor":        this.supervisor,
         "supervisor_phone":  this.supervisorPhone,

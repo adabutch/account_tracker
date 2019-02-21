@@ -63,7 +63,7 @@
                   </div>
                   <div class="name">
                     <div>
-                      {{ item.first_name }} {{ item.middle_name }} {{ item.last_name }}<template v-if="item.suffix">, {{ item.suffix }}</template>
+                      {{ item.first_name }} <template v-if="item.nickname">"{{ item.nickname }}"</template> {{ item.middle_name }} {{ item.last_name }}<template v-if="item.suffix">, {{ item.suffix }}</template>
                     </div>
                     <div>{{ item.job }}</div>
                   </div>

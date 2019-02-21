@@ -33,17 +33,6 @@
             </select>
           </div>
 
-          <!-- <div class="field-group">
-            <label for="start-date">Start Date</label>
-            <datepicker v-model="startDate"
-                        :format="customFormatter"
-                        :disabledDates="startDatesDisabled"
-                        ref="datepicker"
-                        @focus="showDatepicker"
-                        name="start-date"
-                        id="start-date" />
-          </div> -->
-
           <div class="field-group">
             <label for="group">Group</label>
             <select name="group"
@@ -75,6 +64,17 @@
                          name="status"
                          id="status"
                          :options="statusOptions" />
+
+          <div class="field-group">
+            <label for="start-date">Start Date</label>
+            <datepicker v-model="startDate"
+                        :format="customFormatter"
+                        :disabledDates="startDatesDisabled"
+                        ref="datepicker"
+                        @focus="showDatepicker"
+                        name="start-date"
+                        id="start-date" />
+          </div>
 
 
           <div class="button-wrapper">
