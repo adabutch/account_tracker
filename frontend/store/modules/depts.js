@@ -3,7 +3,6 @@ import {
   updateField }     from 'vuex-map-fields';
 
 const state = () => ({
-  namespaced: true,
   departments: [],
 })
 

@@ -9,13 +9,40 @@
         <asideComponent />
 
         <form>
-          <h1><strong>Step Two:</strong> Facility specific information</h1>
+          <h1>
+            <strong>Step Two:</strong>&nbsp; Facility specific information
+          </h1>
 
           <exampleSelect v-model="facility"
                           label="Facility"
                           name="facility"
                           id="facility"
                           :options="deptFacilities" />
+
+          <div class="field-group">
+            <label for="department">Department</label>
+            <select name="department"
+                    id="department"
+                    type="select"
+                    v-model="department">
+              <option>---</option>
+              <option v-for="(item, index) in getDepts"
+                      :value="{id: item.value, name: item.text}">
+                {{ item.text }}
+              </option>
+            </select>
+          </div>
+
+          <!-- <div class="field-group">
+            <label for="start-date">Start Date</label>
+            <datepicker v-model="startDate"
+                        :format="customFormatter"
+                        :disabledDates="startDatesDisabled"
+                        ref="datepicker"
+                        @focus="showDatepicker"
+                        name="start-date"
+                        id="start-date" />
+          </div> -->
 
           <div class="field-group">
             <label for="group">Group</label>
@@ -43,38 +70,25 @@
             </select>
           </div>
 
-          <!-- <exampleSelect v-model="job"
-                         label="Job"
-                         name="job"
-                         id="job"
-                         :options="groupJobs" /> -->
-
           <exampleSelect v-model="status"
                          label="Status"
                          name="status"
                          id="status"
                          :options="statusOptions" />
 
-          <div class="field-group">
-            <label for="start-date">Start Date</label>
-            <datepicker v-model="startDate"
-                        :format="customFormatter"
-                        :disabledDates="startDatesDisabled"
-                        ref="datepicker"
-                        @focus="showDatepicker"
-                        name="start-date"
-                        id="start-date" />
+
+          <div class="button-wrapper">
+            <button @click.prevent="resetForm"
+                    class="reset-form">reset</button>
+
+            <nuxt-link class="button previous"
+                       :to="{ name: 'index'}"
+                       @click.native="">Previous</nuxt-link>
+
+            <nuxt-link class="button"
+                       :to="{ name: 'three'}">Next</nuxt-link>
           </div>
 
-          <button @click.prevent="resetForm"
-                  class="reset-form">reset</button>
-
-          <nuxt-link class="button previous"
-                     :to="{ name: 'index'}"
-                     @click.native="">Previous</nuxt-link>
-
-          <nuxt-link class="button"
-                     :to="{ name: 'three'}">Next</nuxt-link>
         </form>
       </div>
     </div>
@@ -82,19 +96,21 @@
 </template>
 
 <script>
-import axios            from 'axios'
-import moment           from 'moment'
 import {
   mapState,
   mapMutations,
   mapGetters,
   mapActions }          from 'vuex'
-import { createHelpers }from 'vuex-map-fields'
+import {
+  createHelpers }       from 'vuex-map-fields'
 
-import headerComponent  from '~/components/headerComponent.vue'
-import progressStepper  from '~/components/progressStepper.vue'
-import asideComponent   from '~/components/asideComponent.vue'
-import exampleSelect    from '~/components/exampleSelect.vue'
+import axios            from 'axios'
+import moment           from 'moment'
+
+import headerComponent  from '~/components/headerComponent'
+import progressStepper  from '~/components/progressStepper'
+import asideComponent   from '~/components/asideComponent'
+import exampleSelect    from '~/components/exampleSelect'
 import Datepicker       from 'vuejs-datepicker'
 
 const { mapFields } = createHelpers({
@@ -170,18 +186,42 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      console.log(`NTICK :: ${this.department.name}`);
-      if(this.department.id) {
-        this.getGroups;
-      }
+    alert('mounted')
+    axios.get(`https://tomcat2.bloomington.in.gov/timetrack/DepartmentService`)
+    .then((res) => {
+      this.$store.dispatch('depts/setDepartments', res.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
 
-      if(this.group.id) {
-        this.getJobs();
-      }
-    });
+
+
+    // this.$nextTick(() => {
+    //   console.log(`NTICK :: ${this.department.name}`);
+    //   if(this.department.id) {
+    //     this.getGroups;
+    //   }
+
+    //   if(this.group.id) {
+    //     this.getJobs();
+    //   }
+    // });
   },
   watch: {
+    department: function(val, oldVal) {
+      if(val) {
+        let newVal      = JSON.stringify(val.id);
+        let previousVal = JSON.stringify(oldVal.id);
+
+        if(newVal != previousVal) {
+          this.$store.dispatch('createUser/resetGroup');
+          this.$store.dispatch('createUser/resetJob');
+        }
+
+        this.getGroups;
+      }
+    },
     group: function(val) {
       // alert(val)
       // this.getJobs();
@@ -198,6 +238,99 @@ export default {
     // if(this.group.id) {
     //   this.getJobs();
     // }
+  },
+  computed: {
+    ...mapFields([
+      'data',
+      'facilities.facilities',
+      'createUser.department',
+      'createUser.facility',
+      'createUser.division',
+      'createUser.group',
+      'createUser.job',
+      'createUser.status',
+      'startDateFormat',
+      'createUser.startDate',
+
+      'depts.departments'
+    ]),
+    getDepts() {
+      let deptSelectArray = [];
+
+      let depts = this.departments.map(
+        value => { return {id: value.id, name: value.name}}
+      );
+
+      depts.forEach(function(dept) {
+        deptSelectArray.push({
+          "value": dept.id,
+          "text": dept.name
+        });
+      });
+
+      return deptSelectArray;
+    },
+    deptFacilities() {
+      let facilitiesByDept = [];
+
+      let facilities = this.facilities.map(
+        value => {
+          return {
+            id: value.text,
+            name: value.value
+          }
+        }
+      );
+
+      facilities.forEach(function(facility) {
+        facilitiesByDept.push({
+          "text": facility.id,
+          "value": facility.name
+        });
+      });
+
+      return facilitiesByDept;
+    },
+    getGroups() {
+      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupService?department_id=${this.department.id}`)
+      .then((res) => {
+        console.log(res.data);
+        this.groups = res.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    },
+    deptGroups() {
+      let groupSelectArray = [];
+
+      let groups = this.groups.map(
+        value => { return {id: value.id, name: value.name}}
+      );
+
+      groups.forEach(function(group) {
+        groupSelectArray.push({
+          "text": group.name,
+          "value": group.id
+        });
+      });
+      return groupSelectArray;
+    },
+    groupJobs() {
+      let jobSelectArray = [];
+
+      let jobs = this.jobs.map(
+        value => { return {id: value.id, name: value.name}}
+      );
+
+      jobs.forEach(function(job) {
+        jobSelectArray.push({
+          "text": job.name,
+          "value": job.id
+        });
+      });
+      return jobSelectArray;
+    }
   },
   methods: {
     ...mapActions([
@@ -272,81 +405,6 @@ export default {
       })
     }
   },
-  computed: {
-    ...mapFields([
-      'data',
-      'facilities.facilities',
-      'createUser.department',
-      'createUser.facility',
-      'createUser.division',
-      'createUser.group',
-      'createUser.job',
-      'createUser.status',
-      'startDateFormat',
-      'createUser.startDate',
-    ]),
-    deptFacilities() {
-      let facilitiesByDept = [];
-
-      let facilities = this.facilities.map(
-        value => {
-          return {
-            id: value.text,
-            name: value.value
-          }
-        }
-      );
-
-      facilities.forEach(function(facility) {
-        facilitiesByDept.push({
-          "text": facility.id,
-          "value": facility.name
-        });
-      });
-
-      return facilitiesByDept;
-    },
-    getGroups() {
-      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupService?department_id=${this.department.id}`)
-      .then((res) => {
-        console.log(res.data);
-        this.groups = res.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-    },
-    deptGroups() {
-      let groupSelectArray = [];
-
-      let groups = this.groups.map(
-        value => { return {id: value.id, name: value.name}}
-      );
-
-      groups.forEach(function(group) {
-        groupSelectArray.push({
-          "text": group.name,
-          "value": group.id
-        });
-      });
-      return groupSelectArray;
-    },
-    groupJobs() {
-      let jobSelectArray = [];
-
-      let jobs = this.jobs.map(
-        value => { return {id: value.id, name: value.name}}
-      );
-
-      jobs.forEach(function(job) {
-        jobSelectArray.push({
-          "text": job.name,
-          "value": job.id
-        });
-      });
-      return jobSelectArray;
-    }
-  },
 }
 </script>
 
@@ -366,17 +424,7 @@ export default {
   }
 
 
-  form {
-    // background: purple;
-    width: calc(100% - 300px);
-    margin-left: auto;
-    padding: 0 0 0 40px;
-
-    .button {
-      padding: 10px 20px;
-      background-color: $color-green;
-    }
-  }
+  form {}
 
   /deep/ label {
     // background-color: teal;

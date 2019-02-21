@@ -15,20 +15,15 @@
       <fn1-button>Batch user creation</fn1-button>
     </div>
 
-
     <ul>
       <li class="step-title" v-if="first">Step One</li>
       <li v-if="first">
         <strong>Name:</strong>
         <span v-html="first"></span>
+        <span v-if="nickname">"{{nickname}}"</span>
         <span v-html="middle"></span>
         <span v-html="last"></span><!--
         --><span v-if="(suffix)">, {{suffix}}</span>
-      </li>
-
-      <li v-if="!isObjEmpty(department)">
-        <strong>Dept.: </strong>
-        <span v-html="department.name"></span>
       </li>
 
       <li class="step-title" v-if="facility">Step Two</li>
@@ -36,6 +31,11 @@
       <li v-if="facility">
         <strong>Facility: </strong>
         <span v-html="facility"></span>
+      </li>
+
+      <li>
+        <strong>Dept.: </strong>
+        <span v-html="department.name"></span>
       </li>
 
       <li v-if="group.name">
@@ -92,7 +92,6 @@
         <strong>Requester: </strong>
         <span v-html="authUser.username"></span>
       </li>
-
     </ul>
   </aside>
 </template>
@@ -137,7 +136,10 @@ export default {
       'createUser.name.middle',
       'createUser.name.last',
       'createUser.name.suffix',
+      'createUser.name.nickname',
+
       'createUser.startDate',
+
       'createUser.department',
       'createUser.status',
 
@@ -171,7 +173,7 @@ export default {
   @import '@/assets/style.scss';
   aside {
     color: $text-color;
-    width: 275px;
+    width: 350px;
     // background-color: lighten($color-grey, 5%);
 
     // h1 {

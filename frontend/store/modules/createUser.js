@@ -8,6 +8,7 @@ const getDefaultState = () => ({
     middle:           "",
     last:             "",
     suffix:           "",
+    nickname:         "",
   },
   startDate:          "",
   department:       {

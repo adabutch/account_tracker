@@ -91,7 +91,7 @@
 
         <fn1-tab name="Pending">
           <div class="title-row">
-            <h4>User account requests <strong>ready</strong> for review.</h4>
+            <h4>User account requests <strong>pending</strong> creation.</h4>
           </div>
 
           <template v-if="!pendingAccounts.length">
@@ -299,11 +299,6 @@ export default {
       showingUserDetails: false,
       selectFilter: '',
       searchUsers:  '',
-      requestTypes: [
-        { value: 'ready', text: 'Ready' },
-        { value: 'deactivate', text: 'Deactivate' }
-      ],
-      rows: [],
       // batchRequestApproval: [],
       batchRequestIDs: [],
       selected: [],
@@ -424,6 +419,7 @@ export default {
         let requestType = status.request_status.toLowerCase();
         return requestType === "ready"
       })
+      .sort((a, b) => new Date(b.requested) - new Date(a.requested))
     },
     pendingAccounts() {
       return this.accountRequests
@@ -444,6 +440,7 @@ export default {
         let requestType = status.request_status.toLowerCase();
         return requestType === "pending"
       })
+      .sort((a, b) => new Date(b.requested) - new Date(a.requested))
     }
   }
 }
@@ -635,6 +632,7 @@ export default {
   height: 100vh;
   background-color: lighten($text-color, 60%);
   border-left: 1px solid lighten($text-color, 50%);
+  filter: drop-shadow(10px 0 8px $text-color);
   color: $text-color;
 
   button {

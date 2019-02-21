@@ -11,23 +11,19 @@
         <form>
           <h1><strong>Step Three:</strong> Supervisor information</h1>
 
-          {{ supervisors }}<br><br> - - - - <br><br>
-
-          {{ supPhones() }}<br><br> - - - - <br><br>
-
-          {{ divisionSupervisors }}
+          <!-- {{groupManagers}} -->
 
           <exampleSelect v-model="supervisor"
                          label="Supervisor"
                          name="supervisor"
                          id="supervisor"
-                         :options="divisionSupervisors" />
+                         :options="groupManagers" />
 
           <exampleSelect v-model="supervisorPhone"
                          label="Supervisor Phone"
                          name="supervisor-phone"
                          id="supervisor-phone"
-                         :options="supPhones()" />
+                         :options="managersPhone" />
 
           <fn1-input v-model="employeePhone"
                      label="Employee Phone"
@@ -56,10 +52,12 @@
 import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
 import { mapFields } from 'vuex-map-fields';
 
-import headerComponent  from '~/components/headerComponent.vue'
-import progressStepper  from '~/components/progressStepper.vue'
-import asideComponent   from '~/components/asideComponent.vue'
-import exampleSelect    from '~/components/exampleSelect.vue'
+import axios            from 'axios'
+
+import headerComponent  from '~/components/headerComponent'
+import progressStepper  from '~/components/progressStepper'
+import asideComponent   from '~/components/asideComponent'
+import exampleSelect    from '~/components/exampleSelect'
 
 export default {
   middleware: 'authenticated',
@@ -72,57 +70,28 @@ export default {
   data() {
     return {
       stepActive: 3,
-      showSupPhone: false,
-
-      supervisors: [
-        {
-          "name":  "Charles Brandt",
-          "phone": "123-888-8888",
-          "email": "brand tc @ gov"
-        },
-        {
-          "name":  "Adam Butcher",
-          "phone": "456-222-8888",
-          "email": "butcher ad @ gov"
-        }
-      ],
+      managers: [],
+      managersPhone: [
+        {"value": "123-456-7890", "text": "123-456-7890"},
+        {"value": "098-765-4321", "text": "098-765-4321"}
+      ]
     }
   },
   mounted() {
-    // if(this.supervisor) {
-
-    //   this.showSupPhone = true;
-    // }
-    // if(!this.supervisor) {
-    //   this.divisionSupervisors;
-    // }
+    if(this.group) {
+      this.getGroupManagers();
+    }
   },
-  watch: {
-    // supervisor: function(val, oldVal) {
-    //   this.showSupPhone = true;
-    //   this.supervisorPhones = "";
-    // }
-  },
+  watch: {},
   methods: {
-    supPhones() {
-      let supervisorPhones = [];
-
-      let supPhoneMatch = this.supervisors.filter(
-        value => value.name == this.supervisor
-      );
-
-      let supPhone = supPhoneMatch.map(
-        value => value.phone
-      );
-
-      supPhone.forEach(function(phone) {
-        supervisorPhones.push({
-          "text": phone,
-          "value": phone
-        });
-      });
-
-      return supervisorPhones;
+    getGroupManagers() {
+      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupManagerService?group_id=${this.group.id}`)
+      .then((res) => {
+        this.managers = res.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      })
     },
   },
   computed: {
@@ -132,25 +101,26 @@ export default {
       'createUser.department',
       'createUser.facility',
       'createUser.division',
+      'createUser.group',
       'createUser.supervisor',
       'createUser.supervisorPhone',
       'createUser.employeePhone'
     ]),
-    divisionSupervisors() {
-      let supervisorsByDivision = [];
+    groupManagers() {
+      let managersByGroup = [];
 
-      let deptFacilities = this.supervisors.map(
+      let groupManagers = this.managers.map(
         value => value.name
       );
 
-      deptFacilities.forEach((supervisor) => {
-        supervisorsByDivision.push({
+      groupManagers.forEach((supervisor) => {
+        managersByGroup.push({
           "text": supervisor,
           "value": supervisor
         });
       });
 
-      return supervisorsByDivision;
+      return managersByGroup;
     },
   }
 }

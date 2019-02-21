@@ -11,10 +11,13 @@
           <h1>{{ getAllDays(setMonth, setYear) }}</h1> -->
           <!-- <h1>{{ testing() }}</h1> -->
 
-          <h1><strong>Step One:</strong> User information</h1>
+          <h1>
+            <strong>Step One:</strong>&nbsp; User information
+          </h1>
+
           <div class="fields-wrapper">
             <fn1-input v-model="first"
-                     label="First Name"
+                     label="First Name *"
                      placeholder="First name"
                      name="first-name"
                      id="first-name" />
@@ -26,10 +29,16 @@
                        id="middle-name" />
 
             <fn1-input v-model="last"
-                       label="Last Name"
+                       label="Last Name *"
                        placeholder="Last name"
                        name="last-name"
                        id="last-name" />
+
+            <fn1-input v-model="nickname"
+                       label="Nickname"
+                       placeholder="Nickname"
+                       name="nickname"
+                       id="nickname" />
 
             <exampleSelect v-model="suffix"
                           label="Suffix"
@@ -38,19 +47,7 @@
                           :options="suffixOptions" />
           </div>
 
-          <div class="field-group">
-            <label for="department">Department</label>
-            <select name="department"
-                    id="department"
-                    type="select"
-                    v-model="department">
-              <option>---</option>
-              <option v-for="(item, index) in getDepts"
-                      :value="{id: item.value, name: item.text}">
-                {{ item.text }}
-              </option>
-            </select>
-          </div>
+
 
           <!-- <fn1-modal title="Clear/Reset Form"
                      launchButtonText="reset form">
@@ -60,11 +57,13 @@
                         class="reset-form">I Understand</fn1-button>
           </fn1-modal> -->
 
-          <button @click.prevent="resetForm"
-                  class="reset-form">reset form</button>
+          <div class="button-wrapper">
+            <button @click.prevent="resetForm"
+                    class="reset-form">reset form</button>
 
-          <nuxt-link class="button"
-                     :to="{ name: 'two'}">Next</nuxt-link>
+            <nuxt-link class="button"
+                       :to="{ name: 'two'}">Next</nuxt-link>
+          </div>
         </form>
       </div>
     </div>
@@ -76,15 +75,16 @@ import {
   mapState,
   mapMutations,
   mapGetters,
-  mapActions }        from 'vuex'
-import { createHelpers }  from 'vuex-map-fields';
+  mapActions }          from 'vuex'
+import {
+  createHelpers }       from 'vuex-map-fields'
+
+import axios            from 'axios'
 
 import headerComponent  from '~/components/headerComponent'
-import progressStepper  from '~/components/progressStepper.vue'
-import asideComponent   from '~/components/asideComponent.vue'
-import exampleSelect    from '~/components/exampleSelect.vue'
-
-import axios from 'axios'
+import progressStepper  from '~/components/progressStepper'
+import asideComponent   from '~/components/asideComponent'
+import exampleSelect    from '~/components/exampleSelect'
 
 
 const { mapFields } = createHelpers({
@@ -100,16 +100,7 @@ export default {
     asideComponent,
     exampleSelect
   },
-  mounted() {
-    axios.get(`https://tomcat2.bloomington.in.gov/timetrack/DepartmentService`)
-    .then((res) => {
-      console.log(res);
-      this.$store.dispatch('depts/setDepartments', res.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    })
-  },
+  mounted() {},
   data() {
     return {
       stepActive: 1,
@@ -123,26 +114,13 @@ export default {
         { value: 'IV',  text: 'IV' },
         { value: 'V',   text: 'V' },
         { value: 'VI',  text: 'VI' }
-      ],
-      posts: [],
-      errors: []
+      ]
     }
   },
-  watch: {
-    department: function(val, oldVal) {
-      let newVal      = JSON.stringify(val.id);
-      let previousVal = JSON.stringify(oldVal.id);
-
-      if(newVal != previousVal) {
-        this.$store.dispatch('createUser/resetGroup');
-        this.$store.dispatch('createUser/resetJob');
-      }
-    }
-  },
+  watch: {},
   methods: {},
   computed: {
     ...mapFields([
-      'data',
       'totalSteps',
       'endpoints',
 
@@ -150,27 +128,10 @@ export default {
       'createUser.name.middle',
       'createUser.name.last',
       'createUser.name.suffix',
+      'createUser.name.nickname',
 
       'createUser.department',
-
-      'depts.departments'
     ]),
-    getDepts() {
-      let deptSelectArray = [];
-
-      let depts = this.departments.map(
-        value => { return {id: value.id, name: value.name}}
-      );
-
-      depts.forEach(function(dept) {
-        deptSelectArray.push({
-          "value": dept.id,
-          "text": dept.name
-        });
-      });
-
-      return deptSelectArray;
-    }
   },
 }
 </script>
@@ -186,15 +147,16 @@ export default {
   }
 
   .fields-wrapper {
+    width: 400px;
     display: flex;
     flex-wrap: wrap;
     // background-color: red;
 
     &:first-of-type {
       .field-group {
-        flex-grow: 1;
-        width: calc(100% * (1/4) - 40px);
-        margin-right: 20px;
+        // flex-grow: 1;
+        // width: calc(100% * (1/4) - 40px);
+        // margin-right: 20px;
         // background-color: purple;
 
         &:last-of-type {
