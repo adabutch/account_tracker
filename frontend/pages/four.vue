@@ -103,11 +103,19 @@ export default {
       deptServices: [],
       groupServices: [],
       deptServiceProfile: {},
-      groupServiceProfile: {}
+      groupServiceProfile: {},
     }
   },
   mounted() {
     this.getServiceProfiles();
+  },
+  watch: {
+    deptServices: function(val) {
+      this.userServices;
+    },
+    groupServices: function(val) {
+      this.userServices;
+    }
   },
   computed: {
     ...mapFields([
@@ -117,9 +125,9 @@ export default {
       'createUser.department',
       'createUser.group'
     ]),
-    serviceProfile() {
+    userServices() {
       this.requestedServices = [...this.deptServices, ...this.groupServices]
-      return this.requestedServices
+      .join(', ');
     }
   },
   methods: {

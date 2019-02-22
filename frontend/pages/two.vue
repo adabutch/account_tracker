@@ -219,6 +219,7 @@ export default {
         if(newVal != previousVal) {
           this.$store.dispatch('createUser/resetGroup');
           this.$store.dispatch('createUser/resetJob');
+          this.$store.dispatch('createUser/resetRequestedServices');
         }
 
         this.getGroups;
@@ -233,6 +234,7 @@ export default {
           this.$store.dispatch('createUser/resetJob');
           this.$store.dispatch('createUser/resetSupervisor');
           this.$store.dispatch('createUser/resetSupervisorPhone');
+          this.$store.dispatch('createUser/resetRequestedServices');
         }
 
         this.getJobs();

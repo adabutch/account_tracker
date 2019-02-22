@@ -86,9 +86,9 @@
         <span v-html="employeePhone"></span>
       </li>
 
-      <li class="step-title" v-if="requestedServices.length">Step Four</li>
+      <li class="step-title" v-if="requestedServices">Step Four</li>
 
-      <li v-if="requestedServices.length">
+      <li v-if="requestedServices">
         <strong>Requested Services: </strong>
         <span v-html="requestedServices"></span>
       </li>
