@@ -19,11 +19,11 @@ class AccountRequest(models.Model):
     nickname = models.CharField(max_length=50, blank=True, null=True)
 
     # strip out dashes and periods
-    employee_phone = models.CharField(max_length=10)
+    employee_phone = models.CharField(max_length=12)
 
     # Ideally this would reference a User object
     supervisor = models.CharField(max_length=50)
-    supervisor_phone = models.CharField(max_length=50)
+    supervisor_phone = models.CharField(max_length=12)
 
     department = models.CharField(max_length=50)
     group = models.CharField(max_length=50)

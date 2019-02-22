@@ -39,6 +39,8 @@
 
           <fn1-input v-model="employeePhone"
                      label="Employee Phone"
+                     @keyup.native="yooo"
+                     @blur.native="yooo"
                      type="tel"
                      placeholder="888-888-8888"
                      pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
@@ -88,8 +90,10 @@ export default {
   },
   data() {
     return {
-      stepActive: 3,
-      managers: [],
+      stepActive:       3,
+      managers:         [],
+      phoneValue:       0,
+      preventIteration: false,
       managersPhone: [
         {"value": "123-456-7890", "text": "123-456-7890"},
         {"value": "098-765-4321", "text": "098-765-4321"}
@@ -106,6 +110,23 @@ export default {
   watch: {
   },
   methods: {
+    yooo(event) {
+      if (['Arrow', 'Backspace', 'Shift']
+         .includes(event.key)) {
+          this.preventIteration = true;
+        return;
+      }
+      if (this.preventIteration) {
+          this.preventIteration = false;
+        return;
+      }
+      this.phoneValue = this.employeePhone
+                        .replace(/-/g, '')
+                        .match(/(\d{1,10})/g)[0];
+
+      this.employeePhone = this.phoneValue
+      .replace(/(\d{1,3})(\d{1,3})(\d{1,4})/g, '$1-$2-$3');
+    },
     getGroupManagers() {
       axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupManagerService?group_id=${this.group.id}`)
       .then((res) => {
