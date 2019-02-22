@@ -53,17 +53,28 @@
                     type="select"
                     v-model="job">
               <option v-for="(item, index) in groupJobs"
-                      :value="{id: item.value, name: item.text}">
+                      :value="{id: item.value, name: item.text, salaryGroup: item.salaryGroup, clockInRequired: item.clockInRequired}">
                 {{ item.text }}
               </option>
             </select>
           </div>
 
-          <exampleSelect v-model="status"
-                         label="Status"
-                         name="status"
-                         id="status"
-                         :options="statusOptions" />
+          <!-- Not sure we need to show these as
+               they are automagically determined
+               based on job selection. -->
+          <!-- <fn1-input v-model="job.salaryGroup"
+                     v-if="job.salaryGroup"
+                     label="Job Status"
+                     name="job-status"
+                     id="job-status"
+                     disabled />
+
+          <fn1-input v-model="job.clockInRequired"
+                     v-if="job.clockInRequired"
+                     label="Clock-In Required"
+                     name="clockin-required"
+                     id="clockin-required"
+                     disabled /> -->
 
           <div class="field-group">
             <label for="start-date">Start Date</label>
@@ -76,7 +87,6 @@
                         id="start-date" />
           </div>
 
-
           <div class="button-wrapper">
             <button @click.prevent="resetForm"
                     class="reset-form">reset</button>
@@ -88,7 +98,6 @@
             <nuxt-link class="button"
                        :to="{ name: 'three'}">Next</nuxt-link>
           </div>
-
         </form>
       </div>
     </div>
@@ -102,7 +111,7 @@ import {
   mapGetters,
   mapActions }          from 'vuex'
 import {
-  mapFields }       from 'vuex-map-fields'
+  mapFields }           from 'vuex-map-fields'
 
 import axios            from 'axios'
 import moment           from 'moment'
@@ -165,6 +174,7 @@ export default {
           text: 'Part-Time'
         }
       ],
+      jobsStatusOptions: [],
       setMonth: 1,
       setYear: 2019,
       startDatesDisabled: {
@@ -224,6 +234,11 @@ export default {
         }
 
         this.getJobs();
+      }
+    },
+    job: function(val, oldVal) {
+      if(val) {
+        this.getJobStatus;
       }
     }
   },
@@ -308,15 +323,25 @@ export default {
       let jobSelectArray = [];
 
       let jobs = this.jobs.map(
-        value => { return {id: value.id, name: value.name}}
+        value => {
+          return {
+            id: value.id,
+            name: value.name,
+            salaryGroup: value.salaryGroup,
+            clockInRequired: value.clockInRequired
+          }
+        }
       );
 
       jobs.forEach(function(job) {
         jobSelectArray.push({
+          "value": job.id,
           "text": job.name,
-          "value": job.id
+          "salaryGroup": job.salaryGroup,
+          "clockInRequired": job.clockInRequired
         });
       });
+
       return jobSelectArray;
     }
   },
@@ -382,7 +407,6 @@ export default {
       return formatedDates;
     },
     getJobs() {
-      console.log('actual getJobs');
       axios.get(`https://tomcat2.bloomington.in.gov/timetrack/JobTitleService?group_id=${this.group.id}`)
       .then((res) => {
         console.log(res.data);

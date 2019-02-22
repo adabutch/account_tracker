@@ -11,16 +11,18 @@
     <p v-if="!first">Details of the <strong>User Creation Wizard</strong> will appear here as they become available.</p>
 
 
-    <div class="wrapper" v-if="!first">
+    <!-- Save button for later, when we have
+         batch creation in place. -->
+    <!-- <div class="wrapper" v-if="!first">
       <fn1-button>Batch user creation</fn1-button>
-    </div>
+    </div> -->
 
     <ul>
       <li class="step-title" v-if="first">Step One</li>
       <li v-if="first">
         <strong>Name:</strong>
         <span v-html="first"></span>
-        <span v-if="nickname">"{{nickname}}"</span>
+        <span v-if="nickname">({{nickname}})</span>
         <span v-html="middle"></span>
         <span v-html="last"></span><!--
         --><span v-if="(suffix)">, {{suffix}}</span>
@@ -33,7 +35,7 @@
         <span v-html="facility"></span>
       </li>
 
-      <li>
+      <li v-if="department.name">
         <strong>Dept.: </strong>
         <span v-html="department.name"></span>
       </li>
@@ -46,6 +48,16 @@
       <li v-if="job.name">
         <strong>Job: </strong>
         <span v-html="job.name"></span>
+      </li>
+
+      <li v-if="job.salaryGroup">
+        <strong>Salary Group: </strong>
+        <span v-html="job.salaryGroup"></span>
+      </li>
+
+      <li v-if="job.clockInRequired">
+        <strong>Clock-In Required: </strong>
+        <span v-html="job.clockInRequired"></span>
       </li>
 
       <li v-if="status">
@@ -95,12 +107,13 @@ import {
   mapMutations,
   mapGetters,
   mapActions }        from 'vuex'
-import { mapFields }  from 'vuex-map-fields';
+import {
+  mapFields }         from 'vuex-map-fields';
 
 import moment         from 'moment'
 
 export default {
-  props: ['stepActive','asideHeader'],
+  props: ['stepActive', 'asideHeader'],
   data() {
     return {
       startDateFormatted: this.dateFormatted,
@@ -165,19 +178,10 @@ export default {
   aside {
     color: $text-color;
     width: 350px;
-    // background-color: lighten($color-grey, 5%);
-
-    // h1 {
-    //   color: $text-color;
-    //   border-bottom: 1px solid lighten($text-color, 40%);
-    //   margin: 0 0 10px 0;
-    //   padding: 0 0 10px 0;
-    // }
 
     h1 {
       color: $text-color;
       font-size: $size-l;
-      // font-weight: $weight-semi-bold;
       line-height: $size-l;
       margin: 0 0 $space-m 0;
       padding: 0 0 $space-s 0;

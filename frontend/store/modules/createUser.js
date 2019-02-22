@@ -25,6 +25,8 @@ const getDefaultState = () => ({
   job:              {
     id:               "",
     name:             "",
+    salaryGroup:      "",
+    clockInRequired:  "",
   },
   supervisor:         "",
   supervisorPhone:    "",
