@@ -6,11 +6,6 @@
       <div>
         <asideComponent />
         <form>
-          <!-- <h1>{{ setMonth }} - {{ setYear }}</h1>
-          <h1>{{ getDaysInMonth(setMonth, setYear) }}</h1>
-          <h1>{{ getAllDays(setMonth, setYear) }}</h1> -->
-          <!-- <h1>{{ testing() }}</h1> -->
-
           <h1>
             <strong>Step One:</strong>&nbsp; User information
           </h1>
@@ -47,16 +42,6 @@
                           :options="suffixOptions" />
           </div>
 
-
-
-          <!-- <fn1-modal title="Clear/Reset Form"
-                     launchButtonText="reset form">
-            <p slot="body">This will clear all form values. Are you sure?</p>
-            <fn1-button slot="footerBtnConfirm"
-                        @click.native="resetForm"
-                        class="reset-form">I Understand</fn1-button>
-          </fn1-modal> -->
-
           <div class="button-wrapper">
             <button @click.prevent="resetForm"
                     class="reset-form">reset form</button>
@@ -77,7 +62,7 @@ import {
   mapGetters,
   mapActions }          from 'vuex'
 import {
-  createHelpers }       from 'vuex-map-fields'
+  mapFields }           from 'vuex-map-fields'
 
 import axios            from 'axios'
 
@@ -85,12 +70,6 @@ import headerComponent  from '~/components/headerComponent'
 import progressStepper  from '~/components/progressStepper'
 import asideComponent   from '~/components/asideComponent'
 import exampleSelect    from '~/components/exampleSelect'
-
-
-const { mapFields } = createHelpers({
-  getterType: `getField`,
-  mutationType: `updateField`,
-});
 
 export default {
   middleware: 'authenticated',
@@ -117,20 +96,15 @@ export default {
       ]
     }
   },
-  watch: {},
-  methods: {},
   computed: {
     ...mapFields([
       'totalSteps',
       'endpoints',
-
       'createUser.name.first',
       'createUser.name.middle',
       'createUser.name.last',
       'createUser.name.suffix',
       'createUser.name.nickname',
-
-      'createUser.department',
     ]),
   },
 }
@@ -150,29 +124,21 @@ export default {
     width: 400px;
     display: flex;
     flex-wrap: wrap;
-    // background-color: red;
 
     &:first-of-type {
       .field-group {
-        // flex-grow: 1;
-        // width: calc(100% * (1/4) - 40px);
-        // margin-right: 20px;
-        // background-color: purple;
 
         &:last-of-type {
-          // background-color: green;
           margin: 0;
 
           /deep/ label {
             margin-bottom: 0;
-            // background-color: pink;
           }
         }
       }
     }
 
     &:nth-of-type(2) {
-      // background-color: teal;
       width: 492px;
     }
   }
