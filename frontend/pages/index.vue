@@ -7,7 +7,7 @@
         <asideComponent />
         <form>
           <h1>
-            <strong>Step One:</strong>&nbsp; User information
+            <strong>Step One:</strong>&nbsp;User information
           </h1>
 
           <div class="fields-wrapper">

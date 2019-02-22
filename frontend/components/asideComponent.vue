@@ -183,6 +183,7 @@ export default {
       color: $text-color;
       font-size: $size-l;
       line-height: $size-l;
+      font-weight: $weight-semi-bold;
       margin: 0 0 $space-m 0;
       padding: 0 0 $space-s 0;
       border-bottom: 1px solid lighten($text-color, 50%);

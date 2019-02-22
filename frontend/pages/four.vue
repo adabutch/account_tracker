@@ -9,7 +9,7 @@
         <asideComponent />
 
         <form>
-          <h1><strong>Step Four:</strong>&nbsp; Software information</h1>
+          <h1><strong>Step Four:</strong>&nbsp;Software information</h1>
 
           <template v-if="deptServiceProfile === undefined">
             <p>No <strong>Service Profiles</strong> associated with this Account Type.</p>

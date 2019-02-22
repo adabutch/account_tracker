@@ -10,7 +10,7 @@
 
         <form>
           <h1>
-            <strong>Step Two:</strong>&nbsp; Facility specific information
+            <strong>Step Two:</strong>&nbsp;Facility specific information
           </h1>
 
           <exampleSelect v-model="facility"

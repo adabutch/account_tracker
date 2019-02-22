@@ -9,7 +9,7 @@
         <asideComponent />
 
         <form>
-          <h1><strong>Step Three:</strong>&nbsp; Supervisor information</h1>
+          <h1><strong>Step Three:</strong>&nbsp;Supervisor information</h1>
 
           <div class="field-group">
             <label for="supervisor">Supervisor</label>
