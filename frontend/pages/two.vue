@@ -231,6 +231,8 @@ export default {
 
         if(newVal != previousVal) {
           this.$store.dispatch('createUser/resetJob');
+          this.$store.dispatch('createUser/resetSupervisor');
+          this.$store.dispatch('createUser/resetSupervisorPhone');
         }
 
         this.getJobs();
@@ -238,7 +240,13 @@ export default {
     },
     job: function(val, oldVal) {
       if(val) {
-        this.getJobStatus;
+        let newVal      = JSON.stringify(val.id);
+        let previousVal = JSON.stringify(oldVal.id);
+
+        if(newVal != previousVal) {
+          this.$store.dispatch('createUser/resetSupervisor');
+          this.$store.dispatch('createUser/resetSupervisorPhone');
+        }
       }
     }
   },

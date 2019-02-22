@@ -31,9 +31,6 @@ const getDefaultState = () => ({
   supervisor:         "",
   supervisorPhone:    "",
   employeePhone:      "",
-  supervisor:         "",
-  supervisorPhone:    "",
-  employeePhone:      "",
   requestedServices:  [],
 })
 
@@ -49,7 +46,13 @@ const mutations = {
   },
   RESET_JOB(state) {
     state.job = {id: "", name: ""}
-  }
+  },
+  RESET_SUPERVISOR(state) {
+    state.supervisor = ""
+  },
+  RESET_SUPERVISOR_PHONE(state) {
+    state.supervisorPhone = ""
+  },
 }
 
 const actions = {
@@ -61,6 +64,12 @@ const actions = {
   },
   resetJob({ commit }) {
     commit('RESET_JOB')
+  },
+  resetSupervisor({ commit }) {
+    commit('RESET_SUPERVISOR')
+  },
+  resetSupervisorPhone({ commit }) {
+    commit('RESET_SUPERVISOR_PHONE')
   },
 }
 
