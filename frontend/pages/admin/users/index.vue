@@ -169,7 +169,7 @@
       <button @click="hideDetails" class="close">close</button>
       <h4>Detailed Information</h4>
       <ul>
-        <li>
+        <li v-if="showDetailsFor.request_status">
           <span>Request Status</span>
             <fn1-badge
               :class="{'ready': (showDetailsFor.request_status === 'ready')}">
@@ -177,47 +177,65 @@
             </fn1-badge>
         </li>
 
-        <li>
+        <li v-if="showDetailsFor.first_name">
           <span>Name</span>
           - {{showDetailsFor.first_name}}
+          <template v-if="showDetailsFor.nickname">
+            ({{showDetailsFor.nickname}})
+          </template>
           {{showDetailsFor.middle_name}}
           {{showDetailsFor.last_name}}
           {{showDetailsFor.suffix}}
         </li>
 
-        <li>
+        <li v-if="showDetailsFor.employee_phone">
+          <span>Employee Phone</span>
+          - {{showDetailsFor.employee_phone}}
+        </li>
+
+        <li v-if="showDetailsFor.supervisor">
           <span>Supervisor</span>
           - {{showDetailsFor.supervisor}} ({{showDetailsFor.supervisor_phone}})
         </li>
 
-        <li>
+        <li v-if="showDetailsFor.facility">
           <span>Facility</span>
           - {{showDetailsFor.facility}}
         </li>
 
-        <li>
+        <li v-if="showDetailsFor.department">
           <span>Department</span>
           - {{showDetailsFor.department}}
         </li>
 
-        <li>
+        <li v-if="showDetailsFor.group">
           <span>Group</span>
           - {{showDetailsFor.group}}
         </li>
 
-        <li>
+        <li v-if="showDetailsFor.job">
           <span>Job</span>
           - {{showDetailsFor.job}}
         </li>
 
-        <li>
+        <li v-if="showDetailsFor.clock_entry_only">
+          <span>Clock-In Required</span>
+          - {{showDetailsFor.clock_entry_only}}
+        </li>
+
+        <li v-if="showDetailsFor.employee_status">
           <span>Employee Status</span>
           - {{showDetailsFor.employee_status}}
         </li>
 
-        <li>
+        <li v-if="showDetailsFor.start_date">
           <span>Start Date</span>
           - {{showDetailsFor.start_date}}
+        </li>
+
+        <li v-if="showDetailsFor.requested_services">
+          <span>Requested Services</span>
+          - {{showDetailsFor.requested_services}}
         </li>
       </ul>
 

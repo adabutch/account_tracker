@@ -35,9 +35,9 @@
            aria-label="navigation dropdown"
            class="navigation-dropdown">
         <details>
-          <!-- <summary>{{authUser}}</summary> -->
+          <summary>hi</summary>
           <!-- <summary>{{endpoints.obtainJWT}}</summary> -->
-          <summary>User</summary>
+          <!-- <summary>User</summary> -->
           <ul class="right">
             <li @click="logout()">
               Logout
@@ -45,15 +45,8 @@
           </ul>
         </details>
       </nav>
-      <!-- <exampleDropdown :text="authUser.first_name" navAlign="right">
-        <li>
-          <a href="" @click="logout()" title="Logout">Logout</a>
-        </li>
-      </exampleDropdown> -->
 
     </fn1-header>
-
-<!--     {{user}} -->
   </span>
 </template>
 
@@ -63,24 +56,31 @@ import {
   mapMutations,
   mapGetters,
   mapActions }         from 'vuex'
-import { createHelpers }   from 'vuex-map-fields'
+import {
+  mapFields }          from 'vuex-map-fields'
 import exampleDropdown from '~/components/exampleDropdown'
 
 const Cookie = process.client ? require('js-cookie') : undefined
-
-
-const { mapFields } = createHelpers({
-  getterType: `getField`,
-  mutationType: `updateField`,
-});
 
 export default {
   components: {
     exampleDropdown
   },
+  computed: {
+    ...mapFields([
+      'auth',
+      'authUser',
+      'authUser.username',
+      'endpoints'
+    ]),
+    // fullName() {
+    //   return this.$store.state.authUser.first_name
+    // }
+  },
+
   data() {
     return {
-      user: this.$store.state.authUser
+      // user: this.username
     }
   },
   methods: {
@@ -94,16 +94,7 @@ export default {
       this.$router.push('/login')
     },
   },
-  computed: {
-    ...mapFields([
-      'authUser',
-      'authUserTwo',
-      'endpoints'
-    ]),
-    // fullName() {
-    //   return this.$store.state.authUser.first_name
-    // }
-  }
+
 }
 </script>
 

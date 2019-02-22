@@ -7,7 +7,7 @@ import {
 
 import createUser   from './modules/createUser'
 import facilities   from './modules/facilities'
-import depts  from './modules/depts'
+import depts        from './modules/depts'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'

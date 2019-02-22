@@ -254,18 +254,17 @@ export default {
   },
   computed: {
     ...mapFields([
-      'data',
+      'startDateFormat',
+      'depts.departments',
       'facilities.facilities',
+
       'createUser.department',
       'createUser.facility',
       'createUser.division',
       'createUser.group',
       'createUser.job',
       'createUser.status',
-      'startDateFormat',
       'createUser.startDate',
-
-      'depts.departments'
     ]),
     getDepts() {
       let deptSelectArray = [];
