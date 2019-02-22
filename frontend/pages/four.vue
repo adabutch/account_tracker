@@ -15,42 +15,44 @@
             <p>No <strong>Service Profiles</strong> associated with this Account Type.</p>
           </template>
 
-          <div class="form-group"
-               v-if="deptServiceProfile != undefined">
-            <fieldset>
-              <legend>Department Services</legend>
-              <div v-for="(item, index) in deptServiceProfile.services">
-                <input v-model="deptServices"
-                       :key="index"
-                       :id="item"
-                       :value="item"
-                       type="checkbox"
-                       name="software">
+          <div class="wrapper">
+            <div class="form-group"
+                 v-if="deptServiceProfile != undefined">
+              <fieldset>
+                <legend>Department Services</legend>
+                <div v-for="(item, index) in deptServiceProfile.services">
+                  <input v-model="deptServices"
+                         :key="index"
+                         :id="item"
+                         :value="item"
+                         type="checkbox"
+                         name="software">
 
-                <label v-if="item"
-                       :for="item"
-                       v-html="item"></label>
-              </div>
-            </fieldset>
-          </div>
+                  <label v-if="item"
+                         :for="item"
+                         v-html="item"></label>
+                </div>
+              </fieldset>
+            </div>
 
-          <div class="form-group"
-               v-if="groupServiceProfile != undefined">
-            <fieldset>
-              <legend>Group Services</legend>
-              <div v-for="(item, index) in groupServiceProfile.services">
-                <input v-model="groupServices"
-                       :key="index"
-                       :id="item"
-                       :value="item"
-                       type="checkbox"
-                       name="software">
+            <div class="form-group"
+                 v-if="groupServiceProfile != undefined">
+              <fieldset>
+                <legend>Group Services</legend>
+                <div v-for="(item, index) in groupServiceProfile.services">
+                  <input v-model="groupServices"
+                         :key="index"
+                         :id="item"
+                         :value="item"
+                         type="checkbox"
+                         name="software">
 
-                <label v-if="item"
-                       :for="item"
-                       v-html="item"></label>
-              </div>
-            </fieldset>
+                  <label v-if="item"
+                         :for="item"
+                         v-html="item"></label>
+                </div>
+              </fieldset>
+            </div>
           </div>
 
           <div class="button-wrapper">
@@ -153,6 +155,14 @@ export default {
     &:nth-of-type(2):not(.form-group) {
       display: flex;
       flex-wrap: wrap;
+    }
+  }
+
+  .wrapper {
+    div {
+      &:last-of-type {
+        border-right: none;
+      }
     }
   }
 
