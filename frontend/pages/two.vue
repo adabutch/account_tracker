@@ -386,7 +386,6 @@ export default {
     ...mapActions([
       'addToTotalSteps'
     ]),
-
     customFormatter(date) {
       return moment(date).format(this.startDateFormat);
     },
@@ -395,7 +394,7 @@ export default {
       year = currentDate.getFullYear(),
       mondays = [];
 
-      currentDate.setDate(1);
+      // currentDate.setDate(1);
 
       while (currentDate.getDay() !== 1) {
         currentDate.setDate(currentDate.getDate() + 2);
@@ -445,4 +444,15 @@ export default {
       margin: 0 0 $space-s 0;
     }
   }
+</style>
+
+<style lang="scss">
+@import '@/assets/style.scss';
+
+.flatpickr-day {
+  &.selected {
+    background: $color-blue !important;
+    border-color: $color-blue !important;
+  }
+}
 </style>

@@ -115,9 +115,7 @@ import moment         from 'moment'
 export default {
   props: ['stepActive', 'asideHeader'],
   data() {
-    return {
-      startDateFormatted: this.dateFormatted,
-    }
+    return {}
   },
   computed: {
     customHeader() {
