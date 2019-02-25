@@ -8,7 +8,7 @@
       <h1>Overview</h1>
     </template>
 
-    <p v-if="!first">Details of the <strong>User Creation Wizard</strong> will appear here as they become available.</p>
+    <p v-if="!stepOneData">Details of the <strong>User Creation Wizard</strong> will appear here as they become available.</p>
 
 
     <!-- Save button for later, when we have
@@ -18,80 +18,86 @@
     </div> -->
 
     <ul>
-      <li class="step-title" v-if="first">Step One</li>
-      <li v-if="first">
-        <strong>Name:</strong>
-        <span v-html="first"></span>
-        <span v-if="nickname">({{nickname}})</span>
-        <span v-html="middle"></span>
-        <span v-html="last"></span><!--
-        --><span v-if="(suffix)">, {{suffix}}</span>
-      </li>
+      <template v-if="stepOneData">
+        <li class="step-title" v-if="stepOneData">Step One</li>
+        <li v-if="stepOneData">
+          <strong>Name:</strong>
+          <span v-html="first"></span>
+          <span v-if="nickname">({{nickname}})</span>
+          <span v-html="middle"></span>
+          <span v-html="last"></span><!--
+          --><span v-if="(suffix)">, {{suffix}}</span>
+        </li>
+      </template>
 
-      <li class="step-title" v-if="facility">Step Two</li>
+      <template v-if="stepTwoData">
+        <li class="step-title" v-if="stepTwoData">Step Two</li>
+        <li v-if="facility">
+          <strong>Facility: </strong>
+          <span v-html="facility"></span>
+        </li>
 
-      <li v-if="facility">
-        <strong>Facility: </strong>
-        <span v-html="facility"></span>
-      </li>
+        <li v-if="department.name">
+          <strong>Dept.: </strong>
+          <span v-html="department.name"></span>
+        </li>
 
-      <li v-if="department.name">
-        <strong>Dept.: </strong>
-        <span v-html="department.name"></span>
-      </li>
+        <li v-if="group.name">
+          <strong>Group: </strong>
+          <span v-html="group.name"></span>
+        </li>
 
-      <li v-if="group.name">
-        <strong>Group: </strong>
-        <span v-html="group.name"></span>
-      </li>
+        <li v-if="job.name">
+          <strong>Job: </strong>
+          <span v-html="job.name"></span>
+        </li>
 
-      <li v-if="job.name">
-        <strong>Job: </strong>
-        <span v-html="job.name"></span>
-      </li>
+        <li v-if="job.salaryGroup">
+          <strong>Salary Group: </strong>
+          <span v-html="job.salaryGroup"></span>
+        </li>
 
-      <li v-if="job.salaryGroup">
-        <strong>Salary Group: </strong>
-        <span v-html="job.salaryGroup"></span>
-      </li>
+        <li v-if="job.clockInRequired">
+          <strong>Clock-In Required: </strong>
+          <span v-html="job.clockInRequired"></span>
+        </li>
 
-      <li v-if="job.clockInRequired">
-        <strong>Clock-In Required: </strong>
-        <span v-html="job.clockInRequired"></span>
-      </li>
+        <li v-if="status">
+          <strong>Status: </strong>
+          <span v-html="status"></span>
+        </li>
 
-      <li v-if="status">
-        <strong>Status: </strong>
-        <span v-html="status"></span>
-      </li>
+        <li v-if="startDate">
+          <strong>Start Date: </strong>
+          <span v-html="dateFormatted"></span>
+        </li>
+      </template>
 
-      <li v-if="startDate">
-        <strong>Start Date: </strong>
-        <span v-html="dateFormatted"></span>
-      </li>
+      <template v-if="stepThreeData">
+        <li class="step-title" v-if="stepThreeData">Step Three</li>
+        <li v-if="supervisor">
+          <strong>Supervisor: </strong>
+          <span v-html="supervisor"></span>
+        </li>
 
-      <li class="step-title" v-if="supervisor">Step Three</li>
-      <li v-if="supervisor">
-        <strong>Supervisor: </strong>
-        <span v-html="supervisor"></span>
-      </li>
+        <li v-if="supervisorPhone">
+          <strong>Supervisor Phone: </strong>
+          <span v-html="supervisorPhone"></span>
+        </li>
 
-      <li v-if="supervisorPhone">
-        <strong>Supervisor Phone: </strong>
-        <span v-html="supervisorPhone"></span>
-      </li>
+        <li v-if="employeePhone">
+          <strong>Employee Phone: </strong>
+          <span v-html="employeePhone"></span>
+        </li>
+      </template>
 
-      <li v-if="employeePhone">
-        <strong>Employee Phone: </strong>
-        <span v-html="employeePhone"></span>
-      </li>
-
-      <li class="step-title" v-if="requestedServices">Step Four</li>
-
-      <li v-if="requestedServices">
-        <strong>Requested Services: </strong>
-        <span v-html="requestedServices"></span>
-      </li>
+      <template v-if="requestedServices">
+        <li class="step-title" v-if="requestedServices">Step Four</li>
+        <li v-if="requestedServices">
+          <strong>Requested Services: </strong>
+          <span v-html="requestedServices"></span>
+        </li>
+      </template>
 
       <li v-if="asideHeader">
         <strong>Requester: </strong>
@@ -118,6 +124,28 @@ export default {
     return {}
   },
   computed: {
+    stepOneData() {
+      if(this.first    ||
+         this.nickname ||
+         this.middle   ||
+         this.last     ||
+         this.suffix)
+        return true;
+    },
+    stepTwoData() {
+      if(this.facility      ||
+         this.department.id ||
+         this.group.id      ||
+         this.job.id        ||
+         this.startDate)
+        return true;
+    },
+    stepThreeData() {
+      if(this.supervisor      ||
+         this.supervisorPhone ||
+         this.employeePhone)
+        return true;
+    },
     customHeader() {
       if (this.asideHeader.length) {
         return true
@@ -142,15 +170,12 @@ export default {
       'createUser.name.suffix',
       'createUser.name.nickname',
 
-      'createUser.startDate',
-
-      'createUser.department',
-      'createUser.status',
-
       'createUser.facility',
-      'createUser.division',
+      'createUser.department',
       'createUser.group',
       'createUser.job',
+      'createUser.startDate',
+
 
       'createUser.supervisor',
       'createUser.supervisorPhone',

@@ -10,14 +10,12 @@ const getDefaultState = () => ({
     suffix:           "",
     nickname:         "",
   },
-  startDate:          "",
+
+  facility:           "",
   department:       {
     id:               "",
     name:             "",
   },
-  status:             "",
-  facility:           "",
-  division:           "",
   group:            {
     id:               "",
     name:             "",
@@ -28,10 +26,16 @@ const getDefaultState = () => ({
     salaryGroup:      "",
     clockInRequired:  "",
   },
+  startDate:          "",
+
   supervisor:         "",
   supervisorPhone:    "",
   employeePhone:      "",
+
   requestedServices:  "",
+
+  division:           "",
+  status:             "",
 })
 
 const state = () => getDefaultState();
