@@ -25,6 +25,7 @@
       </svg>
 
       <p v-if="errorMessge">{{errorMessge}}</p>
+      {{isAuthenticated}}
       <fn1-input v-model="username"
                label="Username"
                placeholder="Username"
@@ -62,7 +63,7 @@ export default {
     }
   },
   computed: {
-    ...mapFields(['endpoints'])
+    ...mapFields(['endpoints','isAuthenticated'])
   },
   methods: {
     postLogin() {

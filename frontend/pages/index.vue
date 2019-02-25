@@ -98,6 +98,7 @@ export default {
   },
   computed: {
     ...mapFields([
+      'authUser',
       'totalSteps',
       'endpoints',
       'createUser.name.first',

@@ -3,7 +3,6 @@ import {
   updateField }     from 'vuex-map-fields';
 
 export const state = () => ({
-  namespaced: true,
   facilities: [
     {
       text: "Showers Building",

@@ -30,22 +30,25 @@
         {name: 'Denied',             href: '/admin/users/denied'}
       ]">
 
-      <nav slot="dropdown"
+      <!-- <nav slot="dropdown"
            role="navigation dropdown"
            aria-label="navigation dropdown"
            class="navigation-dropdown">
         <details>
-          <summary>hi</summary>
-          <!-- <summary>{{endpoints.obtainJWT}}</summary> -->
-          <!-- <summary>User</summary> -->
+          <summary>User</summary>
           <ul class="right">
             <li @click="logout()">
               Logout
             </li>
           </ul>
         </details>
-      </nav>
+      </nav> -->
 
+      <fn1-button slot="dropdown"
+                  v-if="isAuthenticated"
+                  @click.native="logout()">
+        Logout
+      </fn1-button>
     </fn1-header>
   </span>
 </template>
@@ -66,22 +69,15 @@ export default {
   components: {
     exampleDropdown
   },
+  created() {},
   computed: {
     ...mapFields([
       'auth',
       'authUser',
       'authUser.username',
+      'isAuthenticated',
       'endpoints'
-    ]),
-    // fullName() {
-    //   return this.$store.state.authUser.first_name
-    // }
-  },
-
-  data() {
-    return {
-      // user: this.username
-    }
+    ])
   },
   methods: {
     logout() {
@@ -94,9 +90,23 @@ export default {
       this.$router.push('/login')
     },
   },
-
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+@import '@/assets/style.scss';
+
+header {
+  /deep/ button {
+    font-size: $size-s;
+    line-height: $size-s;
+    padding: 10px 15px;
+    margin: 0 0 0 15px;
+    background-color: $text-color;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    align-self: center;
+  }
+}
 </style>
