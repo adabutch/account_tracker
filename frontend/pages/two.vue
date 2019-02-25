@@ -76,16 +76,30 @@
                      id="clockin-required"
                      disabled /> -->
 
-          <div class="field-group">
+
+
+          <!-- {{testing()}} -->
+
+          <!-- <div class="field-group">
             <label for="start-date">Start Date</label>
             <datepicker v-model="startDate"
                         :format="customFormatter"
-                        :disabledDates="startDatesDisabled"
+                        :disabledDates="startDates"
                         ref="datepicker"
-                        @focus="showDatepicker"
                         name="start-date"
                         id="start-date" />
+          </div> -->
+
+          <div class="field-group">
+            <label for="start-date">Start Date</label>
+            <flat-pickr v-model="startDate"
+                        ref="datepicker"
+                        :config="config"
+                        placeholder="Select date"
+                        name="date"></flat-pickr>
           </div>
+
+
 
           <div class="button-wrapper">
             <button @click.prevent="resetForm"
@@ -120,7 +134,10 @@ import headerComponent  from '~/components/headerComponent'
 import progressStepper  from '~/components/progressStepper'
 import asideComponent   from '~/components/asideComponent'
 import exampleSelect    from '~/components/exampleSelect'
-import Datepicker       from 'vuejs-datepicker'
+// import Datepicker       from 'vuejs-datepicker'
+
+import flatPickr from 'vue-flatpickr-component';
+import 'flatpickr/dist/flatpickr.css';
 
 export default {
   middleware: 'authenticated',
@@ -129,10 +146,42 @@ export default {
     progressStepper,
     asideComponent,
     exampleSelect,
-    Datepicker
+    flatPickr
+  },
+  mounted() {
+    this.mondays();
+
+    axios.get(`https://tomcat2.bloomington.in.gov/timetrack/DepartmentService`)
+    .then((res) => {
+      this.$store.dispatch('depts/setDepartments', res.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+
+    this.$nextTick(() => {
+      console.log(`NTICK :: ${this.department.name}`);
+      if(this.department.id) {
+        this.getGroups;
+      }
+
+      if(this.group.id) {
+        this.getJobs();
+      }
+    });
   },
   data() {
     return {
+        config: {
+          enable: [],
+          altInput: true,
+          altFormat: "F j, Y",
+          dateFormat: "Y-m-d",
+          onMonthChange: function(fp,currentYear,currentMonth){
+            console.log(currentMonth.currentMonth);
+            console.log(currentMonth.currentYear);
+          }
+        },
       stepActive: 2,
       showDivision: false,
       showJob: false,
@@ -175,40 +224,9 @@ export default {
         }
       ],
       jobsStatusOptions: [],
-      setMonth: 1,
-      setYear: 2019,
-      startDatesDisabled: {
-        // days: [0, 2, 3, 4, 5, 6, 7],
-        dates: [],
-        // customPredictor: function(date) {
-        //   if(date.getDate() % 14 == 0){
-        //     return true
-        //   }
-        // },
-      },
       groups: [],
       jobs: [],
     }
-  },
-  mounted() {
-    axios.get(`https://tomcat2.bloomington.in.gov/timetrack/DepartmentService`)
-    .then((res) => {
-      this.$store.dispatch('depts/setDepartments', res.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    })
-
-    this.$nextTick(() => {
-      console.log(`NTICK :: ${this.department.name}`);
-      if(this.department.id) {
-        this.getGroups;
-      }
-
-      if(this.group.id) {
-        this.getJobs();
-      }
-    });
   },
   watch: {
     department: function(val, oldVal) {
@@ -270,7 +288,12 @@ export default {
       let deptSelectArray = [];
 
       let depts = this.departments.map(
-        value => { return {id: value.id, name: value.name}}
+        value => {
+          return {
+            id: value.id,
+            name: value.name
+          }
+        }
       );
 
       depts.forEach(function(dept) {
@@ -317,7 +340,12 @@ export default {
       let groupSelectArray = [];
 
       let groups = this.groups.map(
-        value => { return {id: value.id, name: value.name}}
+        value => {
+          return {
+            id: value.id,
+            name: value.name
+          }
+        }
       );
 
       groups.forEach(function(group) {
@@ -358,62 +386,29 @@ export default {
     ...mapActions([
       'addToTotalSteps'
     ]),
+
     customFormatter(date) {
       return moment(date).format(this.startDateFormat);
     },
-    showDatepicker() {
-      return this.$refs.datepicker.$children[0].$emit('showCalendar');
-    },
-    getDaysInMonth(month, year) {
-      let date = new Date(year, month, 1);
-      let allDays = [];
-      let wantedDays = [];
+    mondays() {
+      let currentDate = new Date(),
+      year = currentDate.getFullYear(),
+      mondays = [];
 
-      // Get the first Monday in the month
-      while (date.getDay() != 1) {
-        date.setDate(date.getDate() + 1);
+      currentDate.setDate(1);
+
+      while (currentDate.getDay() !== 1) {
+        currentDate.setDate(currentDate.getDate() + 2);
       }
 
-      while (date.getMonth() === month) {
-        allDays.push(
-          new Date(date)
-          .toISOString().split('T')[0]
+      while (currentDate.getFullYear() === year) {
+        mondays.push(
+          new Date(currentDate.getTime()).toISOString().split('T')[0]
         );
-        date.setDate(date.getDate() + 14);
+        currentDate.setDate(currentDate.getDate() + 14);
       }
 
-      return allDays;
-    },
-    getAllDays(month, year) {
-      let date = new Date(year, month);
-      let days = [];
-
-      while (date.getMonth() === month) {
-        days.push(
-          new Date(date)
-          .toISOString().split('T')[0]
-        );
-        date.setDate(date.getDate() + 1);
-      }
-
-      return days;
-    },
-    pluckDates(array1, array2) {
-      array1 = array1.filter(val => !array2.includes(val));
-      return array1;
-    },
-    testing() {
-      let dates = this.pluckDates(this.getAllDays(this.setMonth, this.setYear), this.getDaysInMonth(this.setMonth, this.setYear));
-
-      let formatedDates = [];
-
-      dates.forEach((item, index) => {
-        formatedDates.push(
-          new Date(item)
-        );
-      });
-
-      return formatedDates;
+      return this.config.enable = mondays;;
     },
     getJobs() {
       axios.get(`https://tomcat2.bloomington.in.gov/timetrack/JobTitleService?group_id=${this.group.id}`)
