@@ -3,6 +3,7 @@ import {
   updateField }     from 'vuex-map-fields';
 
 const getDefaultState = () => ({
+  // Step One
   name:             {
     first:            "",
     middle:           "",
@@ -11,6 +12,7 @@ const getDefaultState = () => ({
     nickname:         "",
   },
 
+  // Step Two
   facility:           "",
   department:       {
     id:               "",
@@ -28,12 +30,15 @@ const getDefaultState = () => ({
   },
   startDate:          "",
 
+  // Step Three
   supervisor:         "",
   supervisorPhone:    "",
   employeePhone:      "",
 
+  // Step Four
   requestedServices:  "",
 
+  // Inactive
   division:           "",
   status:             "",
 })

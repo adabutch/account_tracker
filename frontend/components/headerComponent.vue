@@ -18,16 +18,16 @@
       }"
 
       :navItems="[
-        {name: 'Users',            href: '/admin/users'},
+        {name: 'Users',            href: '/users'},
         {name: 'Profiles',         href: '/profiles'}
       ]"
 
       :subNavItems="[
-        {name: 'All Users',          href: '/admin/users/all' },
-        {name: 'Recently Approved',  href: '/admin/users/recent'},
-        {name: 'Approved',           href: '/admin/users/full-time'},
-        {name: 'Deactivated',        href: '/admin/users/deactivated'},
-        {name: 'Denied',             href: '/admin/users/denied'}
+        {name: 'All Users',          href: '/users/all' },
+        {name: 'Recently Approved',  href: '/users/recent-approvals'},
+        {name: 'Approved',           href: '/users/full-time'},
+        {name: 'Deactivated',        href: '/users/deactivated'},
+        {name: 'Denied',             href: '/users/denied'}
       ]">
 
       <!-- <nav slot="dropdown"
