@@ -291,7 +291,7 @@ import {
   createHelpers }       from 'vuex-map-fields';
 
 import headerComponent  from '~/components/headerComponent'
-import adminUsersAside  from '~/components/admin/users/adminUsersAside'
+import adminUsersAside  from '~/components/users/adminUsersAside'
 import exampleSelect    from '~/components/exampleSelect'
 import exampleDropdown  from '~/components/exampleDropdown'
 import exampleModal     from '~/components/exampleModal'

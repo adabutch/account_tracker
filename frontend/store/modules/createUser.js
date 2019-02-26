@@ -11,6 +11,7 @@ const getDefaultState = () => ({
     suffix:           "",
     nickname:         "",
   },
+  profileImage:     "",
 
   // Step Two
   facility:           "",

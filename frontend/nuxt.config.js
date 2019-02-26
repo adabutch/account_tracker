@@ -41,7 +41,8 @@ module.exports = {
     { src: '~/plugins/filters' },
     { src: '~/plugins/localStorage', ssr: false },
     { src: '~/plugins/emptyObjTest' },
-    { src: '~/plugins/resetForm' }
+    { src: '~/plugins/resetForm' },
+    { src: '~/plugins/croppie.js', ssr: false }
   ],
 
   /*
