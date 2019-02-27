@@ -138,6 +138,9 @@ export default {
         url: this.profileImage,
       });
     }
+    if(this.profileImageCrop) {
+      this.cropped = this.profileImageCrop;
+    }
   },
   data() {
     return {
@@ -395,6 +398,7 @@ export default {
           position: absolute;
           display: block;
           background-color: $color-green;
+          filter: drop-shadow(0 1px 1px lighten($text-color, 20%));
           height: 30px;
           width: 30px;
           padding: 5px;
