@@ -45,6 +45,9 @@ class AccountRequest(models.Model):
     # store as JSON object
     dynamic_options = models.TextField(blank=True, null=True)
 
+    # in case something is denied, could add a note about why
+    comment = models.TextField(default='', blank=True, null=True)
+
     # Temp. placeholder for services associated w/ an account request
     requested_services = models.TextField(blank=True, null=True)
 
