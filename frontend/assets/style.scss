@@ -36,8 +36,16 @@ body, html {
   font-family: $font-text;
 }
 
-h1, h2, h3, h4, p {
+h1, h2, h3, h4, p, ol, ul {
   color: $text-color;
+}
+
+pre, code {
+  border-radius: $radius-default;
+  background-color: lighten($text-color, 15%);
+  color: white;
+  padding: 1px 10px;
+  font-size: $size-s;
 }
 
 .page-wrapper {
@@ -113,7 +121,8 @@ button {
   }
 }
 
-/deep/ label {
+/deep/ label,
+span.label {
   // background-color: teal;
   color: $text-color;
   font-size: 18px;

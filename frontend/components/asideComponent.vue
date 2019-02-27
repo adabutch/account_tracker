@@ -21,11 +21,14 @@
       <template v-if="stepOneData">
         <li class="step-title" v-if="stepOneData">Step One</li>
         <li v-if="stepOneData">
-          <strong>Name:</strong>
-          <span v-html="first"></span>
-          <span v-if="nickname">({{nickname}})</span>
-          <span v-html="middle"></span>
-          <span v-html="last"></span><!--
+          <strong>Name:&nbsp;</strong>
+          <div v-if="profileImageCrop" class="profile-image">
+            <img :src="profileImageCrop" alt="">
+          </div>
+          <span v-if="first">{{first}}&nbsp;</span>
+          <span v-if="nickname">({{nickname}})&nbsp;</span>
+          <span v-if="middle">{{middle}}&nbsp;</span>
+          <span v-if="last">{{last}}</span><!--
           --><span v-if="(suffix)">, {{suffix}}</span>
         </li>
       </template>
@@ -33,42 +36,42 @@
       <template v-if="stepTwoData">
         <li class="step-title" v-if="stepTwoData">Step Two</li>
         <li v-if="facility">
-          <strong>Facility: </strong>
+          <strong>Facility:&nbsp;</strong>
           <span v-html="facility"></span>
         </li>
 
         <li v-if="department.name">
-          <strong>Dept.: </strong>
+          <strong>Dept.:&nbsp;</strong>
           <span v-html="department.name"></span>
         </li>
 
         <li v-if="group.name">
-          <strong>Group: </strong>
+          <strong>Group:&nbsp;</strong>
           <span v-html="group.name"></span>
         </li>
 
         <li v-if="job.name">
-          <strong>Job: </strong>
+          <strong>Job:&nbsp;</strong>
           <span v-html="job.name"></span>
         </li>
 
         <li v-if="job.salaryGroup">
-          <strong>Salary Group: </strong>
+          <strong>Salary Group:&nbsp;</strong>
           <span v-html="job.salaryGroup"></span>
         </li>
 
         <li v-if="job.clockInRequired">
-          <strong>Clock-In Required: </strong>
+          <strong>Clock-In Required:&nbsp;</strong>
           <span v-html="job.clockInRequired"></span>
         </li>
 
         <li v-if="status">
-          <strong>Status: </strong>
+          <strong>Status:&nbsp;</strong>
           <span v-html="status"></span>
         </li>
 
         <li v-if="startDate">
-          <strong>Start Date: </strong>
+          <strong>Start Date:&nbsp;</strong>
           <span v-html="dateFormatted"></span>
         </li>
       </template>
@@ -76,17 +79,17 @@
       <template v-if="stepThreeData">
         <li class="step-title" v-if="stepThreeData">Step Three</li>
         <li v-if="supervisor">
-          <strong>Supervisor: </strong>
+          <strong>Supervisor:&nbsp;</strong>
           <span v-html="supervisor"></span>
         </li>
 
         <li v-if="supervisorPhone">
-          <strong>Supervisor Phone: </strong>
+          <strong>Supervisor Phone:&nbsp;</strong>
           <span v-html="supervisorPhone"></span>
         </li>
 
         <li v-if="employeePhone">
-          <strong>Employee Phone: </strong>
+          <strong>Employee Phone:&nbsp;</strong>
           <span v-html="employeePhone"></span>
         </li>
       </template>
@@ -94,13 +97,13 @@
       <template v-if="requestedServices">
         <li class="step-title" v-if="requestedServices">Step Four</li>
         <li v-if="requestedServices">
-          <strong>Requested Services: </strong>
+          <strong>Requested Services:&nbsp;</strong>
           <span v-html="requestedServices"></span>
         </li>
       </template>
 
       <li v-if="asideHeader">
-        <strong>Requester: </strong>
+        <strong>Requester:&nbsp;</strong>
         <span v-html="authUser.username"></span>
       </li>
     </ul>
@@ -125,7 +128,8 @@ export default {
   },
   computed: {
     stepOneData() {
-      if(this.first    ||
+      if(this.profileImageCrop ||
+         this.first    ||
          this.nickname ||
          this.middle   ||
          this.last     ||
@@ -164,6 +168,7 @@ export default {
       'startDateFormat',
       'authUser',
 
+      'createUser.profileImageCrop',
       'createUser.name.first',
       'createUser.name.middle',
       'createUser.name.last',
@@ -234,9 +239,30 @@ export default {
       padding: 0;
 
       li {
-        margin: 0 0 10px 17px;
+        display: flex;
+        align-items: center;
+        margin: 0 0 10px 6px;
         font-weight: $weight-semi-bold;
         color: lighten($text-color, 15%);
+
+        .profile-image {
+          position:relative;
+          overflow:hidden;
+          border: 1px solid lighten($text-color, 50%);
+          margin: 0 5px 0 0;
+          border-radius: 50%;
+          height: 30px;
+          width: 30px;
+
+          img {
+            position:absolute;
+            top:50%;
+            transform:translateY(-50%);
+            height: auto;
+            width: auto;
+            max-width:100%;
+          }
+        }
 
         &.divider {
           border-bottom: 1px solid lighten($text-color, 50%);

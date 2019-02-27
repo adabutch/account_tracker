@@ -67,7 +67,7 @@ export default {
 
   h3 {
     width: auto;
-    margin-right: 50px;
+    margin-right: 95px;
     font-style: italic;
     color: $text-color;
   }
