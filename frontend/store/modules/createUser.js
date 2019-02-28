@@ -44,7 +44,8 @@ const getDefaultState = () => ({
   requestedServices:  "",
 
   // Step Five
-  dynamic_options:    "",
+  extraDeptQuestions:  "",
+  extraGroupOptions:   "",
 
   // Inactive
   division:           "",

@@ -362,6 +362,24 @@ export default {
 
       /deep/ .croppie-container {
 
+        .cr-viewport  {
+          position: relative;
+
+          &:before {
+            position: absolute;
+            content: 'Original';
+            font-size: $size-xs;
+            font-weight: $weight-semi-bold;
+            text-transform: uppercase;
+            color: white;
+            background-color: rgba(0,0,0,0.4);
+            border-radius: $radius-default;
+            padding: 5px 10px;
+            bottom: 5px;
+            right: 5px;
+          }
+        }
+
         .cr-viewport,
         .cr-resizer {
           border: 1px solid lighten($text-color, 50%);
