@@ -128,7 +128,7 @@ export default {
       .replace(/(\d{1,3})(\d{1,3})(\d{1,4})/g, '$1-$2-$3');
     },
     getGroupManagers() {
-      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupManagerService?group_id=${this.group.id}`)
+      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/ManagerService?group_id=${this.group.id}`)
       .then((res) => {
         this.managers = res.data;
       })

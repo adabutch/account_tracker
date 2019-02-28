@@ -28,10 +28,10 @@ const state = () => ({
     // TODO: Remove hardcoding of dev endpoints
     obtainJWT:      'auth/obtain_token/',
     refreshJWT:     'auth/refresh_token/',
-    baseUrl:        'http://127.0.0.1:8000/api/'
+    baseUrl:        'http://127.0.0.1:8000/api/',
+    profile:        'profile/',
   },
   accountRequests:  [],
-  totalSteps:       4,
   startDateFormat:  "MMMM Do, YYYY"
 })
 
@@ -39,9 +39,6 @@ const mutations = {
   updateField,
   SET_AUTH(state, auth) {
     state.auth = auth
-  },
-  ADD_TO_TOTAL_STEPS(state, payload) {
-    state.totalSteps = payload;
   },
   ACCOUNT_REQUESTS(state, payload) {
     state.accountRequests = payload
@@ -63,9 +60,6 @@ const mutations = {
 const actions = {
   accountRequests(context, payload) {
     context.commit('ACCOUNT_REQUESTS', payload)
-  },
-  addToTotalSteps(context, payload) {
-    context.commit("ADD_TO_TOTAL_STEPS", payload)
   },
   nuxtServerInit({ commit }, { req }) {
     let auth = null

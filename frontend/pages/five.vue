@@ -9,39 +9,25 @@
         <asideComponent />
 
         <form>
-          <h1><strong>Step Five:</strong> Extra information</h1>
+          <h1><strong>Step Five:&nbsp;</strong>Extra information</h1>
 
-          <div class="form-group">
-            <fieldset>
-              <legend>Choose a computer</legend>
-              <div v-for="(item, index) in computerTypes">
-                <input v-model="userComputer"
-                       :key="index"
-                       :id="item.value"
-                       :value="item.value"
-                       type="radio"
-                       name="software">
+          {{extraDeptQuestions.questions}}
 
-                <label v-if="item.text"
-                       :for="item.value"
-                       v-html="item.text"></label>
-              </div>
-            </fieldset>
+          <div class="button-wrapper">
+            <button @click.prevent="resetForm"
+                    class="reset-form">reset</button>
+
+            <nuxt-link class="button previous"
+                       :to="{ name: 'four'}">Previous</nuxt-link>
+
+            <nuxt-link v-if="stepActive < totalSteps"
+                       class="button"
+                       :to="{ name: 'six'}">Next</nuxt-link>
+
+            <nuxt-link v-if="stepActive == totalSteps"
+                       class="button"
+                       :to="{ name: 'finish'}">Finish</nuxt-link>
           </div>
-
-          <button @click.prevent="resetForm"
-                  class="reset-form">reset</button>
-
-          <nuxt-link class="button previous"
-                     :to="{ name: 'four'}">Previous</nuxt-link>
-
-          <nuxt-link v-if="stepActive < totalSteps"
-                     class="button"
-                     :to="{ name: 'six'}">Next</nuxt-link>
-
-          <nuxt-link v-if="stepActive == totalSteps"
-                     class="button"
-                     :to="{ name: 'finish'}">Finish</nuxt-link>
         </form>
       </div>
     </div>
@@ -68,12 +54,6 @@ export default {
   data() {
     return {
       stepActive: 5,
-      computerTypes: [
-        { text: 'Apple iMac',          value: 'Apple iMac' },
-        { text: 'Apple Macbook Pro',     value: 'Apple Macbook Pro' },
-        { text: 'Windows Laptop',            value: 'Windows Laptop' },
-        { text: 'Windows Desktop',        value: 'Windows Desktop' }
-      ],
     }
   },
   mounted() {
@@ -85,7 +65,8 @@ export default {
     },
     ...mapFields([
       'totalSteps',
-      'createUser.userComputer'
+      'createUser.extraDeptQuestions',
+      'createUser.extraGroupOptions'
     ]),
   }
 }

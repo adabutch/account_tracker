@@ -23,7 +23,7 @@ export default {
   props: ['stepActive','stepComplete'],
   computed: {
     ...mapGetters([
-      'totalSteps'
+      'createUser.totalSteps',
     ]),
   }
 }

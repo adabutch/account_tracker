@@ -42,10 +42,11 @@ h1, h2, h3, h4, p, ol, ul {
 
 pre, code {
   border-radius: $radius-default;
-  background-color: lighten($text-color, 15%);
+  background-color: $color-blue;
   color: white;
   padding: 1px 10px;
   font-size: $size-s;
+  font-weight: $weight-semi-bold;
 }
 
 .page-wrapper {

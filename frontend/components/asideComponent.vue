@@ -163,11 +163,10 @@ export default {
       return formatted;
     },
     ...mapFields([
-      'data',
-      'totalSteps',
       'startDateFormat',
       'authUser',
 
+      'createUser.totalSteps',
       'createUser.profileImageCrop',
       'createUser.name.first',
       'createUser.name.middle',

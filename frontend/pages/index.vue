@@ -12,8 +12,8 @@
 
           <div class="wrapper">
             <div class="image-upload-wrapper">
+              <span class="label">Profile Image</span>
               <div class="croppie-wrapper">
-                <span class="label">Profile Image</span>
                 <vue-croppie
                   ref="croppieRef"
                   :enableResize="false"
@@ -390,7 +390,7 @@ export default {
         border: 1px solid lighten($text-color, 50%);
         width: 150px;
         height: 200px;
-        margin: 29px 0 0 0;
+        margin: 0;
       }
 
       svg {
@@ -403,13 +403,11 @@ export default {
           width: 30px;
           padding: 5px;
           border-radius: 50%;
-          top: 18px;
+          top: -10px;
           right: -10px;
         }
       }
     }
-
-
 
     input {
       &[type=file] {
@@ -419,7 +417,7 @@ export default {
 
     .button-group {
       border-bottom: 1px solid lighten($text-color, 50%);
-      margin: 50px 0 20px 0;
+      margin: 15px 0 20px 0;
       padding: 0 0 20px 0;
 
       button {

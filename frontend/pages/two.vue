@@ -172,16 +172,16 @@ export default {
   },
   data() {
     return {
-        config: {
-          enable: [],
-          altInput: true,
-          altFormat: "F j, Y",
-          dateFormat: "Y-m-d",
-          onMonthChange: function(fp,currentYear,currentMonth){
-            console.log(currentMonth.currentMonth);
-            console.log(currentMonth.currentYear);
-          }
-        },
+      config: {
+        enable: [],
+        altInput: true,
+        altFormat: "F j, Y",
+        dateFormat: "Y-m-d",
+        onMonthChange: function(fp,currentYear,currentMonth){
+          console.log(currentMonth.currentMonth);
+          console.log(currentMonth.currentYear);
+        }
+      },
       stepActive: 2,
       showDivision: false,
       showJob: false,
@@ -241,6 +241,7 @@ export default {
         }
 
         this.getGroups;
+        this.getExtraDeptQuestions;
       }
     },
     group: function(val, oldVal) {
@@ -272,6 +273,7 @@ export default {
   },
   computed: {
     ...mapFields([
+      'endpoints',
       'startDateFormat',
       'depts.departments',
       'facilities.facilities',
@@ -283,6 +285,8 @@ export default {
       'createUser.job',
       'createUser.status',
       'createUser.startDate',
+
+      'createUser.extraDeptQuestions',
     ]),
     getDepts() {
       let deptSelectArray = [];
@@ -380,11 +384,35 @@ export default {
       });
 
       return jobSelectArray;
+    },
+    getExtraDeptQuestions() {
+      this.$axios.get(`${this.endpoints.baseUrl}${this.endpoints.profile}?department_id=${this.department.id}`)
+      .then((response) => {
+        let questionsData = response.data.results;
+        if(questionsData.length) {
+          console.log('We have EXTRAS!!',response.data.results)
+
+          questionsData.forEach(m =>
+            console.log(m.questions)
+          );
+
+          this.extraDeptQuestions = response.data.results[0];
+          this.$store.dispatch('createUser/addToTotalSteps', 5);
+          // this.addToTotalSteps(5);
+        } else {
+          console.log('No EXTRAS!!');
+          // this.addToTotalSteps(4);
+          this.$store.dispatch('createUser/addToTotalSteps', 4);
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
     }
   },
   methods: {
     ...mapActions([
-      'addToTotalSteps'
+      'createUser/addToTotalSteps'
     ]),
     customFormatter(date) {
       return moment(date).format(this.startDateFormat);

@@ -3,6 +3,9 @@ import {
   updateField }     from 'vuex-map-fields';
 
 const getDefaultState = () => ({
+  // Progress Stepper
+  totalSteps:       4,
+
   // Step One
   name:             {
     first:            "",
@@ -40,6 +43,9 @@ const getDefaultState = () => ({
   // Step Four
   requestedServices:  "",
 
+  // Step Five
+  dynamic_options:    "",
+
   // Inactive
   division:           "",
   status:             "",
@@ -67,6 +73,9 @@ const mutations = {
   RESET_REQUESTED_SERVICES(state) {
     state.requestedServices = ""
   },
+  ADD_TO_TOTAL_STEPS(state, payload) {
+    state.totalSteps = payload;
+  },
 }
 
 const actions = {
@@ -87,6 +96,9 @@ const actions = {
   },
   resetRequestedServices({ commit }) {
     commit('RESET_REQUESTED_SERVICES')
+  },
+  addToTotalSteps(context, payload) {
+    context.commit("ADD_TO_TOTAL_STEPS", payload)
   },
 }
 
