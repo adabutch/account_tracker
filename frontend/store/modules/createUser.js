@@ -41,7 +41,10 @@ const getDefaultState = () => ({
   employeePhone:      "",
 
   // Step Four
-  requestedServices:  "",
+  requestedServices: {
+    id:               "",
+    name:             "",
+  },
 
   // Step Five
   extraDeptQuestions:  "",

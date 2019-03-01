@@ -15,22 +15,27 @@
             <p>No <strong>Service Profiles</strong> associated with this Account Type.</p>
           </template>
 
+          <br>getServiceIDs<br>{{getServiceIDs}}<br><br><br>
+          <br>requestedServices<br>{{requestedServices}}<br><br><br>
+          <br>DEPT<br>{{deptServices}}<br><br><br>
+          <br>GROUP <br>{{groupServices}}<br><br><br>
+
           <div class="wrapper">
             <div class="form-group"
                  v-if="deptServiceProfile != undefined">
               <fieldset>
                 <legend>Department Services</legend>
-                <div v-for="(item, index) in deptServiceProfile.services">
+                <div v-for="(item, index) in deptServiceProfile">
                   <input v-model="deptServices"
                          :key="index"
-                         :id="item"
-                         :value="item"
+                         :id="item.id"
+                         :value="{id: item.id, name: item.name}"
                          type="checkbox"
                          name="software">
 
                   <label v-if="item"
-                         :for="item"
-                         v-html="item"></label>
+                         :for="item.id"
+                         v-html="item.name"></label>
                 </div>
               </fieldset>
             </div>
@@ -39,17 +44,17 @@
                  v-if="groupServiceProfile != undefined">
               <fieldset>
                 <legend>Group Services</legend>
-                <div v-for="(item, index) in groupServiceProfile.services">
+                <div v-for="(item, index) in groupServiceProfile">
                   <input v-model="groupServices"
                          :key="index"
-                         :id="item"
-                         :value="item"
+                         :id="item.id"
+                         :value="{id: item.id, name: item.name}"
                          type="checkbox"
                          name="software">
 
                   <label v-if="item"
-                         :for="item"
-                         v-html="item"></label>
+                         :for="item.id"
+                         v-html="item.name"></label>
                 </div>
               </fieldset>
             </div>
@@ -126,8 +131,16 @@ export default {
       'createUser.group'
     ]),
     userServices() {
-      this.requestedServices = [...this.deptServices, ...this.groupServices]
-      .join(', ');
+      this.requestedServices = [...this.deptServices, ...this.groupServices];
+    },
+    getServiceIDs() {
+      // this.requestedServices.forEach(function(item) {
+      //   Object.keys(item).forEach(function(key) {
+      //     console.log("key:" + key + "value:" + item[key]);
+      //   });
+      // });
+      // var objectKeys = Object.entries(this.requestedServices);
+      // return objectKeys
     }
   },
   methods: {
@@ -135,7 +148,8 @@ export default {
       if(this.department.id) {
         this.$axios.get(`${this.endpoints.baseUrl}profile/?department_id=${this.department.id}`)
         .then((res) => {
-          this.deptServiceProfile = res.data.results[0];
+          console.log(`DEPT SERVICES :::: `,res.data.results[0].services);
+          this.deptServiceProfile = res.data.results[0].services;
         })
         .catch((error) => {
           console.log(error);
@@ -145,7 +159,7 @@ export default {
       if(this.group.id) {
         this.$axios.get(`${this.endpoints.baseUrl}profile/?department_id=${this.department.id}&group_id=${this.group.id}`)
         .then((res) => {
-          this.groupServiceProfile = res.data.results[0];
+          this.groupServiceProfile = res.data.results[0].services;
         })
         .catch((error) => {
           console.log(error);

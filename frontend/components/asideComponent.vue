@@ -98,7 +98,7 @@
         <li class="step-title" v-if="requestedServices">Step Four</li>
         <li v-if="requestedServices">
           <strong>Requested Services:&nbsp;</strong>
-          <span v-html="requestedServices"></span>
+          <span v-html="requestedServices.name"></span>
         </li>
       </template>
 
