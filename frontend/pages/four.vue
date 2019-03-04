@@ -15,10 +15,11 @@
             <p>No <strong>Service Profiles</strong> associated with this Account Type.</p>
           </template>
 
-          <br>getServiceIDs<br>{{getServiceIDs}}<br><br><br>
-          <br>requestedServices<br>{{requestedServices}}<br><br><br>
-          <br>DEPT<br>{{deptServices}}<br><br><br>
-          <br>GROUP <br>{{groupServices}}<br><br><br>
+          <!-- <br>selectedServiceIDs<br>{{selectedServiceIDs}}<br><br><br> -->
+          <!-- <br>selectedServiceNames<br>{{selectedServiceNames}}<br><br><br> -->
+          <!-- <br>requestedServices<br>{{requestedServices}}<br><br><br> -->
+          <!-- <br>deptServices <br>{{deptServices}}<br><br><br> -->
+          <!-- <br>groupServices <br>{{groupServices}}<br><br><br> -->
 
           <div class="wrapper">
             <div class="form-group"
@@ -26,7 +27,7 @@
               <fieldset>
                 <legend>Department Services</legend>
                 <div v-for="(item, index) in deptServiceProfile">
-                  <input v-model="deptServices"
+                  <input v-model="selectedDeptServices"
                          :key="index"
                          :id="item.id"
                          :value="{id: item.id, name: item.name}"
@@ -45,7 +46,7 @@
               <fieldset>
                 <legend>Group Services</legend>
                 <div v-for="(item, index) in groupServiceProfile">
-                  <input v-model="groupServices"
+                  <input v-model="selectedGroupServices"
                          :key="index"
                          :id="item.id"
                          :value="{id: item.id, name: item.name}"
@@ -105,8 +106,6 @@ export default {
   data() {
     return {
       stepActive: 4,
-      deptServices: [],
-      groupServices: [],
       deptServiceProfile: {},
       groupServiceProfile: {},
     }
@@ -115,32 +114,53 @@ export default {
     this.getServiceProfiles();
   },
   watch: {
-    deptServices: function(val) {
+    selectedDeptServices: function(val) {
       this.userServices;
+      this.selectedServiceIDs;
+      this.selectedServiceNames;
     },
-    groupServices: function(val) {
+    selectedGroupServices: function(val) {
       this.userServices;
+      this.selectedServiceIDs;
+      this.selectedServiceNames;
     }
   },
   computed: {
     ...mapFields([
-      'totalSteps',
       'endpoints',
+      'createUser.totalSteps',
       'createUser.requestedServices',
+      'createUser.selectedDeptServices',
+      'createUser.selectedGroupServices',
+      'createUser.selectedServiceRequestIds',
+      'createUser.selectedServiceRequestNames',
       'createUser.department',
       'createUser.group'
     ]),
     userServices() {
-      this.requestedServices = [...this.deptServices, ...this.groupServices];
+      return this.requestedServices = [...this.selectedDeptServices, ...this.selectedGroupServices];
     },
-    getServiceIDs() {
-      // this.requestedServices.forEach(function(item) {
-      //   Object.keys(item).forEach(function(key) {
-      //     console.log("key:" + key + "value:" + item[key]);
-      //   });
-      // });
-      // var objectKeys = Object.entries(this.requestedServices);
-      // return objectKeys
+    selectedServiceIDs() {
+      let selectedServiceIDsArray = [];
+
+      this.requestedServices.forEach(function (service) {
+        selectedServiceIDsArray.push(service.id);
+      });
+
+      let selectedServiceIDsString = selectedServiceIDsArray.join(', ');
+
+      return this.selectedServiceRequestIds = selectedServiceIDsString;
+    },
+    selectedServiceNames() {
+      let selectedServiceNamesArray = [];
+
+      this.requestedServices.forEach(function (service) {
+        selectedServiceNamesArray.push(service.name);
+      });
+
+      let selectedServiceNamesString = selectedServiceNamesArray.join(', ');
+
+      return this.selectedServiceRequestNames = selectedServiceNamesString;
     }
   },
   methods: {

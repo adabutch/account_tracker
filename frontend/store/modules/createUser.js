@@ -45,6 +45,10 @@ const getDefaultState = () => ({
     id:               "",
     name:             "",
   },
+  selectedDeptServices:        [],
+  selectedGroupServices:       [],
+  selectedServiceRequestIds:   "",
+  selectedServiceRequestNames: "",
 
   // Step Five
   extraDeptQuestions:  "",

@@ -34,7 +34,9 @@ function listen() {
 
   console.log(`City of Bloomington\n`
             + `/ * * * * * * * * * * * * * * * /\n`
-            + `uReport Vuejs client\n`
+            + `Account Track\n`
             + `/ * * * * * * * * * * * * * * * /\n`
-            + `https://localhost:${port}`);
+            + `https://localhost:${port}`
+            + `/ * * * * * * * * * * * * * * * /\n`
+            + `https://dhcp-cityhall-xxx-xxx.bloomington.in.gov:${port}`);
 }

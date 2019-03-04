@@ -10,17 +10,10 @@
 
     <p v-if="!stepOneData">Details of the <strong>User Creation Wizard</strong> will appear here as they become available.</p>
 
-
-    <!-- Save button for later, when we have
-         batch creation in place. -->
-    <!-- <div class="wrapper" v-if="!first">
-      <fn1-button>Batch user creation</fn1-button>
-    </div> -->
-
     <ul>
       <template v-if="stepOneData">
         <li class="step-title" v-if="stepOneData">Step One</li>
-        <li v-if="stepOneData">
+        <li v-if="stepOneData" class="name">
           <strong>Name:&nbsp;</strong>
           <div v-if="profileImageCrop" class="profile-image">
             <img :src="profileImageCrop" alt="">
@@ -65,10 +58,10 @@
           <span v-html="job.clockInRequired"></span>
         </li>
 
-        <li v-if="status">
+        <!-- <li v-if="status">
           <strong>Status:&nbsp;</strong>
           <span v-html="status"></span>
-        </li>
+        </li> -->
 
         <li v-if="startDate">
           <strong>Start Date:&nbsp;</strong>
@@ -94,11 +87,11 @@
         </li>
       </template>
 
-      <template v-if="requestedServices">
-        <li class="step-title" v-if="requestedServices">Step Four</li>
-        <li v-if="requestedServices">
-          <strong>Requested Services:&nbsp;</strong>
-          <span v-html="requestedServices.name"></span>
+      <template v-if="selectedServiceRequestNames">
+         <li class="step-title" v-if="selectedServiceRequestNames">Step Four</li>
+        <li v-if="selectedServiceRequestNames">
+          <strong>Services:&nbsp;</strong>
+          <span v-html="selectedServiceRequestNames"></span>
         </li>
       </template>
 
@@ -162,6 +155,9 @@ export default {
                       .format(this.startDateFormat);
       return formatted;
     },
+    serviceNamesArrayToString() {
+      return this.requestedServicesNames.join(', ')
+    },
     ...mapFields([
       'startDateFormat',
       'authUser',
@@ -185,7 +181,7 @@ export default {
       'createUser.supervisorPhone',
       'createUser.employeePhone',
 
-      'createUser.requestedServices'
+      'createUser.selectedServiceRequestNames',
     ])
   },
   methods: {
@@ -239,27 +235,31 @@ export default {
 
       li {
         display: flex;
-        align-items: center;
+
         margin: 0 0 10px 6px;
         font-weight: $weight-semi-bold;
         color: lighten($text-color, 15%);
 
-        .profile-image {
-          position:relative;
-          overflow:hidden;
-          border: 1px solid lighten($text-color, 50%);
-          margin: 0 5px 0 0;
-          border-radius: 50%;
-          height: 30px;
-          width: 30px;
+        &.name {
+          align-items: center;
 
-          img {
-            position:absolute;
-            top:50%;
-            transform:translateY(-50%);
-            height: auto;
-            width: auto;
-            max-width:100%;
+          .profile-image {
+            position:relative;
+            overflow:hidden;
+            border: 1px solid lighten($text-color, 50%);
+            margin: 0 5px 0 0;
+            border-radius: 50%;
+            height: 30px;
+            width: 30px;
+
+            img {
+              position:absolute;
+              top:50%;
+              transform:translateY(-50%);
+              height: auto;
+              width: auto;
+              max-width:100%;
+            }
           }
         }
 
