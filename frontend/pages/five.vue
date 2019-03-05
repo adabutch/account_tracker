@@ -11,7 +11,75 @@
         <form>
           <h1><strong>Step Five:&nbsp;</strong>Extra information</h1>
 
-          {{extraDeptQuestions.questions}}
+
+          <h4>Dept.</h4>
+
+          {{extraQuestionAnswers}}<br><br>
+
+          Joined Answers<br>
+          {{joinedAnswers}}<br><br>
+
+          Texts<br>
+          {{exQsTexts}}<br><br>
+
+          Selects<br>
+          {{exQsSelects}}<br><br>
+
+          TextAreas<br>
+          {{exQsTextareas}}<br><br>
+
+          Numbers<br>
+          {{exQsNumbers}}<br><br>
+
+          <template v-for="(question, index) in exDeptQuestions">
+            <template v-if="question.type == 'select'">
+              <h1>Select Types</h1>
+              <div class="field-group">
+                <label :for="question">{{question.text}}</label>
+                <select v-model="exQsSelects[question.text]"
+                        :name="question"
+                        :id="question"
+                        type="select">
+                  <option>---</option>
+                  <option v-for="(value, index) in question.value"
+                          :value="value">
+                    {{ value }}
+                  </option>
+                </select>
+              </div>
+            </template>
+
+            <template v-if="question.type == 'text'">
+              <h1>Text Types</h1>
+              <fn1-input v-model="exQsTexts[question.text]"
+                         :label="question.text"
+                         :placeholder="question.text"
+                         :name="question.text"
+                         :id="question.text" />
+            </template>
+
+            <template v-if="question.type == 'number'">
+              <h1>Number Types</h1>
+              <fn1-input type="number"
+                         v-model="exQsNumbers[question.text]"
+                         :label="question.text"
+                         :placeholder="question.text"
+                         :name="question.text"
+                         :id="question.text" />
+            </template>
+
+            <template v-if="question.type == 'textarea'">
+              <h1>Textarea Types</h1>
+              <div class="field-group">
+                <label :for="question.text">{{question.text}}</label>
+                <textarea type="textarea"
+                          v-model="exQsTextareas[question.text]"
+                          :id="question.text"
+                          :name="question.text"
+                          :placeholder="question.text"></textarea>
+              </div>
+            </template>
+          </template>
 
           <div class="button-wrapper">
             <button @click.prevent="resetForm"
@@ -38,34 +106,45 @@
 import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
 import { mapFields } from 'vuex-map-fields';
 
-import headerComponent from '~/components/headerComponent.vue'
-import progressStepper from '~/components/progressStepper.vue'
-import asideComponent   from '~/components/asideComponent.vue'
-import exampleCheckbox from '~/components/exampleCheckbox.vue'
+import headerComponent from '~/components/headerComponent'
+import progressStepper from '~/components/progressStepper'
+import asideComponent   from '~/components/asideComponent'
 
 export default {
   middleware: 'authenticated',
+  // props: ['question'],
   components: {
     headerComponent,
     progressStepper,
-    asideComponent,
-    exampleCheckbox
+    asideComponent
   },
   data() {
     return {
       stepActive: 5,
+
+      exQsSelects:    {},
+      exQsTexts:      {},
+      exQsTextareas:  {},
+      exQsNumbers:    {},
+      exQsCheckboxes: {},
+      exQsRadios:     {},
+
+      extraQuestionAnswers: []
     }
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {},
   computed: {
-    selectedSoftwareNames() {
-      console.log(this.stepActive)
+    exDeptQuestions() {
+      return JSON.parse(this.extraDeptQuestions.questions);
+    },
+    joinedAnswers() {
+      return this.exQsTexts
     },
     ...mapFields([
-      'totalSteps',
+      'createUser.totalSteps',
       'createUser.extraDeptQuestions',
+      'createUser.extraDeptQuestionAnswers',
       'createUser.extraGroupOptions'
     ]),
   }

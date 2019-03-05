@@ -52,6 +52,8 @@ const getDefaultState = () => ({
 
   // Step Five
   extraDeptQuestions:  "",
+  extraDeptQuestionAnswers: [],
+
   extraGroupOptions:   "",
 
   // Inactive
