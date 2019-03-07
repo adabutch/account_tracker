@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'change_request',
     'termination_request',
     'action',
+    'account_image',
 ]
 
 MIDDLEWARE = [
@@ -143,7 +144,7 @@ REST_FRAMEWORK = {
 
         # Details available:
         # https://www.django-rest-framework.org/api-guide/permissions/
-        'rest_framework.permissions.IsAuthenticated',
+        #'rest_framework.permissions.IsAuthenticated',
     ),
     'TEST_REQUEST_RENDERER_CLASSES': (
         'rest_framework.renderers.MultiPartRenderer',
@@ -201,6 +202,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'

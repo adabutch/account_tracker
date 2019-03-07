@@ -40,6 +40,9 @@ class AccountRequest(models.Model):
     employee_status = models.CharField(max_length=50)
     start_date = models.DateField()
 
+    # optional, only necessary if known (e.g. seasonal)
+    end_date = models.DateField(blank=True, null=True)
+
     # used for storing any other fields
     # that are only applicable to a subset of employees
     # store as JSON object
