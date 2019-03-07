@@ -23,8 +23,7 @@
       ]"
 
       :subNavItems="[
-        {name: 'All Users',          href: '/users/all' },
-        {name: 'Denied',             href: '/users/denied'}
+        {name: 'Denied Users',             href: '/users/denied'}
       ]">
 
       <!-- <nav slot="dropdown"
