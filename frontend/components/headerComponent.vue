@@ -24,9 +24,6 @@
 
       :subNavItems="[
         {name: 'All Users',          href: '/users/all' },
-        {name: 'Recently Approved',  href: '/users/recent-approvals'},
-        {name: 'Approved',           href: '/users/full-time'},
-        {name: 'Deactivated',        href: '/users/deactivated'},
         {name: 'Denied',             href: '/users/denied'}
       ]">
 

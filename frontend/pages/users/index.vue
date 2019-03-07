@@ -17,7 +17,7 @@
 
             <template v-if="batchApprovalCount > 1">
               <fn1-modal title="Ready Request Batch Confirmation"
-                         :launchButtonText="launchButtonText">
+                         launchButtonText="Batch Approve">
                 <p slot="body">Approve all <strong>({{ batchApprovalCount }})</strong> requests?</p>
                 <fn1-button slot="footerBtnConfirm">I Understand</fn1-button>
               </fn1-modal>
@@ -33,7 +33,7 @@
             <thead>
               <tr>
                 <th scope="col">
-                  <input v-model="batchRequestApproval"
+                  <input v-model="batchReadyRequestApproval"
                          id="select-all-requests"
                          value="select-all-requests"
                          type="checkbox"
@@ -92,6 +92,14 @@
         <fn1-tab name="Pending">
           <div class="title-row">
             <h4>User account requests <strong>pending</strong> creation.</h4>
+
+            <template v-if="batchApprovalCount > 1">
+              <fn1-modal title="Ready Request Batch Confirmation"
+                         launchButtonText="Batch Approve">
+                <p slot="body">Approve all <strong>({{ batchApprovalCount }})</strong> requests?</p>
+                <fn1-button slot="footerBtnConfirm">I Understand</fn1-button>
+              </fn1-modal>
+            </template>
           </div>
 
           <template v-if="!pendingAccounts.length">
@@ -103,7 +111,7 @@
             <thead>
               <tr>
                 <th scope="col">
-                  <input v-model="batchRequestApproval"
+                  <input v-model="batchPendingRequestApproval"
                          id="select-all-requests"
                          value="select-all-requests"
                          type="checkbox"
@@ -330,10 +338,8 @@ export default {
       showingUserDetails: false,
       selectFilter: '',
       searchUsers:  '',
-      // batchRequestApproval: [],
       batchRequestIDs: [],
       selected: [],
-      launchButtonText: "Batch Approve",
     }
   },
   mounted() {
@@ -349,10 +355,22 @@ export default {
       return JSON.parse(extras);
     },
     getAccountRequests() {
-      this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000`)
+      this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000&request_status=pending`)
       .then((res) => {
         console.log(res.data.results)
-        this.$store.dispatch('accountRequests', res.data.results)
+        this.$store.dispatch('accountRequestsPending', res.data.results)
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+
+      this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000&request_status=ready`)
+      .then((res) => {
+        console.log(res.data.results)
+        this.$store.dispatch('accountRequestsReady', res.data.results)
+      })
+      .catch((e) => {
+        console.log(e);
       })
     },
     batchRequestButtonAction(e) {
@@ -431,7 +449,10 @@ export default {
   },
   computed: {
     ...mapFields([
-      'accountRequests',
+      'accountRequests.pending',
+      'accountRequests.ready',
+      'accountRequests.approved',
+      'accountRequests.denied',
       'endpoints',
       'authUser'
     ]),
@@ -441,26 +462,38 @@ export default {
     batchApprovalCount() {
       return this.selected.length;
     },
-    batchRequestApproval: {
+    batchPendingRequestApproval: {
       get: function () {
-        return this.accountRequests ? this.selected.length == this.accountRequests.length : false;
+        return this.pending ? this.selected.length == this.pending.length : false;
       },
       set: function (value) {
         var selected = [];
 
         if (value) {
-          this.accountRequests.forEach(function (item) {
+          this.pending.forEach(function (item) {
             selected.push(item.id);
           });
         }
         this.selected = selected;
       }
     },
-    fullNames() {
-      return this.accountRequests;
+    batchReadyRequestApproval: {
+      get: function () {
+        return this.ready ? this.selected.length == this.ready.length : false;
+      },
+      set: function (value) {
+        var selected = [];
+
+        if (value) {
+          this.ready.forEach(function (item) {
+            selected.push(item.id);
+          });
+        }
+        this.selected = selected;
+      }
     },
     readyAccounts() {
-      return this.accountRequests
+      return this.ready
       .filter(user => {
         let firstName  = user.first_name.toLowerCase();
         let middleName = user.middle_name.toLowerCase();
@@ -474,14 +507,14 @@ export default {
                userDept.includes(this.searchUsers.toLowerCase()) ||
                userGroup.includes(this.searchUsers.toLowerCase())
       })
-      .filter(status => {
-        let requestType = status.request_status.toLowerCase();
-        return requestType === "ready"
-      })
+      // .filter(status => {
+      //   let requestType = status.request_status.toLowerCase();
+      //   return requestType === "ready"
+      // })
       .sort((a, b) => new Date(b.requested) - new Date(a.requested))
     },
     pendingAccounts() {
-      return this.accountRequests
+      return this.pending
       .filter(user => {
         let firstName  = user.first_name.toLowerCase();
         let middleName = user.middle_name.toLowerCase();
@@ -495,10 +528,10 @@ export default {
                userDept.includes(this.searchUsers.toLowerCase()) ||
                userGroup.includes(this.searchUsers.toLowerCase())
       })
-      .filter(status => {
-        let requestType = status.request_status.toLowerCase();
-        return requestType === "pending"
-      })
+      // .filter(status => {
+      //   let requestType = status.request_status.toLowerCase();
+      //   return requestType === "pending"
+      // })
       .sort((a, b) => new Date(b.requested) - new Date(a.requested))
     }
   }

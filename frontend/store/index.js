@@ -31,7 +31,12 @@ const state = () => ({
     baseUrl:        'http://127.0.0.1:8000/api/',
     profile:        'profile/',
   },
-  accountRequests:  [],
+  accountRequests:  {
+    pending: [],
+    ready: [],
+    approved: [],
+    denied: []
+  },
   startDateFormat:  "MMMM Do, YYYY"
 })
 
@@ -40,8 +45,14 @@ const mutations = {
   SET_AUTH(state, auth) {
     state.auth = auth
   },
-  ACCOUNT_REQUESTS(state, payload) {
-    state.accountRequests = payload
+  ACCOUNT_REQUESTS_PENDING(state, payload) {
+    state.accountRequests.pending = payload
+  },
+  ACCOUNT_REQUESTS_READY(state, payload) {
+    state.accountRequests.ready = payload
+  },
+  ACCOUNT_REQUESTS_DENIED(state, payload) {
+    state.accountRequests.denied = payload
   },
   SET_AUTH_USER(state, payload) {
     state.authUser = payload
@@ -58,8 +69,14 @@ const mutations = {
 }
 
 const actions = {
-  accountRequests(context, payload) {
-    context.commit('ACCOUNT_REQUESTS', payload)
+  accountRequestsPending(context, payload) {
+    context.commit('ACCOUNT_REQUESTS_PENDING', payload)
+  },
+  accountRequestsReady(context, payload) {
+    context.commit('ACCOUNT_REQUESTS_READY', payload)
+  },
+  accountRequestsDenied(context, payload) {
+    context.commit('ACCOUNT_REQUESTS_DENIED', payload)
   },
   nuxtServerInit({ commit }, { req }) {
     let auth = null
