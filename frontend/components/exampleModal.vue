@@ -47,6 +47,10 @@ export default {
         return value.match(/(div)/)
       },
     },
+    // showModal: {
+    //   type: Boolean,
+    //   default: false,
+    // },
     title: {
       type: String,
       default: null,
@@ -67,13 +71,6 @@ export default {
     },
     displayModal() {
       this.showModal = true
-    },
-    cancelModal() {
-      alert('clicked cancel')
-      // this.showModal = false
-    },
-    confirmModal() {
-      // this.showModal = false
     },
   },
 }
@@ -160,6 +157,7 @@ body.showing-modal {
       overflow: auto;
 
       .field-group {
+        width: 100%;
         margin: 10px 0 0 0;
 
         label {

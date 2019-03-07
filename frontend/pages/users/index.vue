@@ -176,9 +176,8 @@
           Approve Request
         </fn1-button>
 
-        <exampleModal title="Deny Account Request Confirmation"
-                      :launchButtonText="denyModalButtonText"
-                      :showModal="showModal">
+        <exampleModal ref="modal" title="Deny Account Request Confirmation"
+                      :launchButtonText="denyModalButtonText">
           <p slot="body"><strong>Deny this Account Request?</strong></p>
           <ul slot="body">
             <li>
@@ -191,19 +190,23 @@
             </li>
           </ul>
 
-          <fn1-textarea slot="body"
-                        label="Leave a comment or reason."
-                        placeholder="Text here ..."
-                        id="denial-comment" />
+          <div class="field-group" slot="body">
+            <label>Leave a comment or reason.</label>
+            <textarea type="textarea"
+                      v-model="denyRequestReason"
+                      id="denial-comment"
+                      placeholder="Text here ..."></textarea>
+          </div>
 
           <fn1-button slot="footer"
-                      @click.native="confirmModal">Confirm
+                      @click.native="confirmModal(showDetailsFor)">Confirm
           </fn1-button>
 
           <fn1-button slot="footer"
                       @click.native="cancelModal">Cancel
           </fn1-button>
         </exampleModal>
+
       </fn1-button-group>
       <ul>
         <li v-if="showDetailsFor.request_status">
@@ -320,7 +323,9 @@ export default {
   },
   data() {
     return {
+      denyRequestReason: "",
       denyModalButtonText: "Deny Request",
+      showModal: false,
       showDetailsFor: null,
       showingUserDetails: false,
       selectFilter: '',
@@ -334,7 +339,11 @@ export default {
   mounted() {
     this.getAccountRequests();
   },
-  watch: {},
+  watch: {
+    // showModal(val) {
+    //   this.$emit('modalChange', this.showModal);
+    // }
+  },
   methods: {
     parseExtras(extras){
       return JSON.parse(extras);
@@ -350,13 +359,30 @@ export default {
       alert('we got here');
     },
     cancelModal() {
-      alert('clicked cancel')
-      this.showModal = false
+      this.$refs.modal.showModal = false;
     },
-    confirmModal() {
+    confirmModal(payload) {
+      // console.log(`WS :: PAYLOAD ::: ${JSON.stringify(payload)}`)
+      // console.log(`${payload.id}`)
+      // console.log(`${this.denyRequestReason}`)
+      // this.$refs.modal.showModal = false;
 
-      alert('clicked confirm')
-      this.showModal = false
+      this.$axios
+      .patch(`${this.endpoints.baseUrl}account-request/${payload.id}/`,{
+        "request_status": "denied",
+        "comment": this.denyRequestReason
+      })
+      .then(response => {
+        console.log(response)
+        this.$refs.modal.showModal = false;
+        this.showDetailsFor = null;
+        this.denyRequestReason = "";
+        this.showingUserDetails = false;
+        this.getAccountRequests();
+      })
+      .catch(e => {
+        console.log(e)
+      });
     },
     showDetails(item) {
       this.showDetailsFor = item;
@@ -409,6 +435,9 @@ export default {
       'endpoints',
       'authUser'
     ]),
+    watchShowModal() {
+      return this.showModal;
+    },
     batchApprovalCount() {
       return this.selected.length;
     },
