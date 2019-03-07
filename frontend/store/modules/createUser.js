@@ -52,7 +52,7 @@ const getDefaultState = () => ({
 
   // Step Five
   extraDeptQuestions:  "",
-  extraDeptQuestionAnswers: [],
+  extraDeptQuestionAnswers: {},
 
   extraGroupOptions:   "",
 

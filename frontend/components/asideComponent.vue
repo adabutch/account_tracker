@@ -95,6 +95,14 @@
         </li>
       </template>
 
+      <template v-if="extraDeptQuestionAnswers">
+         <li class="step-title" v-if="extraDeptQuestionAnswers">Step Five</li>
+        <li v-if="extraDeptQuestionAnswers">
+          <strong>Extras:&nbsp;</strong>
+          <span v-html="extraDeptQuestionAnswers"></span>
+        </li>
+      </template>
+
       <li v-if="asideHeader">
         <strong>Requester:&nbsp;</strong>
         <span v-html="authUser.username"></span>
@@ -155,9 +163,9 @@ export default {
                       .format(this.startDateFormat);
       return formatted;
     },
-    serviceNamesArrayToString() {
-      return this.requestedServicesNames.join(', ')
-    },
+    // serviceNamesArrayToString() {
+    //   return this.selectedServiceRequestNames.join(', ')
+    // },
     ...mapFields([
       'startDateFormat',
       'authUser',
@@ -182,6 +190,8 @@ export default {
       'createUser.employeePhone',
 
       'createUser.selectedServiceRequestNames',
+
+      'createUser.extraDeptQuestionAnswers',
     ])
   },
   methods: {

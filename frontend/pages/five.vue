@@ -11,25 +11,19 @@
         <form>
           <h1><strong>Step Five:&nbsp;</strong>Extra information</h1>
 
-
           <h4>Dept.</h4>
-
-          {{extraQuestionAnswers}}<br><br>
-
           Joined Answers<br>
-          {{joinedAnswers}}<br><br>
+          {{joinedDeptAnswers}}<br><br>
 
-          Texts<br>
-          {{exQsTexts}}<br><br>
+          Joined here<br><br>
+          <template v-for="ex, index in joinedDeptAnswers">
+            {{index}} :: {{ex}}<br>--<br>
+          </template>
 
-          Selects<br>
-          {{exQsSelects}}<br><br>
-
-          TextAreas<br>
-          {{exQsTextareas}}<br><br>
-
-          Numbers<br>
-          {{exQsNumbers}}<br><br>
+          Testing here<br><br>
+          <template v-for="ex, index in testing">
+            {{index}} :: {{ex}}<br>--<br>
+          </template>
 
           <template v-for="(question, index) in exDeptQuestions">
             <template v-if="question.type == 'select'">
@@ -52,6 +46,7 @@
             <template v-if="question.type == 'text'">
               <h1>Text Types</h1>
               <fn1-input v-model="exQsTexts[question.text]"
+                         :key="index"
                          :label="question.text"
                          :placeholder="question.text"
                          :name="question.text"
@@ -126,10 +121,16 @@ export default {
       exQsTexts:      {},
       exQsTextareas:  {},
       exQsNumbers:    {},
-      exQsCheckboxes: {},
-      exQsRadios:     {},
 
-      extraQuestionAnswers: []
+      extraQuestionAnswers: this.joinedDeptAnswers,
+
+      testing: [ 'What is your eye color?: "brown"',
+  'What is color is your favorite?: "brown"',
+  'What is your waist size?: "34"',
+  'What is your favorite restaurant?: "Chipotle"',
+  'Tell us about yourself:: "ABout me ..."',
+  'What is your weight?: "170"',
+  'Your lucky number?: "7"' ]
     }
   },
   mounted() {},
@@ -138,8 +139,26 @@ export default {
     exDeptQuestions() {
       return JSON.parse(this.extraDeptQuestions.questions);
     },
-    joinedAnswers() {
-      return this.exQsTexts
+    joinedDeptAnswers() {
+      // return this.extraDeptQuestionAnswers = {
+      //         ...this.exQsSelects,
+      //         ...this.exQsTexts,
+      //         ...this.exQsTextareas,
+      //         ...this.exQsNumbers
+      //        }
+      let joinedDeptAnswers = {
+              ...this.exQsSelects,
+              ...this.exQsTexts,
+              ...this.exQsTextareas,
+              ...this.exQsNumbers
+             }
+
+      var res = Object.keys(joinedDeptAnswers)
+        .map(function(key) {
+          return `${key}: ${JSON.stringify(joinedDeptAnswers[key])}`;
+        });
+
+      return this.extraDeptQuestionAnswers = res;
     },
     ...mapFields([
       'createUser.totalSteps',

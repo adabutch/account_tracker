@@ -168,6 +168,43 @@
     <div class="slideover" v-if="showingUserDetails">
       <button @click="hideDetails" class="close">close</button>
       <h4>Detailed Information</h4>
+      <fn1-button-group>
+        <fn1-button @click.native="approveUserAccountRequest(showDetailsFor)">
+          <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path fill="currentColor" d="M435.848 83.466L172.804 346.51l-96.652-96.652c-4.686-4.686-12.284-4.686-16.971 0l-28.284 28.284c-4.686 4.686-4.686 12.284 0 16.971l133.421 133.421c4.686 4.686 12.284 4.686 16.971 0l299.813-299.813c4.686-4.686 4.686-12.284 0-16.971l-28.284-28.284c-4.686-4.686-12.284-4.686-16.97 0z"></path>
+          </svg>
+          Approve Request
+        </fn1-button>
+
+        <exampleModal title="Deny Account Request Confirmation"
+                      :launchButtonText="denyModalButtonText"
+                      :showModal="showModal">
+          <p slot="body"><strong>Deny this Account Request?</strong></p>
+          <ul slot="body">
+            <li>
+              <span>Name:</span>-
+              {{showDetailsFor.first_name}}
+              {{showDetailsFor.middle_name}}
+              {{showDetailsFor.last_name}}
+              {{showDetailsFor.suffix}}
+              ({{showDetailsFor.department}})
+            </li>
+          </ul>
+
+          <fn1-textarea slot="body"
+                        label="Leave a comment or reason."
+                        placeholder="Text here ..."
+                        id="denial-comment" />
+
+          <fn1-button slot="footer"
+                      @click.native="confirmModal">Confirm
+          </fn1-button>
+
+          <fn1-button slot="footer"
+                      @click.native="cancelModal">Cancel
+          </fn1-button>
+        </exampleModal>
+      </fn1-button-group>
       <ul>
         <li v-if="showDetailsFor.request_status">
           <span>Request Status</span>
@@ -237,45 +274,16 @@
           <span>Requested Services</span>
           - {{showDetailsFor.requested_services}}
         </li>
+
+        <li v-if="showDetailsFor.dynamic_options">
+          <span>Extra Questions</span>
+            <ul>
+              <li v-for="ex, index in parseExtras(showDetailsFor.dynamic_options)">
+                - {{ex}}
+              </li>
+            </ul>
+        </li>
       </ul>
-
-      <fn1-button-group>
-        <fn1-button @click.native="approveUserAccountRequest(showDetailsFor)">
-          <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-            <path fill="currentColor" d="M435.848 83.466L172.804 346.51l-96.652-96.652c-4.686-4.686-12.284-4.686-16.971 0l-28.284 28.284c-4.686 4.686-4.686 12.284 0 16.971l133.421 133.421c4.686 4.686 12.284 4.686 16.971 0l299.813-299.813c4.686-4.686 4.686-12.284 0-16.971l-28.284-28.284c-4.686-4.686-12.284-4.686-16.97 0z"></path>
-          </svg>
-          Approve
-        </fn1-button>
-
-        <exampleModal title="Deny Account Request Confirmation"
-                      :launchButtonText="denyModalButtonText"
-                      :showModal="showModal">
-          <p slot="body"><strong>Deny this Account Request?</strong></p>
-          <ul slot="body">
-            <li>
-              <span>Name:</span>-
-              {{showDetailsFor.first_name}}
-              {{showDetailsFor.middle_name}}
-              {{showDetailsFor.last_name}}
-              {{showDetailsFor.suffix}}
-              ({{showDetailsFor.department}})
-            </li>
-          </ul>
-
-          <fn1-textarea slot="body"
-                        label="Leave a comment or reason."
-                        placeholder="Text here ..."
-                        id="denial-comment" />
-
-          <fn1-button slot="footer"
-                      @click.native="confirmModal">Confirm
-          </fn1-button>
-
-          <fn1-button slot="footer"
-                      @click.native="cancelModal">Cancel
-          </fn1-button>
-        </exampleModal>
-      </fn1-button-group>
     </div>
   </div>
 </template>
@@ -312,7 +320,7 @@ export default {
   },
   data() {
     return {
-      denyModalButtonText:    "Deny",
+      denyModalButtonText: "Deny Request",
       showDetailsFor: null,
       showingUserDetails: false,
       selectFilter: '',
@@ -328,6 +336,9 @@ export default {
   },
   watch: {},
   methods: {
+    parseExtras(extras){
+      return JSON.parse(extras);
+    },
     getAccountRequests() {
       this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000`)
       .then((res) => {
@@ -645,14 +656,30 @@ export default {
   flex-direction: column;
   top: 0;
   right: 0;
+  bottom: 0;
   margin-left: auto;
-  padding: 20px;
+  padding: 20px 20px 0 20px;
   width: 400px;
-  height: 100vh;
+  // height: 100vh;
   background-color: lighten($text-color, 60%);
   border-left: 1px solid lighten($text-color, 50%);
   filter: drop-shadow(10px 0 8px $text-color);
   color: $text-color;
+
+  &:after {
+    position: absolute;
+    content: '';
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: red;
+    height: 30px;
+    width: 100%;
+    background: linear-gradient(
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+  }
 
   button {
     padding: 5px 10px;
@@ -717,15 +744,17 @@ export default {
   }
 
   h4 {
-    padding: 20px 0 5px 0;
-    border-bottom: 1px solid lighten($text-color, 50%);
+    padding: 20px 0 0 0;
+    // border-bottom: 1px solid lighten($text-color, 50%);
     font-weight: $weight-semi-bold;
   }
 
   ul {
+    overflow-y: scroll;
     margin: 15px 0 0 0;
     padding: 0;
     list-style: none;
+    height: calc(100% - 181px);
 
     li {
       margin: 0 0 10px 10px;
@@ -738,6 +767,16 @@ export default {
         margin: 0 0 5px -10px;
         color: $text-color;
         font-size: $size-m;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+
+        li {
+          margin: 0 0 10px 0;
+          padding: 0;
+        }
       }
     }
   }

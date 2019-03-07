@@ -99,7 +99,9 @@ export default {
       'createUser.supervisorPhone',
       'createUser.employeePhone',
 
-      'createUser.requestedServices',
+      'createUser.selectedServiceRequestIds',
+
+      'createUser.extraDeptQuestionAnswers',
     ])
   },
   methods: {
@@ -126,7 +128,8 @@ export default {
         "start_date":        this.dateFormatted,
         "request_status":    "ready",
         "requester":         this.authUser.id,
-        "requested_services": this.requestedServices,
+        "requested_services": this.selectedServiceRequestIds,
+        "dynamic_options":   JSON.stringify(this.extraDeptQuestionAnswers),
       })
       .then(response => {
         this.responseMsg = response.data
