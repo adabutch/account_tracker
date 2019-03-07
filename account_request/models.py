@@ -10,14 +10,9 @@ class AccountRequest(models.Model):
     associations with software / services / accounts
     will be tracked elsewhere with ForeignKeys
     """
-    full_image = models.ForeignKey(AccountImage, related_name='full_images',
-                                   on_delete=models.SET_NULL,
-                                   blank=True, null=True)
-
-    cropped_image = models.ForeignKey(AccountImage,
-                                      related_name='cropped_images',
-                                      on_delete=models.SET_NULL,
-                                      blank=True, null=True)
+    image = models.ForeignKey(AccountImage, related_name='full_images',
+                              on_delete=models.SET_NULL,
+                              blank=True, null=True)
 
     requester = models.ForeignKey(User, on_delete=models.SET_NULL,
                                   blank=True, null=True)
