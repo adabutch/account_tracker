@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from account_image.models import AccountImage
 
 
 class AccountRequest(models.Model):
@@ -9,6 +10,15 @@ class AccountRequest(models.Model):
     associations with software / services / accounts
     will be tracked elsewhere with ForeignKeys
     """
+    full_image = models.ForeignKey(AccountImage, related_name='full_images',
+                                   on_delete=models.SET_NULL,
+                                   blank=True, null=True)
+
+    cropped_image = models.ForeignKey(AccountImage,
+                                      related_name='cropped_images',
+                                      on_delete=models.SET_NULL,
+                                      blank=True, null=True)
+
     requester = models.ForeignKey(User, on_delete=models.SET_NULL,
                                   blank=True, null=True)
 
@@ -48,6 +58,8 @@ class AccountRequest(models.Model):
     # store as JSON object
     dynamic_options = models.TextField(blank=True, null=True)
 
+    # TODO:
+    # this should be migrated to use an action instead
     # in case something is denied, could add a note about why
     comment = models.TextField(default='', blank=True, null=True)
 
@@ -56,6 +68,12 @@ class AccountRequest(models.Model):
 
     # is it new? approved? completed? denied?
     request_status = models.CharField(max_length=50)
+
+    # who approved the account request
+    # should this simply be an action?
+    # subsequent actions should be tracked in the sub-service_requests
+    # approver = models.ForeignKey(User, on_delete=models.SET_NULL,
+    #                              blank=True, null=True)
 
     requested = models.DateTimeField(auto_now_add=True)
     # any associated logged actions could trigger an update to updated
