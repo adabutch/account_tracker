@@ -14,6 +14,12 @@ const getDefaultState = () => ({
     suffix:           "",
     nickname:         "",
   },
+
+  image: {
+    full:             "",
+    cropped:          "",
+  },
+
   profileImage:       "",
   profileImageCrop:   "",
 

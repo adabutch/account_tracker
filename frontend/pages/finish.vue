@@ -9,7 +9,6 @@
         <div class="success-wrapper">
           <h1 v-if="showSuccessMsg" v-html="successMsg"></h1>
         </div>
-
         <asideComponent v-if="!showSuccessMsg"
                         :step-active="stepActive"
                         :aside-header="asideHeader" />
@@ -59,15 +58,19 @@ export default {
   },
   data() {
     return {
+      testImg:     'butcherad.jpg',
       responseMsg: "",
       showSuccessMsg: false,
       successMsg: "<strong>Thanks</strong>, we've got your request!",
       errorMsg: [],
       stepActive: 6,
-      asideHeader: "Review & Create"
+      asideHeader: "Review & Create",
+      imageID:      "",
     }
   },
-  mounted() {},
+  mounted() {
+    // this.base64Strip();
+  },
   computed: {
     dateFormatted() {
       let formatted = moment(this.startDate)
@@ -80,6 +83,9 @@ export default {
       'totalSteps',
       'startDateFormat',
       'authUser',
+
+      'createUser.image.full',
+      'createUser.image.cropped',
 
       'createUser.name.first',
       'createUser.name.middle',
@@ -108,38 +114,97 @@ export default {
     ...mapActions([
       'createUser.clearUser'
     ]),
+    base64Strip() {
+      this.full = this.full.replace(/^data:image\/[a-z]+;base64,/, "");
+      this.cropped = this.cropped.replace(/^data:image\/[a-z]+;base64,/, "");
+    },
+    b64toBlob(dataURI) {
+      var byteString = atob(dataURI.split(',')[1]);
+      var ab = new ArrayBuffer(byteString.length);
+      var ia = new Uint8Array(ab);
+
+      for (var i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([ab], { type: 'image/jpeg' });
+    },
+    dataURItoBlob(dataURI) {
+      if(dataURI) {
+        var byteString;
+        if (dataURI.split(',')[0].indexOf('base64') >= 0)
+          byteString = atob(dataURI.split(',')[1]);
+        else
+          byteString = unescape(dataURI.split(',')[1]);
+
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+        var ia = new Uint8Array(byteString.length);
+        for (var i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([ia], {type:mimeString});
+      }
+    },
     createUserSubmit() {
-      this.$axios.post(`${this.endpoints.baseUrl}account-request/`,{
-        "first_name":        this.first,
-        "middle_name":       this.middle,
-        "last_name":         this.last,
-        "suffix":            this.suffix,
-        "nickname":          this.nickname,
-        "employee_phone":    this.employeePhone,
-        "supervisor":        this.supervisor,
-        "supervisor_phone":  this.supervisorPhone,
-        "department":        this.department.name,
-        "division":          this.division,
-        "group":             this.group.name,
-        "facility":          this.facility,
-        "job":               this.job.name,
-        "employee_status":   this.job.salaryGroup,
-        "clock_entry_only":  this.job.clockInRequired,
-        "start_date":        this.dateFormatted,
-        "request_status":    "ready",
-        "requester":         this.authUser.id,
-        "requested_services": this.selectedServiceRequestIds,
-        "dynamic_options":   JSON.stringify(this.extraDeptQuestionAnswers),
+      let formData = new FormData();
+      let blobFull = this.dataURItoBlob(this.full);
+      let blobCropped = this.b64toBlob(this.cropped);
+
+      // formData.append('full_image', blobFull);
+      // formData.append('cropped_image', blobCropped);
+
+      formData.append('full_image', blobFull);
+      formData.append('cropped_image', blobCropped);
+      formData.append('image_type', "both");
+
+      this.$axios.post(`${this.endpoints.baseUrl}image/`, formData, {
+        header: {
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+        }
       })
       .then(response => {
-        this.responseMsg = response.data
-        this.showSuccessMsg = true;
-        this.$store.dispatch('createUser/resetState');
+        this.imageID = response.data.id
+        console.log(response)
       })
       .catch(e => {
-        this.errorMsg.push(e)
+        console.log(blobFull)
         console.log(e)
       })
+
+      // this.$axios.post(`${this.endpoints.baseUrl}account-request/`,{
+      //   "image":             this.imageID,
+      //   "first_name":        this.first,
+      //   "middle_name":       this.middle,
+      //   "last_name":         this.last,
+      //   "suffix":            this.suffix,
+      //   "nickname":          this.nickname,
+      //   "employee_phone":    this.employeePhone,
+      //   "supervisor":        this.supervisor,
+      //   "supervisor_phone":  this.supervisorPhone,
+      //   "department":        this.department.name,
+      //   "division":          this.division,
+      //   "group":             this.group.name,
+      //   "facility":          this.facility,
+      //   "job":               this.job.name,
+      //   "employee_status":   this.job.salaryGroup,
+      //   "clock_entry_only":  this.job.clockInRequired,
+      //   "start_date":        this.dateFormatted,
+      //   "request_status":    "ready",
+      //   "requester":         this.authUser.id,
+      //   "requested_services": this.selectedServiceRequestIds,
+      //   "dynamic_options":   JSON.stringify(this.extraDeptQuestionAnswers),
+      // })
+      // .then(response => {
+      //   this.responseMsg = response.data
+      //   this.showSuccessMsg = true;
+      //   this.$store.dispatch('createUser/resetState');
+      // })
+      // .catch(e => {
+      //   this.errorMsg.push(e)
+      //   console.log(e)
+      // })
     },
     clearStore() {
 

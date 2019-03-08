@@ -15,8 +15,8 @@
         <li class="step-title" v-if="stepOneData">Step One</li>
         <li v-if="stepOneData" class="name">
           <strong>Name:&nbsp;</strong>
-          <div v-if="profileImageCrop" class="profile-image">
-            <img :src="profileImageCrop" alt="">
+          <div v-if="cropped" class="profile-image">
+            <img :src="cropped" alt="">
           </div>
           <span v-if="first">{{first}}&nbsp;</span>
           <span v-if="nickname">({{nickname}})&nbsp;</span>
@@ -129,7 +129,7 @@ export default {
   },
   computed: {
     stepOneData() {
-      if(this.profileImageCrop ||
+      if(this.cropped  ||
          this.first    ||
          this.nickname ||
          this.middle   ||
@@ -171,7 +171,9 @@ export default {
       'authUser',
 
       'createUser.totalSteps',
-      'createUser.profileImageCrop',
+
+      'createUser.image.cropped',
+
       'createUser.name.first',
       'createUser.name.middle',
       'createUser.name.last',

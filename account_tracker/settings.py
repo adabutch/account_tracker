@@ -20,6 +20,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
+# Allow for higher-res images
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'v(69g86_0un_0daqp41*y%a25=)lm+s2aow4p8zk91bwf!(%)6'
 

@@ -20,6 +20,7 @@
                   :enableOrientation="true"
                   :enableExif="true"
                   :viewport="{ width: 150, height: 200}"
+                  :result="blob"
                   @result="result"
                   @update="update">
                 </vue-croppie>
@@ -133,13 +134,13 @@ export default {
     exampleSelect
   },
   mounted() {
-    if(this.profileImage){
+    if(this.full){
       this.$refs.croppieRef.bind({
-        url: this.profileImage,
+        url: this.full,
       });
     }
-    if(this.profileImageCrop) {
-      this.cropped = this.profileImageCrop;
+    if(this.cropped) {
+      this.croppieCropped = this.cropped;
     }
   },
   data() {
@@ -157,9 +158,7 @@ export default {
         { value: 'VI',  text: 'VI' }
       ],
       imgOrientation: '',
-      cropped: null,
-      image: '/butcherad.jpg',
-      imageTwo: '/test.png'
+      croppieCropped: null,
     }
   },
   computed: {
@@ -172,8 +171,8 @@ export default {
       'createUser.name.last',
       'createUser.name.suffix',
       'createUser.name.nickname',
-      'createUser.profileImage',
-      'createUser.profileImageCrop',
+      'createUser.image.full',
+      'createUser.image.cropped',
     ]),
   },
   methods: {
@@ -184,14 +183,14 @@ export default {
       }
       this.$refs.croppieRef.result(options, (output) => {
         console.log(options);
+        this.croppieCropped = output;
         this.cropped = output;
-        this.profileImageCrop = output;
       });
     },
     clearImage() {
-      this.cropped      = null;
-      this.profileImage = "";
-      this.profileImageCrop = "";
+      this.croppieCropped      = null;
+      this.full = "";
+      this.cropped = "";
       this.$refs.croppieRef.bind({
         url: "",
       });
@@ -200,8 +199,8 @@ export default {
       context.clearRect(0, 0, canvas.width, canvas.height);
     },
     result(output) {
+      this.croppieCropped = output;
       this.cropped = output;
-      this.profileImageCrop = output;
     },
     update(val) {
       //console.log(val);
@@ -230,9 +229,9 @@ export default {
         // img.onload = function() {
         //   self.drawCanvasImage(img);
         // }
-        this.profileImage = e.target.result;
+        this.full = e.target.result;
         this.$refs.croppieRef.bind({
-          url: this.profileImage,
+          url: this.full,
         });
         // img.src = e.target.result;
       };
