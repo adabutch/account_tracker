@@ -57,8 +57,11 @@ const getDefaultState = () => ({
   selectedServiceRequestNames: "",
 
   // Step Five
-  extraDeptQuestions:  "",
+  extraDeptQuestions:  {},
   extraDeptQuestionAnswers: {},
+
+  extraGroupQuestions:  {},
+  extraGroupQuestionAnswers: {},
 
   extraGroupOptions:   "",
 
@@ -89,6 +92,14 @@ const mutations = {
   RESET_REQUESTED_SERVICES(state) {
     state.requestedServices = ""
   },
+  RESET_DEPT_EX_QUESTIONS(state) {
+    state.extraDeptQuestions = {},
+    state.extraDeptQuestionAnswers = {}
+  },
+  RESET_GROUP_EX_QUESTIONS(state) {
+    state.extraGroupQuestions = {},
+    state.extraGroupQuestionAnswers = {}
+  },
   ADD_TO_TOTAL_STEPS(state, payload) {
     state.totalSteps = payload;
   },
@@ -112,6 +123,12 @@ const actions = {
   },
   resetRequestedServices({ commit }) {
     commit('RESET_REQUESTED_SERVICES')
+  },
+  resetDeptExQuestions({ commit }) {
+    commit('RESET_DEPT_EX_QUESTIONS')
+  },
+  resetGroupExQuestions({ commit }) {
+    commit('RESET_GROUP_EX_QUESTIONS')
   },
   addToTotalSteps(context, payload) {
     context.commit("ADD_TO_TOTAL_STEPS", payload)

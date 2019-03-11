@@ -235,13 +235,21 @@ export default {
         let previousVal = JSON.stringify(oldVal.id);
 
         if(newVal != previousVal) {
+          alert('new');
+
           this.$store.dispatch('createUser/resetGroup');
           this.$store.dispatch('createUser/resetJob');
           this.$store.dispatch('createUser/resetRequestedServices');
-        }
+          this.$store.dispatch('createUser/resetDeptExQuestions');
+          this.$store.dispatch('createUser/resetGroupExQuestions');
 
-        this.getGroups;
-        this.getExtraDeptQuestions;
+          this.getGroups;
+
+          this.getExtraDeptQuestions.then((resolve) => {
+            console.log(`dept Q resolve`, resolve);
+            this.extraDeptQuestions = resolve.results[0].questions;
+          });
+        }
       }
     },
     group: function(val, oldVal) {
@@ -250,13 +258,21 @@ export default {
         let previousVal = JSON.stringify(oldVal.id);
 
         if(newVal != previousVal) {
+          // alert(`${newVal} != ${previousVal}`);
+
           this.$store.dispatch('createUser/resetJob');
           this.$store.dispatch('createUser/resetSupervisor');
           this.$store.dispatch('createUser/resetSupervisorPhone');
           this.$store.dispatch('createUser/resetRequestedServices');
-        }
+          this.$store.dispatch('createUser/resetGroupExQuestions');
 
-        this.getJobs();
+          this.getJobs();
+
+          this.getExtraGroupQuestions.then((resolve) => {
+            console.log(`group Q resolve`, resolve);
+            this.extraGroupQuestions = resolve.results[0].questions;
+          });
+        }
       }
     },
     job: function(val, oldVal) {
@@ -287,6 +303,7 @@ export default {
       'createUser.startDate',
 
       'createUser.extraDeptQuestions',
+      'createUser.extraGroupQuestions',
     ]),
     getDepts() {
       let deptSelectArray = [];
@@ -386,28 +403,27 @@ export default {
       return jobSelectArray;
     },
     getExtraDeptQuestions() {
-      this.$axios.get(`${this.endpoints.baseUrl}${this.endpoints.profile}?department_id=${this.department.id}`)
-      .then((response) => {
-        let questionsData = response.data.results;
-        if(questionsData.length) {
-          console.log('We have EXTRAS!!',response.data.results)
-
-          questionsData.forEach(m =>
-            console.log(m.questions)
-          );
-
-          this.extraDeptQuestions = response.data.results[0];
+      return new Promise((resolve) => {
+        this.$axios.get(`${this.endpoints.baseUrl}${this.endpoints.profile}?department_id=${this.department.id}`)
+        .then((response) => {
+          resolve(response.data);
           this.$store.dispatch('createUser/addToTotalSteps', 5);
-          // this.addToTotalSteps(5);
-        } else {
-          console.log('No EXTRAS!!');
-          // this.addToTotalSteps(4);
-          this.$store.dispatch('createUser/addToTotalSteps', 4);
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      });
+    },
+    getExtraGroupQuestions() {
+      return new Promise((resolve) => {
+        this.$axios.get(`${this.endpoints.baseUrl}${this.endpoints.profile}?department_id=${this.department.id}&group_id=${this.group.id}`)
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      });
     }
   },
   methods: {
