@@ -17,9 +17,7 @@
                 <vue-croppie
                   ref="croppieRef"
                   :enableResize="false"
-                  :enableOrientation="true"
-                  :enableExif="true"
-                  :viewport="{ width: 150, height: 200}"
+                  :viewport="{ width: 180, height: 240}"
                   :result="blob"
                   @result="result"
                   @update="update">
@@ -28,10 +26,6 @@
 
               <div class="image-wrapper">
                 <svg v-if="cropped" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="check"><path fill="#FFFFFF" d="M413.505 91.951L133.49 371.966l-98.995-98.995c-4.686-4.686-12.284-4.686-16.971 0L6.211 284.284c-4.686 4.686-4.686 12.284 0 16.971l118.794 118.794c4.686 4.686 12.284 4.686 16.971 0l299.813-299.813c4.686-4.686 4.686-12.284 0-16.971l-11.314-11.314c-4.686-4.686-12.284-4.686-16.97 0z" class=""></path></svg>
-                <!-- <svg v-if="cropped" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="check">
-                  <path fill="currentColor" d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 464c-118.664 0-216-96.055-216-216 0-118.663 96.055-216 216-216 118.664 0 216 96.055 216 216 0 118.663-96.055 216-216 216zm141.63-274.961L217.15 376.071c-4.705 4.667-12.303 4.637-16.97-.068l-85.878-86.572c-4.667-4.705-4.637-12.303.068-16.97l8.52-8.451c4.705-4.667 12.303-4.637 16.97.068l68.976 69.533 163.441-162.13c4.705-4.667 12.303-4.637 16.97.068l8.451 8.52c4.668 4.705 4.637 12.303-.068 16.97z" class=""></path>
-                </svg> -->
-
                 <img ref="croppedRef" v-if="cropped" v-bind:src="cropped">
               </div>
 
@@ -42,17 +36,35 @@
                      ref="fileInput"
                      name="media">
 
-              <fn1-button-group>
-                <fn1-button type="button" @click.native="$refs.fileInput.click()" class="image-input">Upload Photo</fn1-button>
-                <!-- <fn1-button type="button" @click.native="rotate(-90)">Rotate Left</fn1-button>
-                <fn1-button type="button" @click.native="rotate(90)">Rotate Right</fn1-button> -->
+              <div class="image-controls">
+                <fn1-button-group>
+                  <fn1-button type="button"
+                              class="image-input"
+                              @click.native="$refs.fileInput.click()">
+                    Upload
+                  </fn1-button>
 
-                <fn1-button type="button" @click.native="crop()">Create</fn1-button>
+                  <fn1-button type="button"
+                              class="rotate"
+                              @click.native="rotate(-90)">
+                    Rotate
+                  </fn1-button>
+                </fn1-button-group><br>
 
-                <fn1-button type="button" @click.native="clearImage()">Clear</fn1-button>
+                <fn1-button-group>
+                  <fn1-button type="button"
+                              class="create"
+                              @click.native="crop()">
+                    Create
+                  </fn1-button>
 
-                <!-- <fn1-button type="button" @click.native="cropViaEvent()">Crop Via Event</fn1-button> -->
-              </fn1-button-group>
+                  <fn1-button type="button"
+                              class="clear"
+                              @click.native="clearImage()">
+                    Clear
+                  </fn1-button>
+                </fn1-button-group>
+              </div>
 
               <span class="label">How to set a Profile Image:</span>
               <ol>
@@ -211,98 +223,22 @@ export default {
     removeImage(){
       let canvas = this.$refs.imageCanvas;
       let ctx = canvas.getContext("2d");
+
       ctx.clearRect(0, 0, 1200, 1000)
-      // this.captures.splice(this.captures.indexOf(c), 1);
       this.$refs.fileInput.value = '';
     },
-    fileInputClick(e) {
-      alert('hi')
-    },
     updateCanvasImage(e) {
-      // let self      = this;
       let files     = e.target.files;
       let reader    = new FileReader();
 
       reader.onload = (e) => {
-        // console.log(e);
         let img = new Image();
-        // img.onload = function() {
-        //   self.drawCanvasImage(img);
-        // }
         this.full = e.target.result;
         this.$refs.croppieRef.bind({
           url: this.full,
         });
-        // img.src = e.target.result;
       };
       reader.readAsDataURL(files[0]);
-    },
-    drawCanvasImage(img) {
-      var self      = this;
-      var canvas    = self.$refs.imageCanvas;
-      const EXIF    = require('exif-js');
-
-      EXIF.getData(img, function() {
-        self.imgOrientation = this.exifdata.Orientation;
-      });
-
-      var max_width = 1000;
-      var max_height = 1000;
-      var width     = img.width;
-      var height    = img.height;
-      var ctx       = canvas.getContext("2d");
-
-      if (4 < self.imgOrientation && self.imgOrientation < 9) {
-        if (width > height) {
-          if (width > max_width) {
-            img.height *= max_width / img.width;
-            img.width   = max_width;
-
-            height  = img.height;
-            width   = img.width;
-
-            canvas.width = img.height;
-            canvas.height = img.width;
-          }
-        } else {
-          // console.log('this here 1');
-        }
-      } else {
-        if (height > max_height) {
-          // console.log('this here 2');
-          img.height *= max_height / img.width;
-          img.width   = max_width;
-
-          height  = img.height;
-          width   = img.width;
-
-          canvas.width = img.height;
-          canvas.height = img.width;
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-      }
-
-      switch (self.imgOrientation) {
-        case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
-        case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
-        case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
-        case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
-        case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
-        case 7: ctx.transform(0, -1, -1, 0, height, width); break;
-        case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
-        default: break;
-      }
-
-      ctx.drawImage(img, 0, 0, width, height);
-
-      // if(self.captures.length < 1) {
-      //   self.captures.push(canvas.toDataURL());
-      // } else {
-      //   alert(self.singleImgMessage);
-      // }
-      // this.exifData();
     },
   }
 }
@@ -345,19 +281,20 @@ export default {
 
     &:nth-of-type(2) {
       width: 492px;
+      height: fit-content;
     }
   }
 
-  .image-upload-wrapper{
+  .image-upload-wrapper {
     border-right: 1px solid lighten($text-color, 50%);
-    margin: 0 40px 0 0;
+    margin: 0 20px 0 0;
     align-items: flex-start;
-    width: 400px;
+    width: 440px;
 
     .croppie-wrapper {
-      width: 150px;
-      height: 200px;
-      margin: 0 40px 40px 0;
+      width: 180px;
+      height: 240px;
+      margin: 0 20px 40px 0;
 
       /deep/ .croppie-container {
 
@@ -385,7 +322,7 @@ export default {
         }
 
         .cr-slider-wrap {
-          width: 150px;
+          width: 180px;
           margin: 20px 0;
         }
       }
@@ -402,11 +339,13 @@ export default {
 
     .image-wrapper {
       position: relative;
+      margin-left: auto;
+      padding: 0 20px 0 0;
 
       img {
         border: 1px solid lighten($text-color, 50%);
-        width: 150px;
-        height: 200px;
+        width: 180px;
+        height: 240px;
         margin: 0;
       }
 
@@ -421,7 +360,7 @@ export default {
           padding: 5px;
           border-radius: 50%;
           top: -10px;
-          right: -10px;
+          right: 10px;
         }
       }
     }
@@ -432,17 +371,32 @@ export default {
       }
     }
 
-    .button-group {
+    .image-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      // background-color: blue;
+      border-top: 1px solid lighten($text-color, 50%);
       border-bottom: 1px solid lighten($text-color, 50%);
-      margin: 15px 0 20px 0;
-      padding: 0 0 20px 0;
+      width: 100%;
+      margin: 20px 0;
+    }
+
+    .button-group {
+      // background-color: red;
+      margin: 0;
+      padding: 20px 20px 20px 0;
+
+      &:last-of-type {
+        margin-left: auto;
+      }
 
       button {
         display: inline-flex;
         flex-direction: row;
         color: white;
         background-color: $text-color;
-        border-color: darken($text-color, 15%);
+        border-color: transparent;
         // margin: 0 20px 0 0;
         padding: 5px 10px;
         font-weight: $weight-normal;
@@ -470,35 +424,66 @@ export default {
           }
         }
 
-        &.take {
-          span {
-            @include visuallyHidden;
-          }
+        &.rotate {
+          border-left: 1px solid darken($text-color, 15%);
+          position: relative;
+          padding: 5px 10px 5px 35px;
 
-          position: absolute;
-          left: 50%;
-          bottom: 80px;
-          transform: translateX(-50%);
-          width: 60px;
-          height: 60px;
-          background-color: transparent;
-          background-repeat: no-repeat;
-          background-size: cover;
-          background-image: url("data:image/svg+xml,%3Csvg id='capture-picture-icon' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='40px' height='40px' viewBox='0 0 40 40' enable-background='new 0 0 40 40' xml:space='preserve'%3E%3Ccircle opacity='0.65' fill='%23FFFFFF' cx='20' cy='20' r='16.0050011'/%3E%3Cpath opacity='0.65' fill='%23FFFFFF' d='M20,40C8.9718189,40,0,31.0277157,0,20C0,8.9718189,8.9718189,0,20,0s20,8.9718189,20,20 C40,31.0277157,31.0281811,40,20,40z M20,1.9047619C10.0223217,1.9047619,1.9047619,10.0223217,1.9047619,20 S10.0223217,38.0952377,20,38.0952377S38.0952377,29.9776783,38.0952377,20S29.9776783,1.9047619,20,1.9047619z'/%3E%3C/svg%3E");
-
-          &:hover {
-            background-image: url("data:image/svg+xml,%3Csvg id='capture-picture-icon' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='40px' height='40px' viewBox='0 0 40 40' enable-background='new 0 0 40 40' xml:space='preserve'%3E%3Ccircle opacity='0.85' fill='%23FFFFFF' cx='20' cy='20' r='16.0050011'/%3E%3Cpath opacity='0.85' fill='%23FFFFFF' d='M20,40C8.9718189,40,0,31.0277157,0,20C0,8.9718189,8.9718189,0,20,0s20,8.9718189,20,20 C40,31.0277157,31.0281811,40,20,40z M20,1.9047619C10.0223217,1.9047619,1.9047619,10.0223217,1.9047619,20 S10.0223217,38.0952377,20,38.0952377S38.0952377,29.9776783,38.0952377,20S29.9776783,1.9047619,20,1.9047619z'/%3E%3C/svg%3E");
+          &:before {
+            position: absolute;
+            content: '';
+            left: 10px;
+            top: 6px;
+            width: 20px;
+            height: 15px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23ffffff' d='M20 8h10c6.627 0 12 5.373 12 12v110.625C85.196 57.047 165.239 7.715 256.793 8.001 393.18 8.428 504.213 120.009 504 256.396 503.786 393.181 392.834 504 256 504c-63.926 0-122.202-24.187-166.178-63.908-5.113-4.618-5.354-12.561-.482-17.433l7.069-7.069c4.503-4.503 11.749-4.714 16.482-.454C150.782 449.238 200.935 470 256 470c117.744 0 214-95.331 214-214 0-117.744-95.331-214-214-214-82.862 0-154.737 47.077-190.289 116H180c6.627 0 12 5.373 12 12v10c0 6.627-5.373 12-12 12H20c-6.627 0-12-5.373-12-12V20c0-6.627 5.373-12 12-12z' class=''%3E%3C/path%3E%3C/svg%3E");
+            background-position: contain;
+            background-repeat: no-repeat;
           }
         }
 
-        &.close {
-          position: absolute;
-          left: 50%;
-          bottom: 40px;
-          transform: translateX(-50%);
-          color: white;
-          letter-spacing: 1px;
-          background: rgba(0,0,0,0.55);
+        &.create {
+          background-color: $color-green;
+          position: relative;
+          padding: 5px 10px 5px 35px;
+
+          &:hover {
+            background-color: darken($color-green, 5%);
+          }
+
+          &:before {
+            position: absolute;
+            content: '';
+            left: 10px;
+            top: 6px;
+            width: 20px;
+            height: 15px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512' class='check'%3E%3Cpath fill='%23FFFFFF' d='M413.505 91.951L133.49 371.966l-98.995-98.995c-4.686-4.686-12.284-4.686-16.971 0L6.211 284.284c-4.686 4.686-4.686 12.284 0 16.971l118.794 118.794c4.686 4.686 12.284 4.686 16.971 0l299.813-299.813c4.686-4.686 4.686-12.284 0-16.971l-11.314-11.314c-4.686-4.686-12.284-4.686-16.97 0z' class=''%3E%3C/path%3E%3C/svg%3E");
+            background-position: contain;
+            background-repeat: no-repeat;
+          }
+        }
+
+        &.clear {
+          background-color: $color-orange-darker;
+          position: relative;
+          padding: 5px 10px 5px 30px;
+
+          &:hover {
+            background-color: darken($color-orange-darker, 5%);
+          }
+
+          &:before {
+            position: absolute;
+            content: '';
+            left: 10px;
+            top: 6px;
+            width: 20px;
+            height: 15px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'%3E%3Cpath fill='%23FFFFFF' d='M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z' class=''%3E%3C/path%3E%3C/svg%3E");
+            background-position: contain;
+            background-repeat: no-repeat;
+          }
         }
       }
     }
