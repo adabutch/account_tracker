@@ -20,7 +20,7 @@
 
             <div v-if="!showSuccessMsg">
               <button class="button"
-                      @click="createUserSubmit">Create User</button>
+                      @click="submitForm">Create User</button>
 
               <nuxt-link class="button cancel"
                          :to="{ name: 'index'}">back to last step, </nuxt-link>
@@ -118,16 +118,6 @@ export default {
       this.full = this.full.replace(/^data:image\/[a-z]+;base64,/, "");
       this.cropped = this.cropped.replace(/^data:image\/[a-z]+;base64,/, "");
     },
-    b64toBlob(dataURI) {
-      var byteString = atob(dataURI.split(',')[1]);
-      var ab = new ArrayBuffer(byteString.length);
-      var ia = new Uint8Array(ab);
-
-      for (var i = 0; i < byteString.length; i++) {
-          ia[i] = byteString.charCodeAt(i);
-      }
-      return new Blob([ab], { type: 'image/jpeg' });
-    },
     dataURItoBlob(dataURI) {
       if(dataURI) {
         var byteString;
@@ -146,65 +136,79 @@ export default {
         return new Blob([ia], {type:mimeString});
       }
     },
+    imageSubmit() {
+      return new Promise((resolve) => {
+        let firstLast = `${this.first}-${this.last}`;
+        let flToLower = firstLast.toLowerCase();
+
+        let imgFD = new FormData();
+        let blobFull = this.dataURItoBlob(this.full);
+        let blobCropped = this.dataURItoBlob(this.cropped);
+
+        imgFD.append(`full_image`, blobFull, `${flToLower}-full`);
+        imgFD.append(`cropped_image`, blobCropped, `${flToLower}-cropped`);
+
+        this.$axios.post(`${this.endpoints.baseUrl}image/`, imgFD, {
+          header: {
+            'Content-Type': 'multipart/form-data',
+          }
+        })
+        .then((response) => {
+          console.log(response.data.id);
+          resolve(response.data.id);
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+      });
+    },
+    submitForm() {
+      if(this.full || this.cropped) {
+        this.imageSubmit().then((resolve) => {
+          this.imageID = resolve;
+          this.createUserSubmit().then((resolve) => {
+            this.responseMsg = resolve;
+          })
+        });
+      } else {
+        this.createUserSubmit();
+      }
+    },
     createUserSubmit() {
-      let formData = new FormData();
-      let blobFull = this.dataURItoBlob(this.full);
-      let blobCropped = this.b64toBlob(this.cropped);
-
-      // formData.append('full_image', blobFull);
-      // formData.append('cropped_image', blobCropped);
-
-      formData.append('full_image', blobFull);
-      formData.append('cropped_image', blobCropped);
-      formData.append('image_type', "both");
-
-      this.$axios.post(`${this.endpoints.baseUrl}image/`, formData, {
-        header: {
-          'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data',
-        }
-      })
-      .then(response => {
-        this.imageID = response.data.id
-        console.log(response)
-      })
-      .catch(e => {
-        console.log(blobFull)
-        console.log(e)
-      })
-
-      // this.$axios.post(`${this.endpoints.baseUrl}account-request/`,{
-      //   "image":             this.imageID,
-      //   "first_name":        this.first,
-      //   "middle_name":       this.middle,
-      //   "last_name":         this.last,
-      //   "suffix":            this.suffix,
-      //   "nickname":          this.nickname,
-      //   "employee_phone":    this.employeePhone,
-      //   "supervisor":        this.supervisor,
-      //   "supervisor_phone":  this.supervisorPhone,
-      //   "department":        this.department.name,
-      //   "division":          this.division,
-      //   "group":             this.group.name,
-      //   "facility":          this.facility,
-      //   "job":               this.job.name,
-      //   "employee_status":   this.job.salaryGroup,
-      //   "clock_entry_only":  this.job.clockInRequired,
-      //   "start_date":        this.dateFormatted,
-      //   "request_status":    "ready",
-      //   "requester":         this.authUser.id,
-      //   "requested_services": this.selectedServiceRequestIds,
-      //   "dynamic_options":   JSON.stringify(this.extraDeptQuestionAnswers),
-      // })
-      // .then(response => {
-      //   this.responseMsg = response.data
-      //   this.showSuccessMsg = true;
-      //   this.$store.dispatch('createUser/resetState');
-      // })
-      // .catch(e => {
-      //   this.errorMsg.push(e)
-      //   console.log(e)
-      // })
+      new Promise((resolve) => {
+        this.$axios.post(`${this.endpoints.baseUrl}account-request/`,{
+          "image":             this.imageID,
+          "first_name":        this.first,
+          "middle_name":       this.middle,
+          "last_name":         this.last,
+          "suffix":            this.suffix,
+          "nickname":          this.nickname,
+          "employee_phone":    this.employeePhone,
+          "supervisor":        this.supervisor,
+          "supervisor_phone":  this.supervisorPhone,
+          "department":        this.department.name,
+          "division":          this.division,
+          "group":             this.group.name,
+          "facility":          this.facility,
+          "job":               this.job.name,
+          "employee_status":   this.job.salaryGroup,
+          "clock_entry_only":  this.job.clockInRequired,
+          "start_date":        this.dateFormatted,
+          "request_status":    "ready",
+          "requester":         this.authUser.id,
+          "requested_services": this.selectedServiceRequestIds,
+          "dynamic_options":   JSON.stringify(this.extraDeptQuestionAnswers),
+        })
+        .then((response) => {
+          resolve(response.data);
+          this.showSuccessMsg = true;
+          this.$store.dispatch('createUser/resetState');
+        })
+        .catch((e) => {
+          this.errorMsg.push(e)
+          console.log(e)
+        })
+      });
     },
     clearStore() {
 

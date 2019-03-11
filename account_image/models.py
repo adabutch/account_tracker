@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 
 
 class AccountImage(models.Model):
-    full_image = models.ImageField(upload_to='%Y/%m/%d')
-    cropped_image = models.ImageField(upload_to='%Y/%m/%d')
+    full_image = models.FileField(upload_to='%Y/%m/%d')
+    cropped_image = models.FileField(upload_to='%Y/%m/%d')
 
     creator = models.ForeignKey(
         User, on_delete=models.SET_NULL, blank=True, null=True)
