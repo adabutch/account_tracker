@@ -45,6 +45,7 @@
                   </fn1-button>
 
                   <fn1-button type="button"
+                              v-if="full"
                               class="rotate"
                               @click.native="rotate(-90)">
                     Rotate
@@ -53,12 +54,14 @@
 
                 <fn1-button-group>
                   <fn1-button type="button"
+                              v-if="full"
                               class="create"
                               @click.native="crop()">
                     Create
                   </fn1-button>
 
                   <fn1-button type="button"
+                              v-if="full"
                               class="clear"
                               @click.native="clearImage()">
                     Clear
@@ -68,9 +71,9 @@
 
               <span class="label">How to set a Profile Image:</span>
               <ol>
-                <li>Click, <code>Upload Photo</code></li>
+                <li>Click, <code class="upload">Upload Photo</code></li>
                 <li>Adjust as desired</li>
-                <li>Click, <code>Create</code></li>
+                <li>Click, <code class="create">Create</code></li>
                 <li>The <strong>Profile Image</strong> (on the right) is now set</li>
               </ol>
             </div>
@@ -333,7 +336,45 @@ export default {
       padding: 0 0 0 20px;
 
       li {
-        margin: 0 0 5px 0;
+        margin: 0 0 10px 0;
+      }
+    }
+
+    code {
+      &.upload {
+        background-color: $text-color;
+        position: relative;
+        padding: 5px 10px 5px 40px;
+
+        &:before {
+          position: absolute;
+          content: '';
+          left: 10px;
+          top: 6px;
+          width: 20px;
+          height: 15px;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 335.25 257.4373'%3E%3Ctitle%3EAsset 1%3C/title%3E%3Cg id='Layer_2' data-name='Layer 2'%3E%3Cg id='Layer_1-2' data-name='Layer 1'%3E%3Ccircle cx='167.625' cy='142.37726' r='67.71762' fill='none' stroke='%23FFFFFF' stroke-miterlimit='10' stroke-width='15'/%3E%3Cpath d='M317.794,249.9373H17.456c-5.47578,0-9.956-3.81411-9.956-8.47579V55.34736c0-4.66169,4.48018-8.47579,9.956-8.47579H83.575a17.40057,17.40057,0,0,0,14.13532-6.72763L108.914,16.37682a14.40256,14.40256,0,0,1,5.20835-6.06182,18.57288,18.57288,0,0,1,9.9401-2.815h87.30608a18.59964,18.59964,0,0,1,9.80785,2.73165,14.4177,14.4177,0,0,1,5.22238,5.90892l10.23946,20.762a17.57146,17.57146,0,0,0,14.62648,9.94025q.52673.02862,1.059.02872H317.794c5.47578,0,9.956,3.8141,9.956,8.47579V241.46151C327.75,246.12319,323.26982,249.9373,317.794,249.9373Z' fill='none' stroke='%23FFFFFF' stroke-miterlimit='10' stroke-width='15'/%3E%3Crect x='24.84969' y='19.88012' width='54.83301' height='7.5' fill='%23FFFFFF'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
+          background-position: contain;
+          background-repeat: no-repeat;
+        }
+      }
+
+      &.create {
+        background-color: $color-green;
+        position: relative;
+        padding: 5px 10px 5px 35px;
+
+        &:before {
+          position: absolute;
+          content: '';
+          left: 10px;
+          top: 6px;
+          width: 20px;
+          height: 15px;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512' class='check'%3E%3Cpath fill='%23FFFFFF' d='M413.505 91.951L133.49 371.966l-98.995-98.995c-4.686-4.686-12.284-4.686-16.971 0L6.211 284.284c-4.686 4.686-4.686 12.284 0 16.971l118.794 118.794c4.686 4.686 12.284 4.686 16.971 0l299.813-299.813c4.686-4.686 4.686-12.284 0-16.971l-11.314-11.314c-4.686-4.686-12.284-4.686-16.97 0z' class=''%3E%3C/path%3E%3C/svg%3E");
+          background-position: contain;
+          background-repeat: no-repeat;
+        }
       }
     }
 

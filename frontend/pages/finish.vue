@@ -175,7 +175,7 @@ export default {
       }
     },
     createUserSubmit() {
-      new Promise((resolve) => {
+      return new Promise((resolve) => {
         this.$axios.post(`${this.endpoints.baseUrl}account-request/`,{
           "image":             this.imageID,
           "first_name":        this.first,
