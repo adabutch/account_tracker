@@ -95,11 +95,11 @@
         </li>
       </template>
 
-      <template v-if="extraDeptQuestionAnswers">
-         <li class="step-title" v-if="extraDeptQuestionAnswers">Step Five</li>
-        <li v-if="extraDeptQuestionAnswers">
+      <template v-if="extraQuestionAnswers">
+         <li class="step-title" v-if="extraQuestionAnswers">Step Five</li>
+        <li v-if="extraQuestionAnswers">
           <strong>Extras:&nbsp;</strong>
-          <span v-html="extraDeptQuestionAnswers"></span>
+          <span v-html="extraQuestionAnswers"></span>
         </li>
       </template>
 
@@ -193,7 +193,7 @@ export default {
 
       'createUser.selectedServiceRequestNames',
 
-      'createUser.extraDeptQuestionAnswers',
+      'createUser.extraQuestionAnswers',
     ])
   },
   methods: {

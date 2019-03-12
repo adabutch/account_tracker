@@ -12,7 +12,8 @@ import depts        from './modules/depts'
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
-const cookieparser = process.server ? require('cookieparser') : undefined
+const cookieparser = process.server ? require('cookieparser') : undefined;
+export const strict = false;
 
 const state = () => ({
   auth:             null,

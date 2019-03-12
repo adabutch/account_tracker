@@ -57,13 +57,25 @@ const getDefaultState = () => ({
   selectedServiceRequestNames: "",
 
   // Step Five
+  extraQuestionAnswers: "",
+
   extraDeptQuestions:  {},
-  extraDeptQuestionAnswers: {},
+  extraDeptQuestionAnswers: "",
+  // extraDeptQuestionAnswers: {
+  //   exDeptQsSelects:       "",
+  //   exDeptQsTexts:         "",
+  //   exDeptQsTextareas:     "",
+  //   exDeptQsNumbers:       "",
+  // },
 
-  extraGroupQuestions:  {},
-  extraGroupQuestionAnswers: {},
-
-  extraGroupOptions:   "",
+  extraGroupQuestions: {},
+  extraGroupQuestionAnswers: "",
+  // extraGroupQuestionAnswers: {
+  //   exGroupQsSelects:       "",
+  //   exGroupQsTexts:         "",
+  //   exGroupQsTextareas:     "",
+  //   exGroupQsNumbers:       "",
+  // },
 
   // Inactive
   division:           "",

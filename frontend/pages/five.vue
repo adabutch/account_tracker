@@ -11,70 +11,105 @@
         <form>
           <h1><strong>Step Five:&nbsp;</strong>Extra information</h1>
 
-          <h4>Dept.</h4>
-          Joined Answers<br>
-          {{joinedDeptAnswers}}<br><br>
+          <div class="dept-questions" v-if="!hasDeptExQuestions">
+            <h1>Dept. Questions</h1>
+            <template v-for="(question, index) in exDeptQuestions">
+              <template v-if="question.type == 'select'">
+                <div class="field-group">
+                  <label :for="question">{{question.text}}</label>
+                  <select v-model="exDeptQsSelects[question.text]"
+                          :name="question"
+                          :id="question"
+                          type="select">
+                    <option>---</option>
+                    <option v-for="(value, index) in question.value"
+                            :value="value">
+                      {{ value }}
+                    </option>
+                  </select>
+                </div>
+              </template>
 
-          Joined here<br><br>
-          <template v-for="ex, index in joinedDeptAnswers">
-            {{index}} :: {{ex}}<br>--<br>
-          </template>
+              <template v-if="question.type == 'text'">
+                <fn1-input v-model="exDeptQsTexts[question.text]"
+                           :key="index"
+                           :label="question.text"
+                           :placeholder="question.text"
+                           :name="question.text"
+                           :id="question.text" />
+              </template>
 
-          Testing here<br><br>
-          <template v-for="ex, index in testing">
-            {{index}} :: {{ex}}<br>--<br>
-          </template>
+              <template v-if="question.type == 'number'">
+                <fn1-input type="number"
+                           v-model="exDeptQsNumbers[question.text]"
+                           :label="question.text"
+                           :placeholder="question.text"
+                           :name="question.text"
+                           :id="question.text" />
+              </template>
 
-          <template v-for="(question, index) in exDeptQuestions">
-            <template v-if="question.type == 'select'">
-              <h1>Select Types</h1>
-              <div class="field-group">
-                <label :for="question">{{question.text}}</label>
-                <select v-model="exQsSelects[question.text]"
-                        :name="question"
-                        :id="question"
-                        type="select">
-                  <option>---</option>
-                  <option v-for="(value, index) in question.value"
-                          :value="value">
-                    {{ value }}
-                  </option>
-                </select>
-              </div>
+              <template v-if="question.type == 'textarea'">
+                <div class="field-group">
+                  <label :for="question.text">{{question.text}}</label>
+                  <textarea type="textarea"
+                            v-model="exDeptQsTextareas[question.text]"
+                            :id="question.text"
+                            :name="question.text"
+                            :placeholder="question.text"></textarea>
+                </div>
+              </template>
             </template>
+          </div>
 
-            <template v-if="question.type == 'text'">
-              <h1>Text Types</h1>
-              <fn1-input v-model="exQsTexts[question.text]"
-                         :key="index"
-                         :label="question.text"
-                         :placeholder="question.text"
-                         :name="question.text"
-                         :id="question.text" />
-            </template>
+          <div class="group-questions" v-if="!hasGroupExQuestions">
+            <h1>Group Questions</h1>
+            <template v-for="(question, index) in exGroupQuestions">
+              <template v-if="question.type == 'select'">
+                <div class="field-group">
+                  <label :for="question">{{question.text}}</label>
+                  <select v-model="exGroupQsSelects[question.text]"
+                          :name="question"
+                          :id="question"
+                          type="select">
+                    <option>---</option>
+                    <option v-for="(value, index) in question.value"
+                            :value="value">
+                      {{ value }}
+                    </option>
+                  </select>
+                </div>
+              </template>
 
-            <template v-if="question.type == 'number'">
-              <h1>Number Types</h1>
-              <fn1-input type="number"
-                         v-model="exQsNumbers[question.text]"
-                         :label="question.text"
-                         :placeholder="question.text"
-                         :name="question.text"
-                         :id="question.text" />
-            </template>
+              <template v-if="question.type == 'text'">
+                <fn1-input v-model="exGroupQsTexts[question.text]"
+                           :key="index"
+                           :label="question.text"
+                           :placeholder="question.text"
+                           :name="question.text"
+                           :id="question.text" />
+              </template>
 
-            <template v-if="question.type == 'textarea'">
-              <h1>Textarea Types</h1>
-              <div class="field-group">
-                <label :for="question.text">{{question.text}}</label>
-                <textarea type="textarea"
-                          v-model="exQsTextareas[question.text]"
-                          :id="question.text"
-                          :name="question.text"
-                          :placeholder="question.text"></textarea>
-              </div>
+              <template v-if="question.type == 'number'">
+                <fn1-input type="number"
+                           v-model="exGroupQsNumbers[question.text]"
+                           :label="question.text"
+                           :placeholder="question.text"
+                           :name="question.text"
+                           :id="question.text" />
+              </template>
+
+              <template v-if="question.type == 'textarea'">
+                <div class="field-group">
+                  <label :for="question.text">{{question.text}}</label>
+                  <textarea type="textarea"
+                            v-model="exGroupQsTextareas[question.text]"
+                            :id="question.text"
+                            :name="question.text"
+                            :placeholder="question.text"></textarea>
+                </div>
+              </template>
             </template>
-          </template>
+          </div>
 
           <div class="button-wrapper">
             <button @click.prevent="resetForm"
@@ -117,55 +152,81 @@ export default {
     return {
       stepActive: 5,
 
-      exQsSelects:    {},
-      exQsTexts:      {},
-      exQsTextareas:  {},
-      exQsNumbers:    {},
+      exDeptQsSelects:       {},
+      exDeptQsTexts:         {},
+      exDeptQsTextareas:     {},
+      exDeptQsNumbers:       {},
 
-      extraQuestionAnswers: this.joinedDeptAnswers,
-
-      testing: [ 'What is your eye color?: "brown"',
-  'What is color is your favorite?: "brown"',
-  'What is your waist size?: "34"',
-  'What is your favorite restaurant?: "Chipotle"',
-  'Tell us about yourself:: "ABout me ..."',
-  'What is your weight?: "170"',
-  'Your lucky number?: "7"' ]
+      exGroupQsSelects:       {},
+      exGroupQsTexts:         {},
+      exGroupQsTextareas:     {},
+      exGroupQsNumbers:       {},
     }
   },
-  mounted() {},
-  methods: {},
+  mounted() {
+    this.hasDeptExQuestions;
+    this.hasGroupExQuestions;
+  },
+  watch: {
+    'extraAnswers': {
+      handler: function (val, oldVal) {}
+    }
+  },
+  methods: {
+    isEmpty(obj) {
+      return Object.keys(obj).every(k => !Object.keys(obj[k]).length)
+    },
+  },
   computed: {
-    exDeptQuestions() {
-      return JSON.parse(this.extraDeptQuestions.questions);
-    },
-    joinedDeptAnswers() {
-      // return this.extraDeptQuestionAnswers = {
-      //         ...this.exQsSelects,
-      //         ...this.exQsTexts,
-      //         ...this.exQsTextareas,
-      //         ...this.exQsNumbers
-      //        }
-      let joinedDeptAnswers = {
-              ...this.exQsSelects,
-              ...this.exQsTexts,
-              ...this.exQsTextareas,
-              ...this.exQsNumbers
-             }
-
-      var res = Object.keys(joinedDeptAnswers)
-        .map(function(key) {
-          return `${key}: ${JSON.stringify(joinedDeptAnswers[key])}`;
-        });
-
-      return this.extraDeptQuestionAnswers = res;
-    },
     ...mapFields([
       'createUser.totalSteps',
+      'createUser.extraQuestionAnswers',
+
       'createUser.extraDeptQuestions',
       'createUser.extraDeptQuestionAnswers',
-      'createUser.extraGroupOptions'
+      // 'createUser.extraDeptQuestionAnswers.exDeptQsSelects',
+      // 'createUser.extraDeptQuestionAnswers.exDeptQsTexts',
+      // 'createUser.extraDeptQuestionAnswers.exDeptQsTextareas',
+      // 'createUser.extraDeptQuestionAnswers.exDeptQsNumbers',
+
+      'createUser.extraGroupQuestions',
+      'createUser.extraGroupQuestionAnswers',
+      // 'createUser.extraGroupQuestionAnswers.exGroupQsSelects',
+      // 'createUser.extraGroupQuestionAnswers.exGroupQsTexts',
+      // 'createUser.extraGroupQuestionAnswers.exGroupQsTextareas',
+      // 'createUser.extraGroupQuestionAnswers.exGroupQsNumbers',
     ]),
+    hasDeptExQuestions() {
+      return this.isEmpty(this.extraDeptQuestions);
+    },
+    hasGroupExQuestions() {
+      return this.isEmpty(this.extraGroupQuestions);
+    },
+    exDeptQuestions() {
+      return JSON.parse(this.extraDeptQuestions);
+    },
+    exGroupQuestions() {
+      return JSON.parse(this.extraGroupQuestions);
+    },
+    extraAnswers() {
+      let joinedAnswers = {
+              ...this.exDeptQsSelects,
+              ...this.exDeptQsTexts,
+              ...this.exDeptQsTextareas,
+              ...this.exDeptQsNumbers,
+              ...this.exGroupQsSelects,
+              ...this.exGroupQsTexts,
+              ...this.exGroupQsTextareas,
+              ...this.exGroupQsNumbers
+             }
+
+      var res = Object.keys(joinedAnswers)
+        .map(function(key) {
+          return `${key}: ${JSON.stringify(joinedAnswers[key])}`;
+        });
+
+      return this.extraQuestionAnswers = res;
+    }
   }
 }
 </script>
@@ -178,6 +239,32 @@ export default {
       display: flex;
       flex-wrap: wrap;
       // background-color: red;
+    }
+  }
+
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    .dept-questions,
+    .group-questions {
+      flex: 1;
+      max-width: 50%;
+    }
+
+    .dept-questions {
+      margin: 0 0 0 0;
+      padding: 0 40px 0 0;
+    }
+
+    .group-questions {
+      padding: 0 0 0 40px;
+      border-left: 1px solid lighten($text-color, 50%);
+    }
+
+    .button-wrapper {
+      width: 100%;
     }
   }
 
