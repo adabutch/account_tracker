@@ -3,11 +3,7 @@ import Vue from 'vue'
 Vue.mixin({
   methods: {
     isEmpty(obj) {
-      for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-          return false;
-      }
-      return true;
-    }
+      return Object.keys(obj).every(k => !Object.keys(obj[k]).length)
+    },
   }
 })

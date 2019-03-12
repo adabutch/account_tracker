@@ -235,8 +235,6 @@ export default {
         let previousVal = JSON.stringify(oldVal.id);
 
         if(newVal != previousVal) {
-          alert('new');
-
           this.$store.dispatch('createUser/resetGroup');
           this.$store.dispatch('createUser/resetJob');
           this.$store.dispatch('createUser/resetRequestedServices');

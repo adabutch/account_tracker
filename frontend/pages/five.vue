@@ -172,11 +172,7 @@ export default {
       handler: function (val, oldVal) {}
     }
   },
-  methods: {
-    isEmpty(obj) {
-      return Object.keys(obj).every(k => !Object.keys(obj[k]).length)
-    },
-  },
+  methods: {},
   computed: {
     ...mapFields([
       'createUser.totalSteps',
@@ -245,10 +241,11 @@ export default {
   form {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-self: flex-start;
 
     .dept-questions,
     .group-questions {
+      align-self: flex-start;
       flex: 1;
       max-width: 50%;
     }

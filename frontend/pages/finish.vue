@@ -107,7 +107,7 @@ export default {
 
       'createUser.selectedServiceRequestIds',
 
-      'createUser.extraDeptQuestionAnswers',
+      'createUser.extraQuestionAnswers',
     ])
   },
   methods: {
@@ -197,7 +197,7 @@ export default {
           "request_status":    "ready",
           "requester":         this.authUser.id,
           "requested_services": this.selectedServiceRequestIds,
-          "dynamic_options":   JSON.stringify(this.extraDeptQuestionAnswers),
+          "dynamic_options":   JSON.stringify(this.extraQuestionAnswers),
         })
         .then((response) => {
           resolve(response.data);

@@ -15,15 +15,13 @@
             <p>No <strong>Service Profiles</strong> associated with this Account Type.</p>
           </template>
 
-          <!-- <br>selectedServiceIDs<br>{{selectedServiceIDs}}<br><br><br> -->
-          <!-- <br>selectedServiceNames<br>{{selectedServiceNames}}<br><br><br> -->
-          <!-- <br>requestedServices<br>{{requestedServices}}<br><br><br> -->
-          <!-- <br>deptServices <br>{{deptServices}}<br><br><br> -->
-          <!-- <br>groupServices <br>{{groupServices}}<br><br><br> -->
+          <!-- {{hasDeptServices}}<br><br>- - - - <br><br>
+          {{deptServiceProfile}}<br><br>- - - - <br><br>
+          {{hasGroupServices}}<br><br>- - - - <br><br>
+          {{groupServiceProfile}}<br><br>- - - - <br><br> -->
 
           <div class="wrapper">
-            <div class="form-group"
-                 v-if="deptServiceProfile != undefined">
+            <div class="form-group" v-if="!hasDeptServices">
               <fieldset>
                 <legend>Department Services</legend>
                 <div v-for="(item, index) in deptServiceProfile">
@@ -41,8 +39,7 @@
               </fieldset>
             </div>
 
-            <div class="form-group"
-                 v-if="groupServiceProfile != undefined">
+            <div class="form-group" v-if="!hasGroupServices">
               <fieldset>
                 <legend>Group Services</legend>
                 <div v-for="(item, index) in groupServiceProfile">
@@ -137,6 +134,12 @@ export default {
       'createUser.department',
       'createUser.group'
     ]),
+    hasDeptServices() {
+      return this.isEmpty(this.deptServiceProfile);
+    },
+    hasGroupServices() {
+      return this.isEmpty(this.groupServiceProfile);
+    },
     userServices() {
       return this.requestedServices = [...this.selectedDeptServices, ...this.selectedGroupServices];
     },
