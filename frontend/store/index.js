@@ -26,10 +26,10 @@ const state = () => ({
     username:       ""
   },
   accountRequests:  {
-    pending: [],
-    ready: [],
-    approved: [],
-    denied: []
+    new:          [],
+    pending:      [],
+    approved:     [],
+    denied:       [],
   },
   startDateFormat:  "MMMM Do, YYYY"
 })
@@ -39,11 +39,11 @@ const mutations = {
   SET_AUTH(state, auth) {
     state.auth = auth
   },
+  ACCOUNT_REQUESTS_NEW(state, payload) {
+    state.accountRequests.new = payload
+  },
   ACCOUNT_REQUESTS_PENDING(state, payload) {
     state.accountRequests.pending = payload
-  },
-  ACCOUNT_REQUESTS_READY(state, payload) {
-    state.accountRequests.ready = payload
   },
   ACCOUNT_REQUESTS_DENIED(state, payload) {
     state.accountRequests.denied = payload
@@ -63,11 +63,11 @@ const mutations = {
 }
 
 const actions = {
+  accountRequestsNew(context, payload) {
+    context.commit('ACCOUNT_REQUESTS_NEW', payload)
+  },
   accountRequestsPending(context, payload) {
     context.commit('ACCOUNT_REQUESTS_PENDING', payload)
-  },
-  accountRequestsReady(context, payload) {
-    context.commit('ACCOUNT_REQUESTS_READY', payload)
   },
   accountRequestsDenied(context, payload) {
     context.commit('ACCOUNT_REQUESTS_DENIED', payload)

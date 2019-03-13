@@ -11,8 +11,8 @@
         <form>
           <h1><strong>Step Four:</strong>&nbsp;Software information</h1>
 
-          <template v-if="deptServiceProfile === undefined">
-            <p>No <strong>Service Profiles</strong> associated with this Account Type.</p>
+          <template v-if="isEmpty(!deptServiceProfile)">
+            <p>No associated <strong>Service Profiles</strong>.</p>
           </template>
 
           <!-- {{hasDeptServices}}<br><br>- - - - <br><br>
