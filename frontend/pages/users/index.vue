@@ -181,7 +181,7 @@
 
     <transition name="slideover-slide">
       <div v-if="showingUserDetails"
-           :class="['slideover', { open: showingUserDetails, closed: !showingUserDetails }]">
+           :class="['slideover']">
         <button @click="hideDetails" class="close">close</button>
         <h4>Detailed Information</h4>
         <fn1-button-group>
@@ -723,7 +723,7 @@ export default {
 }
 
 .slideover-slide-leave-to {
-  transform: translate(0, 0);
+  transform: translate(100%, 0);
 }
 
 .slideover {
@@ -737,7 +737,6 @@ export default {
   bottom: 0;
   padding: 20px 20px 0 20px;
   width: 400px;
-  // height: 100vh;
   background-color: lighten($text-color, 60%);
   border-left: 1px solid lighten($text-color, 50%);
   filter: drop-shadow(10px 0 8px $text-color);
