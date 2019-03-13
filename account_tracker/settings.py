@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'change_request',
     'termination_request',
     'action',
-    'account_image',
 ]
 
 MIDDLEWARE = [

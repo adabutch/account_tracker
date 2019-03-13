@@ -7,19 +7,8 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account_image', '0001_initial'),
         ('account_request', '0009_accountrequest_end_date'),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='accountrequest',
-            name='cropped_image',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='cropped_images', to='account_image.AccountImage'),
-        ),
-        migrations.AddField(
-            model_name='accountrequest',
-            name='full_image',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='full_images', to='account_image.AccountImage'),
-        ),
     ]
