@@ -179,129 +179,132 @@
       </fn1-tabs>
     </div>
 
-    <div class="slideover" v-if="showingUserDetails">
-      <button @click="hideDetails" class="close">close</button>
-      <h4>Detailed Information</h4>
-      <fn1-button-group>
-        <fn1-button @click.native="approveUserAccountRequest(showDetailsFor)">
-          <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-            <path fill="currentColor" d="M435.848 83.466L172.804 346.51l-96.652-96.652c-4.686-4.686-12.284-4.686-16.971 0l-28.284 28.284c-4.686 4.686-4.686 12.284 0 16.971l133.421 133.421c4.686 4.686 12.284 4.686 16.971 0l299.813-299.813c4.686-4.686 4.686-12.284 0-16.971l-28.284-28.284c-4.686-4.686-12.284-4.686-16.97 0z"></path>
-          </svg>
-          Approve Request
-        </fn1-button>
-
-        <exampleModal ref="modal" title="Deny Account Request Confirmation"
-                      :launchButtonText="denyModalButtonText">
-          <p slot="body"><strong>Deny this Account Request?</strong></p>
-          <ul slot="body">
-            <li>
-              <span>Name:</span>-
-              {{showDetailsFor.first_name}}
-              {{showDetailsFor.middle_name}}
-              {{showDetailsFor.last_name}}
-              {{showDetailsFor.suffix}}
-              ({{showDetailsFor.department}})
-            </li>
-          </ul>
-
-          <div class="field-group" slot="body">
-            <label>Leave a comment or reason.</label>
-            <textarea type="textarea"
-                      v-model="denyRequestReason"
-                      id="denial-comment"
-                      placeholder="Text here ..."></textarea>
-          </div>
-
-          <fn1-button slot="footer"
-                      @click.native="confirmModal(showDetailsFor)">Confirm
+    <transition name="slideover-slide">
+      <div v-if="showingUserDetails"
+           :class="['slideover', { open: showingUserDetails, closed: !showingUserDetails }]">
+        <button @click="hideDetails" class="close">close</button>
+        <h4>Detailed Information</h4>
+        <fn1-button-group>
+          <fn1-button @click.native="approveUserAccountRequest(showDetailsFor)">
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <path fill="currentColor" d="M435.848 83.466L172.804 346.51l-96.652-96.652c-4.686-4.686-12.284-4.686-16.971 0l-28.284 28.284c-4.686 4.686-4.686 12.284 0 16.971l133.421 133.421c4.686 4.686 12.284 4.686 16.971 0l299.813-299.813c4.686-4.686 4.686-12.284 0-16.971l-28.284-28.284c-4.686-4.686-12.284-4.686-16.97 0z"></path>
+            </svg>
+            Approve Request
           </fn1-button>
 
-          <fn1-button slot="footer"
-                      @click.native="cancelModal">Cancel
-          </fn1-button>
-        </exampleModal>
-
-      </fn1-button-group>
-      <ul>
-        <li v-if="showDetailsFor.request_status">
-          <span>Request Status</span>
-            <fn1-badge
-              :class="{'ready': (showDetailsFor.request_status === 'ready')}">
-              {{ showDetailsFor.request_status }}
-            </fn1-badge>
-        </li>
-
-        <li v-if="showDetailsFor.first_name">
-          <span>Name</span>
-          - {{showDetailsFor.first_name}}
-          <template v-if="showDetailsFor.nickname">
-            ({{showDetailsFor.nickname}})
-          </template>
-          {{showDetailsFor.middle_name}}
-          {{showDetailsFor.last_name}}
-          {{showDetailsFor.suffix}}
-        </li>
-
-        <li v-if="showDetailsFor.employee_phone">
-          <span>Employee Phone</span>
-          - {{showDetailsFor.employee_phone}}
-        </li>
-
-        <li v-if="showDetailsFor.supervisor">
-          <span>Supervisor</span>
-          - {{showDetailsFor.supervisor}} ({{showDetailsFor.supervisor_phone}})
-        </li>
-
-        <li v-if="showDetailsFor.facility">
-          <span>Facility</span>
-          - {{showDetailsFor.facility}}
-        </li>
-
-        <li v-if="showDetailsFor.department">
-          <span>Department</span>
-          - {{showDetailsFor.department}}
-        </li>
-
-        <li v-if="showDetailsFor.group">
-          <span>Group</span>
-          - {{showDetailsFor.group}}
-        </li>
-
-        <li v-if="showDetailsFor.job">
-          <span>Job</span>
-          - {{showDetailsFor.job}}
-        </li>
-
-        <li v-if="showDetailsFor.clock_entry_only">
-          <span>Clock-In Required</span>
-          - {{showDetailsFor.clock_entry_only}}
-        </li>
-
-        <li v-if="showDetailsFor.employee_status">
-          <span>Employee Status</span>
-          - {{showDetailsFor.employee_status}}
-        </li>
-
-        <li v-if="showDetailsFor.start_date">
-          <span>Start Date</span>
-          - {{showDetailsFor.start_date}}
-        </li>
-
-        <li v-if="showDetailsFor.requested_services">
-          <span>Requested Services</span>
-          - {{showDetailsFor.requested_services}}
-        </li>
-
-        <li v-if="showDetailsFor.dynamic_options">
-          <span>Extra Questions</span>
-            <ul>
-              <li v-for="ex, index in parseExtras(showDetailsFor.dynamic_options)">
-                - {{ex}}
+          <exampleModal ref="modal" title="Deny Account Request Confirmation"
+                        :launchButtonText="denyModalButtonText">
+            <p slot="body"><strong>Deny this Account Request?</strong></p>
+            <ul slot="body">
+              <li>
+                <span>Name:</span>-
+                {{showDetailsFor.first_name}}
+                {{showDetailsFor.middle_name}}
+                {{showDetailsFor.last_name}}
+                {{showDetailsFor.suffix}}
+                ({{showDetailsFor.department}})
               </li>
             </ul>
-        </li>
-      </ul>
-    </div>
+
+            <div class="field-group" slot="body">
+              <label>Leave a comment or reason.</label>
+              <textarea type="textarea"
+                        v-model="denyRequestReason"
+                        id="denial-comment"
+                        placeholder="Text here ..."></textarea>
+            </div>
+
+            <fn1-button slot="footer"
+                        @click.native="confirmModal(showDetailsFor)">Confirm
+            </fn1-button>
+
+            <fn1-button slot="footer"
+                        @click.native="cancelModal">Cancel
+            </fn1-button>
+          </exampleModal>
+
+        </fn1-button-group>
+        <ul>
+          <li v-if="showDetailsFor.request_status">
+            <span>Request Status</span>
+              <fn1-badge
+                :class="{'ready': (showDetailsFor.request_status === 'ready')}">
+                {{ showDetailsFor.request_status }}
+              </fn1-badge>
+          </li>
+
+          <li v-if="showDetailsFor.first_name">
+            <span>Name</span>
+            - {{showDetailsFor.first_name}}
+            <template v-if="showDetailsFor.nickname">
+              ({{showDetailsFor.nickname}})
+            </template>
+            {{showDetailsFor.middle_name}}
+            {{showDetailsFor.last_name}}
+            {{showDetailsFor.suffix}}
+          </li>
+
+          <li v-if="showDetailsFor.employee_phone">
+            <span>Employee Phone</span>
+            - {{showDetailsFor.employee_phone}}
+          </li>
+
+          <li v-if="showDetailsFor.supervisor">
+            <span>Supervisor</span>
+            - {{showDetailsFor.supervisor}} ({{showDetailsFor.supervisor_phone}})
+          </li>
+
+          <li v-if="showDetailsFor.facility">
+            <span>Facility</span>
+            - {{showDetailsFor.facility}}
+          </li>
+
+          <li v-if="showDetailsFor.department">
+            <span>Department</span>
+            - {{showDetailsFor.department}}
+          </li>
+
+          <li v-if="showDetailsFor.group">
+            <span>Group</span>
+            - {{showDetailsFor.group}}
+          </li>
+
+          <li v-if="showDetailsFor.job">
+            <span>Job</span>
+            - {{showDetailsFor.job}}
+          </li>
+
+          <li v-if="showDetailsFor.clock_entry_only">
+            <span>Clock-In Required</span>
+            - {{showDetailsFor.clock_entry_only}}
+          </li>
+
+          <li v-if="showDetailsFor.employee_status">
+            <span>Employee Status</span>
+            - {{showDetailsFor.employee_status}}
+          </li>
+
+          <li v-if="showDetailsFor.start_date">
+            <span>Start Date</span>
+            - {{showDetailsFor.start_date}}
+          </li>
+
+          <li v-if="showDetailsFor.requested_services">
+            <span>Requested Services</span>
+            - {{showDetailsFor.requested_services}}
+          </li>
+
+          <li v-if="showDetailsFor.dynamic_options">
+            <span>Extra Questions</span>
+              <ul>
+                <li v-for="ex, index in parseExtras(showDetailsFor.dynamic_options)">
+                  - {{ex}}
+                </li>
+              </ul>
+          </li>
+        </ul>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -707,6 +710,22 @@ export default {
   }
 }
 
+.slideover-slide-enter-active {
+  transition: all .2s ease-in-out;
+}
+
+.slideover-slide-leave-active {
+  transition: all .2s ease-in-out;
+}
+
+.slideover-slide-enter {
+  transform: translate(100%, 0);
+}
+
+.slideover-slide-leave-to {
+  transform: translate(0, 0);
+}
+
 .slideover {
   position: fixed;
   z-index: 10;
@@ -716,7 +735,6 @@ export default {
   top: 0;
   right: 0;
   bottom: 0;
-  margin-left: auto;
   padding: 20px 20px 0 20px;
   width: 400px;
   // height: 100vh;
