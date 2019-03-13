@@ -14,7 +14,7 @@
         <h1>Denied Account Requests</h1>
 
         <div class="title-row">
-          <h4>User Account Requests <strong>deined</strong> after review.</h4>
+          <h4>User Account Requests <strong>deined ({{deniedCount}})</strong> after review.</h4>
         </div>
 
         <template v-if="!deniedAccounts.length">
@@ -142,6 +142,9 @@ export default {
       'accountRequests.denied',
       'authUser'
     ]),
+    deniedCount() {
+      return this.denied.length;
+    },
     deniedAccounts() {
       return this.denied
       .filter(user => {
