@@ -185,7 +185,6 @@ export default {
     ...mapFields([
       'authUser',
       'totalSteps',
-      'endpoints',
       'createUser.name.first',
       'createUser.name.middle',
       'createUser.name.last',

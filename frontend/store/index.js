@@ -16,6 +16,7 @@ const cookieparser = process.server ? require('cookieparser') : undefined;
 export const strict = false;
 
 const state = () => ({
+  isAuthenticated:  false,
   auth:             null,
   authUser: {
     email:          "",
@@ -23,14 +24,6 @@ const state = () => ({
     groups:         [],
     last_name:      "",
     username:       ""
-  },
-  isAuthenticated:  false,
-  endpoints: {
-    baseUrl:        'http://127.0.0.1:8000/api/',
-    obtainJWT:      'auth/obtain_token/',
-    refreshJWT:     'auth/refresh_token/',
-    profile:        'profile/',
-    image:          'image/',
   },
   accountRequests:  {
     pending: [],

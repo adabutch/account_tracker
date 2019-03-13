@@ -124,7 +124,6 @@ export default {
   },
   computed: {
     ...mapFields([
-      'endpoints',
       'createUser.totalSteps',
       'createUser.requestedServices',
       'createUser.selectedDeptServices',
@@ -169,7 +168,7 @@ export default {
   methods: {
     getServiceProfiles() {
       if(this.department.id) {
-        this.$axios.get(`${this.endpoints.baseUrl}profile/?department_id=${this.department.id}`)
+        this.$axios.get(`${process.env.api}${process.env.profile}?department_id=${this.department.id}`)
         .then((res) => {
           console.log(`DEPT SERVICES :::: `,res.data.results[0].services);
           this.deptServiceProfile = res.data.results[0].services;
@@ -180,7 +179,7 @@ export default {
       }
 
       if(this.group.id) {
-        this.$axios.get(`${this.endpoints.baseUrl}profile/?department_id=${this.department.id}&group_id=${this.group.id}`)
+        this.$axios.get(`${process.env.api}${process.env.profile}?department_id=${this.department.id}&group_id=${this.group.id}`)
         .then((res) => {
           this.groupServiceProfile = res.data.results[0].services;
         })

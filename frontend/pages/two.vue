@@ -117,7 +117,7 @@ export default {
   mounted() {
     this.mondays();
 
-    axios.get(`https://tomcat2.bloomington.in.gov/timetrack/DepartmentService`)
+    axios.get(`${process.env.ttApi}${process.env.deptService}`)
     .then((res) => {
       this.$store.dispatch('depts/setDepartments', res.data);
     })
@@ -219,7 +219,6 @@ export default {
   },
   computed: {
     ...mapFields([
-      'endpoints',
       'startDateFormat',
       'depts.departments',
       'facilities.facilities',
@@ -278,7 +277,7 @@ export default {
       return facilitiesByDept;
     },
     getGroups() {
-      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupService?department_id=${this.department.id}`)
+      axios.get(`${process.env.ttApi}${process.env.groupService}?department_id=${this.department.id}`)
       .then((res) => {
         console.log(`getGroups res :: `,res.data);
         this.groups = res.data;
@@ -334,7 +333,7 @@ export default {
     },
     getExtraDeptQuestions() {
       return new Promise((resolve) => {
-        this.$axios.get(`${this.endpoints.baseUrl}${this.endpoints.profile}?department_id=${this.department.id}`)
+        this.$axios.get(`${process.env.api}${process.env.profile}?department_id=${this.department.id}`)
         .then((response) => {
           resolve(response.data);
         })
@@ -345,7 +344,7 @@ export default {
     },
     getExtraGroupQuestions() {
       return new Promise((resolve) => {
-        this.$axios.get(`${this.endpoints.baseUrl}${this.endpoints.profile}?department_id=${this.department.id}&group_id=${this.group.id}`)
+        this.$axios.get(`${process.env.api}${process.env.profile}?department_id=${this.department.id}&group_id=${this.group.id}`)
         .then((response) => {
           resolve(response.data);
         })
@@ -383,7 +382,7 @@ export default {
       return this.config.enable = mondays;;
     },
     getJobs() {
-      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/JobTitleService?group_id=${this.group.id}`)
+      axios.get(`${process.env.ttApi}${process.env.jobService}?group_id=${this.group.id}`)
       .then((res) => {
         console.log(`getJobs res :: `, res.data);
         this.jobs = res.data;

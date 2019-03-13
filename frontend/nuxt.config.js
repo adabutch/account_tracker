@@ -26,6 +26,12 @@ module.exports = {
     user:           'user/',
     profile:        'profile/',
     image:          'image/',
+
+    ttApi:          'https://tomcat2.bloomington.in.gov/timetrack/',
+    deptService:    'DepartmentService',
+    groupService:   'GroupService',
+    jobService:     'JobTitleService',
+    managerService: 'ManagerService',
   },
 
   /*
