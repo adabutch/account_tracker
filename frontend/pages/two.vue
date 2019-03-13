@@ -176,6 +176,8 @@ export default {
             if(hasDeptQuestions != null) {
               this.extraDeptQuestions = hasDeptQuestions;
               this.$store.dispatch('createUser/addToTotalSteps', 5);
+            } else {
+              this.$store.dispatch('createUser/addToTotalSteps', 4);
             }
           });
         }
