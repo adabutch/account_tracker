@@ -10,10 +10,11 @@
                        @selectChange="watchSelect" />
 
       <fn1-tabs>
-        <fn1-tab name="Ready" :selected="true">
+        <fn1-tab :name="`New (` + [[ newReadyCount ]] + `)`" :selected="true">
 
           <div class="title-row">
-            <h4>User account requests <strong>ready</strong> for review.</h4>
+
+            <h4><strong>New</strong> user Account Requests.</h4>
 
             <template v-if="batchApprovalCount > 1">
               <fn1-modal title="Ready Request Batch Confirmation"
@@ -72,7 +73,7 @@
                   </div>
                 </th>
                 <th>
-                  <fn1-badge :class="{'ready': (item.request_status === 'ready')}">
+                  <fn1-badge :class="{'ready': (item.request_status === 'ready'), 'new': (item.request_status === 'new')}">
                     {{ item.request_status }}
                   </fn1-badge>
                 </th>
@@ -92,7 +93,7 @@
           </table>
         </fn1-tab>
 
-        <fn1-tab name="Pending">
+        <fn1-tab :name="`Pending (` + [[ pendingCount ]] + `)`">
           <div class="title-row">
             <h4>User account requests <strong>pending</strong> creation.</h4>
 
@@ -330,7 +331,7 @@ const { mapFields } = createHelpers({
 });
 
 export default {
-  middleware: 'authenticated',
+  middleware:       'authenticated',
   components: {
     headerComponent,
     adminUsersAside,
@@ -340,32 +341,24 @@ export default {
   },
   data() {
     return {
-      denyRequestReason: "",
+      denyRequestReason:   "",
       denyModalButtonText: "Deny Request",
-      showModal: false,
-      showDetailsFor: null,
-      showingUserDetails: false,
-      selectFilter: '',
-      searchUsers:  '',
-      batchRequestIDs: [],
-      selected: [],
+      showModal:           false,
+      showDetailsFor:      null,
+      showingUserDetails:  false,
+      selectFilter:        "",
+      searchUsers:         "",
+      batchRequestIDs:     [],
+      selected:            [],
     }
   },
   mounted() {
     this.getAccountRequests;
   },
-  watch: {
-    // showModal(val) {
-    //   this.$emit('modalChange', this.showModal);
-    // }
-  },
+  watch: {},
   methods: {
     parseExtras(extras){
       return JSON.parse(extras);
-    },
-
-    batchRequestButtonAction(e) {
-      alert('we got here');
     },
     cancelModal() {
       this.$refs.modal.showModal = false;
@@ -428,9 +421,6 @@ export default {
         console.log(e)
       })
     },
-    denyUserAccountRequest(account) {
-      // alert('deny Account Request')
-    }
   },
   computed: {
     ...mapFields([
@@ -458,11 +448,14 @@ export default {
         console.log(e);
       })
     },
-    watchShowModal() {
-      return this.showModal;
-    },
     batchApprovalCount() {
       return this.selected.length;
+    },
+    newReadyCount() {
+      return this.ready.length;
+    },
+    pendingCount() {
+      return this.pending.length;
     },
     batchPendingRequestApproval: {
       get: function () {
@@ -535,326 +528,327 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
 
-.page-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 0;
-  // background-color: red;
+  .page-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    // background-color: red;
 
-  aside {
-    padding: 20px;
-    // background-color: green;
-  }
-
-  table {
-    color: $text-color;
-
-    thead tr th,
-    tbody tr th {
-      &:last-of-type {
-        // background-color: green;
-        text-align: right;
-      }
+    aside {
+      padding: 20px;
+      // background-color: green;
     }
 
-    thead {
-      background-color: transparent;
+    table {
+      color: $text-color;
 
-      tr {
-        th {
-          &:nth-of-type(2) {
-            width: 1px;
-            min-width: 350px;
-            white-space: nowrap;
+      thead tr th,
+      tbody tr th {
+        &:last-of-type {
+          // background-color: green;
+          text-align: right;
+        }
+      }
+
+      thead {
+        background-color: transparent;
+
+        tr {
+          th {
+            &:nth-of-type(2) {
+              width: 1px;
+              min-width: 350px;
+              white-space: nowrap;
+            }
           }
         }
       }
-    }
 
-    tbody {
-      tr {
-        th {
-          &:nth-of-type(2) {
-            display: flex;
-            flex-wrap: wrap;
-            // background-color: pink;
+      tbody {
+        tr {
+          th {
+            &:nth-of-type(2) {
+              display: flex;
+              flex-wrap: wrap;
+              // background-color: pink;
 
-            div {
-              &.avatar {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background-color: lighten($color-blue, 45%);
-                margin: 0 20px 0 0;
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-              }
+              div {
+                &.avatar {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  background-color: lighten($color-blue, 45%);
+                  margin: 0 20px 0 0;
+                  width: 50px;
+                  height: 50px;
+                  border-radius: 50%;
+                }
 
-              &.profile-image {
-                margin: 0 20px 0 0;
-                width: 50px;
-                height: 50px;
-              }
+                &.profile-image {
+                  margin: 0 20px 0 0;
+                  width: 50px;
+                  height: 50px;
+                }
 
-              &.name {
-                // background-color: red;
-                display: flex;
-                flex-direction: column;
-                align-self: center;
+                &.name {
+                  // background-color: red;
+                  display: flex;
+                  flex-direction: column;
+                  align-self: center;
 
-                div {
-                  width: 100%;
+                  div {
+                    width: 100%;
 
-                  &:nth-child(2) {
-                    font-size: 14px;
-                    color: lighten($text-color, 25%);
+                    &:nth-child(2) {
+                      font-size: 14px;
+                      color: lighten($text-color, 25%);
+                    }
                   }
                 }
               }
             }
-          }
 
-          &:nth-child(4),
-          &:nth-child(5) {
-            div {
-              &:nth-child(2) {
-                font-size: 14px;
-                color: lighten($text-color, 25%);
+            &:nth-child(4),
+            &:nth-child(5) {
+              div {
+                &:nth-child(2) {
+                  font-size: 14px;
+                  color: lighten($text-color, 25%);
+                }
               }
             }
-          }
 
-          button {
-            background-color: darken($color-silver, 10%);
-            padding: 0 10px;
+            button {
+              background-color: darken($color-silver, 10%);
+              padding: 0 10px;
+            }
           }
         }
       }
     }
-  }
 
-  /deep/ .navigation-dropdown {
-    summary {
-      background-color: darken($color-silver, 10%);
-    }
-
-    ul {
-      li {
-        width: 100%;
-        border: none;
-        margin: 0;
-        padding: 0 10px;
-        text-align: left;
-        border-radius: 0;
-
-        &:hover {
-          border: none;
-          background-color: lighten($color-silver, 40%);
-        }
+    /deep/ .navigation-dropdown {
+      summary {
+        background-color: darken($color-silver, 10%);
       }
-    }
-  }
 
-  .tabs-group {
-    flex: 1;
-    padding: 20px;
-
-    /deep/ .tabs {
       ul {
         li {
-          color: $text-color;
-          font-size: 18px;
-          line-height: 18px;
+          width: 100%;
+          border: none;
+          margin: 0;
+          padding: 0 10px;
+          text-align: left;
+          border-radius: 0;
+
+          &:hover {
+            border: none;
+            background-color: lighten($color-silver, 40%);
+          }
         }
       }
     }
 
-    /deep/ .tab-content {
-      padding: 0;
+    .tabs-group {
+      flex: 1;
+      padding: 20px;
 
-      .tab-pane {
-        .title-row {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin: 30px 0 20px 0;
-          min-height: 25px;
-          // background-color: red;
-
-          h4 {
+      /deep/ .tabs {
+        ul {
+          li {
             color: $text-color;
             font-size: 18px;
             line-height: 18px;
           }
+        }
+      }
 
-          button {
-            margin: 0;
-            padding: 0 20px;
-            background-color: $color-green;
-            white-space: nowrap;
+      /deep/ .tab-content {
+        padding: 0;
+
+        .tab-pane {
+          .title-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0 20px 0;
+            min-height: 25px;
+            // background-color: red;
+
+            h4 {
+              color: $text-color;
+              font-size: 18px;
+              line-height: 18px;
+            }
+
+            button {
+              margin: 0;
+              padding: 0 20px;
+              background-color: $color-green;
+              white-space: nowrap;
+            }
           }
         }
       }
     }
   }
-}
 
-.badge {
-  text-transform: uppercase;
-  font-size: 14px;
-  margin: 0;
+  .badge {
+    text-transform: uppercase;
+    font-size: 14px;
+    margin: 0;
 
-  &.ready {
-    background-color: $color-green;
+    &.ready,
+    &.new {
+      background-color: $color-green;
+    }
   }
-}
 
-.slideover-slide-enter-active {
-  transition: all .2s ease-in-out;
-}
+  .slideover-slide-enter-active {
+    transition: all .2s ease-in-out;
+  }
 
-.slideover-slide-leave-active {
-  transition: all .2s ease-in-out;
-}
+  .slideover-slide-leave-active {
+    transition: all .2s ease-in-out;
+  }
 
-.slideover-slide-enter {
-  transform: translate(100%, 0);
-}
+  .slideover-slide-enter {
+    transform: translate(100%, 0);
+  }
 
-.slideover-slide-leave-to {
-  transform: translate(100%, 0);
-}
+  .slideover-slide-leave-to {
+    transform: translate(100%, 0);
+  }
 
-.slideover {
-  position: fixed;
-  z-index: 10;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  padding: 20px 20px 0 20px;
-  width: 400px;
-  background-color: lighten($text-color, 60%);
-  border-left: 1px solid lighten($text-color, 50%);
-  filter: drop-shadow(10px 0 8px $text-color);
-  color: $text-color;
-
-  &:after {
-    position: absolute;
-    content: '';
+  .slideover {
+    position: fixed;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    top: 0;
     right: 0;
     bottom: 0;
-    left: 0;
-    background-color: red;
-    height: 30px;
-    width: 100%;
-    background: linear-gradient(
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 1) 100%
-    );
-  }
+    padding: 20px 20px 0 20px;
+    width: 400px;
+    background-color: lighten($text-color, 60%);
+    border-left: 1px solid lighten($text-color, 50%);
+    filter: drop-shadow(10px 0 8px $text-color);
+    color: $text-color;
 
-  button {
-    padding: 5px 10px;
-
-    &.close {
-      background-color: darken($color-silver, 10%);
-      width: 100px;
-      margin-left: auto;
-
-      &:hover {
-        background-color: darken($color-silver, 15%);
-      }
-    }
-  }
-
-  .button-group {
-    display: flex;
-    margin: 15px 0 0 0;
-    padding: 15px 0;
-    border-top: 1px solid lighten($text-color, 50%);
-    border-bottom: 1px solid lighten($text-color, 50%);
-
-    div {
-      margin: 0;
-      padding: 0;
-      display: inline-block;
+    &:after {
+      position: absolute;
+      content: '';
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: red;
+      height: 30px;
+      width: 100%;
+      background: linear-gradient(
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 1) 100%
+      );
     }
 
-    button,
-    .button,
-    /deep/ div > button,
-    /deep/ div > .button {
-      margin: 0 10px 0 0;
+    button {
       padding: 5px 10px;
-      border-radius: $radius-default;
-      background-color: $color-orange-darker;
-      border: none;
 
-      &:hover {
-        background-color: darken($color-orange-darker, 5%);
-      }
-
-      &:first-child {
-        background-color: $color-green;
+      &.close {
+        background-color: darken($color-silver, 10%);
+        width: 100px;
+        margin-left: auto;
 
         &:hover {
-          background-color: darken($color-green, 5%);
+          background-color: darken($color-silver, 15%);
         }
       }
-
-      &:last-child {
-
-      }
-
-      svg {
-        display: block;
-        width: 20px;
-        height: 20px;
-        margin: 0 10px 0 0;
-      }
     }
-  }
 
-  h4 {
-    padding: 20px 0 0 0;
-    // border-bottom: 1px solid lighten($text-color, 50%);
-    font-weight: $weight-semi-bold;
-  }
+    .button-group {
+      display: flex;
+      margin: 15px 0 0 0;
+      padding: 15px 0;
+      border-top: 1px solid lighten($text-color, 50%);
+      border-bottom: 1px solid lighten($text-color, 50%);
 
-  ul {
-    overflow-y: scroll;
-    margin: 15px 0 0 0;
-    padding: 0;
-    list-style: none;
-    height: calc(100% - 181px);
-
-    li {
-      margin: 0 0 10px 10px;
-      font-weight: $weight-semi-bold;
-      color: lighten($text-color, 15%);
-      font-size: 14px;
-
-      span:not(.badge) {
-        display: block;
-        margin: 0 0 5px -10px;
-        color: $text-color;
-        font-size: $size-m;
-      }
-
-      ul {
+      div {
         margin: 0;
         padding: 0;
+        display: inline-block;
+      }
 
-        li {
-          margin: 0 0 10px 0;
+      button,
+      .button,
+      /deep/ div > button,
+      /deep/ div > .button {
+        margin: 0 10px 0 0;
+        padding: 5px 10px;
+        border-radius: $radius-default;
+        background-color: $color-orange-darker;
+        border: none;
+
+        &:hover {
+          background-color: darken($color-orange-darker, 5%);
+        }
+
+        &:first-child {
+          background-color: $color-green;
+
+          &:hover {
+            background-color: darken($color-green, 5%);
+          }
+        }
+
+        &:last-child {
+
+        }
+
+        svg {
+          display: block;
+          width: 20px;
+          height: 20px;
+          margin: 0 10px 0 0;
+        }
+      }
+    }
+
+    h4 {
+      padding: 20px 0 0 0;
+      // border-bottom: 1px solid lighten($text-color, 50%);
+      font-weight: $weight-semi-bold;
+    }
+
+    ul {
+      overflow-y: scroll;
+      margin: 15px 0 0 0;
+      padding: 0;
+      list-style: none;
+      height: calc(100% - 181px);
+
+      li {
+        margin: 0 0 10px 10px;
+        font-weight: $weight-semi-bold;
+        color: lighten($text-color, 15%);
+        font-size: 14px;
+
+        span:not(.badge) {
+          display: block;
+          margin: 0 0 5px -10px;
+          color: $text-color;
+          font-size: $size-m;
+        }
+
+        ul {
+          margin: 0;
           padding: 0;
+
+          li {
+            margin: 0 0 10px 0;
+            padding: 0;
+          }
         }
       }
     }
   }
-}
 </style>
