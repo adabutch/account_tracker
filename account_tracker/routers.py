@@ -7,14 +7,12 @@ from service_request.viewsets import ServiceRequestViewSet
 from service.viewsets import ServiceViewSet
 from service_manager.viewsets import ServiceManagerViewSet
 from default_profile.viewsets import DefaultProfileViewSet
-from account_image.viewsets import AccountImageViewSet
 from action.viewsets import ActionViewSet
 
 router = routers.DefaultRouter()
 router.register(r'employee', UserViewSet, basename='employee')
 router.register(r'user', CurrentUserViewSet, basename='user')
 router.register(r'profile', DefaultProfileViewSet)
-router.register(r'image', AccountImageViewSet)
 router.register(r'action', ActionViewSet)
 router.register(r'account-request', AccountRequestViewSet)
 router.register(r'change-request', ChangeRequestViewSet)

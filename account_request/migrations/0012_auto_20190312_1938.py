@@ -10,10 +10,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='accountrequest',
-            name='image',
-        ),
         migrations.AddField(
             model_name='accountrequest',
             name='cropped_image',

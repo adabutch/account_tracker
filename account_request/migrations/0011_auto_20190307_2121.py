@@ -10,13 +10,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name='accountrequest',
-            old_name='full_image',
-            new_name='image',
-        ),
-        migrations.RemoveField(
-            model_name='accountrequest',
-            name='cropped_image',
-        ),
     ]
