@@ -38,7 +38,7 @@
           </div>
 
           <fn1-input v-model="employeePhone"
-                     label="Employee Phone"
+                     label="Employee Phone (desk)"
                      @keyup.native="yooo"
                      @blur.native="yooo"
                      type="tel"

@@ -141,6 +141,23 @@ span.label {
   }
 }
 
+.profile-image {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid lighten($text-color, 50%);
+  margin: 0 5px 0 0;
+  border-radius: 50%;
+
+  img {
+    position:absolute;
+    top:50%;
+    transform: translateY(-50%);
+    height: auto;
+    width: auto;
+    max-width:100%;
+  }
+}
+
 .vdp-datepicker__calendar {
   font-family: $font-text;
 

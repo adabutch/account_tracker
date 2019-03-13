@@ -20,7 +20,7 @@
 
             <div v-if="!showSuccessMsg">
               <button class="button"
-                      @click="submitForm">Create User</button>
+                      @click="createUserSubmit">Create User</button>
 
               <nuxt-link class="button cancel"
                          :to="{ name: 'index'}">back to last step, </nuxt-link>
@@ -163,51 +163,57 @@ export default {
       });
     },
     submitForm() {
-      if(this.full || this.cropped) {
-        this.imageSubmit().then((resolve) => {
-          this.imageID = resolve;
-          this.createUserSubmit().then((resolve) => {
-            this.responseMsg = resolve;
-          })
-        });
-      } else {
-        this.createUserSubmit();
-      }
+      // if(this.full || this.cropped) {
+      //   this.imageSubmit().then((resolve) => {
+      //     this.imageID = resolve;
+      //     this.createUserSubmit().then((resolve) => {
+      //       this.responseMsg = resolve;
+      //     })
+      //   });
+      // } else {
+      //   this.createUserSubmit();
+      // }
     },
     createUserSubmit() {
-      return new Promise((resolve) => {
-        this.$axios.post(`${this.endpoints.baseUrl}account-request/`,{
-          "image":             this.imageID,
-          "first_name":        this.first,
-          "middle_name":       this.middle,
-          "last_name":         this.last,
-          "suffix":            this.suffix,
-          "nickname":          this.nickname,
-          "employee_phone":    this.employeePhone,
-          "supervisor":        this.supervisor,
-          "supervisor_phone":  this.supervisorPhone,
-          "department":        this.department.name,
-          "division":          this.division,
-          "group":             this.group.name,
-          "facility":          this.facility,
-          "job":               this.job.name,
-          "employee_status":   this.job.salaryGroup,
-          "clock_entry_only":  this.job.clockInRequired,
-          "start_date":        this.dateFormatted,
-          "request_status":    "ready",
-          "requester":         this.authUser.id,
-          "requested_services": this.selectedServiceRequestIds,
-          "dynamic_options":   JSON.stringify(this.extraQuestionAnswers),
-        })
-        .then((response) => {
-          resolve(response.data);
-          this.showSuccessMsg = true;
-          this.$store.dispatch('createUser/resetState');
-        })
-        .catch((e) => {
-          this.errorMsg.push(e)
-          console.log(e)
-        })
+      let blobFull = this.dataURItoBlob(this.full);
+      let blobCropped = this.dataURItoBlob(this.cropped);
+      let firstLast = `${this.first}-${this.last}`;
+      let flToLower = firstLast.toLowerCase();
+
+      let fD = new FormData();
+      fD.append(`full_image`, blobFull, `${flToLower}-full`);
+      fD.append(`cropped_image`, blobCropped, `${flToLower}-cropped`);
+      fD.append(`first_name`, this.first);
+      fD.append(`middle_name`, this.middle);
+      fD.append(`last_name`, this.last);
+      fD.append(`suffix`, this.suffix);
+      fD.append(`nickname`, this.nickname);
+      fD.append(`employee_phone`, this.employeePhone);
+      fD.append(`supervisor`, this.supervisor);
+      fD.append(`supervisor_phone`, this.supervisorPhone);
+      fD.append(`department`, this.department.name);
+      fD.append(`division`, this.division);
+      fD.append(`group`, this.group.name);
+      fD.append(`facility`, this.facility);
+      fD.append(`job`, this.job.name);
+      fD.append(`employee_status`, this.job.salaryGroup);
+      fD.append(`clock_entry_only`, this.job.clockInRequired);
+      fD.append(`start_date`, this.dateFormatted);
+      fD.append(`request_status`, `ready`);
+      fD.append(`requester`, this.authUser.id);
+      fD.append(`requested_services`, this.selectedServiceRequestIds);
+      fD.append(`dynamic_options`, JSON.stringify(this.extraQuestionAnswers));
+
+      this.$axios
+      .post(`${this.endpoints.baseUrl}account-request/`,fD)
+      .then((response) => {
+        console.log(response.data);
+        this.showSuccessMsg = true;
+        this.$store.dispatch('createUser/resetState');
+      })
+      .catch((e) => {
+        this.errorMsg.push(e)
+        console.log(e)
       });
     },
     clearStore() {

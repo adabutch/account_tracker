@@ -153,6 +153,10 @@ export default {
       this.$refs.croppieRef.bind({
         url: this.full,
       });
+    } else {
+      this.$refs.croppieRef.bind({
+        url: this.placeholderImg,
+      });
     }
     if(this.cropped) {
       this.croppieCropped = this.cropped;
@@ -172,6 +176,7 @@ export default {
         { value: 'V',   text: 'V' },
         { value: 'VI',  text: 'VI' }
       ],
+      placeholderImg: '/user-upload-placeholder.jpg',
       imgOrientation: '',
       croppieCropped: null,
     }
@@ -290,14 +295,14 @@ export default {
 
   .image-upload-wrapper {
     border-right: 1px solid lighten($text-color, 50%);
-    margin: 0 20px 0 0;
+    margin: 0 40px 0 0;
     align-items: flex-start;
-    width: 440px;
+    width: 480px;
 
     .croppie-wrapper {
       width: 180px;
       height: 240px;
-      margin: 0 20px 40px 0;
+      margin: 0 40px 40px 0;
 
       /deep/ .croppie-container {
 
@@ -381,7 +386,7 @@ export default {
     .image-wrapper {
       position: relative;
       margin-left: auto;
-      padding: 0 20px 0 0;
+      padding: 0 40px 0 0;
 
       img {
         border: 1px solid lighten($text-color, 50%);
@@ -401,7 +406,7 @@ export default {
           padding: 5px;
           border-radius: 50%;
           top: -10px;
-          right: 10px;
+          right: 30px;
         }
       }
     }

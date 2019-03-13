@@ -26,11 +26,11 @@ const state = () => ({
   },
   isAuthenticated:  false,
   endpoints: {
-    // TODO: Remove hardcoding of dev endpoints
+    baseUrl:        'http://127.0.0.1:8000/api/',
     obtainJWT:      'auth/obtain_token/',
     refreshJWT:     'auth/refresh_token/',
-    baseUrl:        'http://127.0.0.1:8000/api/',
     profile:        'profile/',
+    image:          'image/',
   },
   accountRequests:  {
     pending: [],

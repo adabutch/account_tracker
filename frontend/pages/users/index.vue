@@ -28,6 +28,8 @@
             <h1>Sorry, no results.</h1>
           </template>
 
+          {{getAccountRequests}}
+
           <table v-if="readyAccounts.length">
             <caption class="sr-only">All User Requests</caption>
             <thead>
@@ -58,7 +60,10 @@
                          name="select-all-requests">
                 </th>
                 <th>
-                  <div class="avatar">
+                  <div class="profile-image" v-if="item.cropped_image">
+                    <img :src="item.cropped_image">
+                  </div>
+                  <div class="avatar" v-if="!item.cropped_image">
                     {{ userInitial(item.first_name) }}{{ userInitial(item.last_name) }}
                   </div>
                   <div class="name">
@@ -343,7 +348,7 @@ export default {
     }
   },
   mounted() {
-    this.getAccountRequests();
+    // this.getAccountRequests();
   },
   watch: {
     // showModal(val) {
@@ -354,25 +359,7 @@ export default {
     parseExtras(extras){
       return JSON.parse(extras);
     },
-    getAccountRequests() {
-      this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000&request_status=pending`)
-      .then((res) => {
-        console.log(res.data.results)
-        this.$store.dispatch('accountRequestsPending', res.data.results)
-      })
-      .catch((e) => {
-        console.log(e);
-      })
 
-      this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000&request_status=ready`)
-      .then((res) => {
-        console.log(res.data.results)
-        this.$store.dispatch('accountRequestsReady', res.data.results)
-      })
-      .catch((e) => {
-        console.log(e);
-      })
-    },
     batchRequestButtonAction(e) {
       alert('we got here');
     },
@@ -456,6 +443,40 @@ export default {
       'endpoints',
       'authUser'
     ]),
+    getAccountRequests() {
+      this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000&request_status=pending`)
+      .then((res) => {
+        this.$store.dispatch('accountRequestsPending', res.data.results)
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+
+      this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000&request_status=ready`)
+      .then((res) => {
+        let readyResults = res.data.results;
+        this.$store.dispatch('accountRequestsReady', readyResults);
+
+        // readyResults.forEach((p) => {
+        //   let imgID = p.image;
+
+        //   if(imgID != null) {
+        //     this.$axios
+        //     .get(`${this.endpoints.baseUrl}${this.endpoints.image}${imgID}/`)
+        //     .then((res) => {
+        //       p.image_url = res.data.cropped_image
+        //     })
+        //     .catch((e) => {
+        //       console.log(e);
+        //     })
+        //   }
+        // })
+
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+    },
     watchShowModal() {
       return this.showModal;
     },
@@ -595,6 +616,12 @@ export default {
                 width: 50px;
                 height: 50px;
                 border-radius: 50%;
+              }
+
+              &.profile-image {
+                margin: 0 20px 0 0;
+                width: 50px;
+                height: 50px;
               }
 
               &.name {

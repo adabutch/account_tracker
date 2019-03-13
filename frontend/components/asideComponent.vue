@@ -256,22 +256,8 @@ export default {
           align-items: center;
 
           .profile-image {
-            position:relative;
-            overflow:hidden;
-            border: 1px solid lighten($text-color, 50%);
-            margin: 0 5px 0 0;
-            border-radius: 50%;
             height: 30px;
             width: 30px;
-
-            img {
-              position:absolute;
-              top:50%;
-              transform:translateY(-50%);
-              height: auto;
-              width: auto;
-              max-width:100%;
-            }
           }
         }
 

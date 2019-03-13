@@ -25,7 +25,6 @@
                     id="department"
                     type="select"
                     v-model="department">
-              <option>---</option>
               <option v-for="(item, index) in getDepts"
                       :value="{id: item.value, name: item.text}">
                 {{ item.text }}
@@ -59,37 +58,6 @@
             </select>
           </div>
 
-          <!-- Not sure we need to show these as
-               they are automagically determined
-               based on job selection. -->
-          <!-- <fn1-input v-model="job.salaryGroup"
-                     v-if="job.salaryGroup"
-                     label="Job Status"
-                     name="job-status"
-                     id="job-status"
-                     disabled />
-
-          <fn1-input v-model="job.clockInRequired"
-                     v-if="job.clockInRequired"
-                     label="Clock-In Required"
-                     name="clockin-required"
-                     id="clockin-required"
-                     disabled /> -->
-
-
-
-          <!-- {{testing()}} -->
-
-          <!-- <div class="field-group">
-            <label for="start-date">Start Date</label>
-            <datepicker v-model="startDate"
-                        :format="customFormatter"
-                        :disabledDates="startDates"
-                        ref="datepicker"
-                        name="start-date"
-                        id="start-date" />
-          </div> -->
-
           <div class="field-group">
             <label for="start-date">Start Date</label>
             <flat-pickr v-model="startDate"
@@ -98,8 +66,6 @@
                         placeholder="Select date"
                         name="date"></flat-pickr>
           </div>
-
-
 
           <div class="button-wrapper">
             <button @click.prevent="resetForm"
@@ -185,45 +151,6 @@ export default {
       stepActive: 2,
       showDivision: false,
       showJob: false,
-      statusOptions: [
-        {
-          value: 'Full-Time',
-          text: 'Full-Time'
-        },
-        {
-          value: 'Part-Time',
-          text: 'Part-Time'
-        },
-        {
-          value: 'Intern',
-          text: 'Intern'
-        },
-        {
-          value: 'SPEA Intern',
-          text: 'SPEA Intern'
-        },
-        {
-          value: 'Volunteer',
-          text: 'Volunteer'
-        },
-        {
-          value: 'Seasonal',
-          text: 'Seasonal'
-        },
-        {
-          value: 'Temp. Full-Time',
-          text: 'Temp. Full-Time'
-        },
-        {
-          value: 'Temp. Part-Time',
-          text: 'Temp. Part-Time'
-        },
-        {
-          value: 'Part-Time',
-          text: 'Part-Time'
-        }
-      ],
-      jobsStatusOptions: [],
       groups: [],
       jobs: [],
     }
@@ -245,7 +172,11 @@ export default {
 
           this.getExtraDeptQuestions.then((resolve) => {
             console.log(`dept Q resolve`, resolve);
-            this.extraDeptQuestions = resolve.results[0].questions;
+            let hasDeptQuestions = resolve.results[0].questions;
+            if(hasDeptQuestions != null) {
+              this.extraDeptQuestions = hasDeptQuestions;
+              this.$store.dispatch('createUser/addToTotalSteps', 5);
+            }
           });
         }
       }
@@ -256,8 +187,6 @@ export default {
         let previousVal = JSON.stringify(oldVal.id);
 
         if(newVal != previousVal) {
-          // alert(`${newVal} != ${previousVal}`);
-
           this.$store.dispatch('createUser/resetJob');
           this.$store.dispatch('createUser/resetSupervisor');
           this.$store.dispatch('createUser/resetSupervisorPhone');
@@ -268,7 +197,10 @@ export default {
 
           this.getExtraGroupQuestions.then((resolve) => {
             console.log(`group Q resolve`, resolve);
-            this.extraGroupQuestions = resolve.results[0].questions;
+            let hasGroupQuestions = resolve.results[0].questions;
+            if(hasGroupQuestions != null) {
+              this.extraGroupQuestions = hasGroupQuestions;
+            }
           });
         }
       }
@@ -348,11 +280,11 @@ export default {
     getGroups() {
       axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupService?department_id=${this.department.id}`)
       .then((res) => {
-        console.log(res.data);
+        console.log(`getGroups res :: `,res.data);
         this.groups = res.data;
       })
       .catch((error) => {
-        console.log(error);
+        console.log(`getGroups error :: `,error);
       })
     },
     deptGroups() {
@@ -405,10 +337,9 @@ export default {
         this.$axios.get(`${this.endpoints.baseUrl}${this.endpoints.profile}?department_id=${this.department.id}`)
         .then((response) => {
           resolve(response.data);
-          this.$store.dispatch('createUser/addToTotalSteps', 5);
         })
         .catch((error) => {
-          console.log(error)
+          console.log(`getExtraDeptQuestions error :: `, error)
         })
       });
     },
@@ -419,7 +350,7 @@ export default {
           resolve(response.data);
         })
         .catch((error) => {
-          console.log(error)
+          console.log(`getExtraGroupQuestions error :: `, error)
         })
       });
     }
@@ -454,11 +385,11 @@ export default {
     getJobs() {
       axios.get(`https://tomcat2.bloomington.in.gov/timetrack/JobTitleService?group_id=${this.group.id}`)
       .then((res) => {
-        console.log(res.data);
+        console.log(`getJobs res :: `, res.data);
         this.jobs = res.data;
       })
       .catch((error) => {
-        console.log(error);
+        console.log(`getJobs error :: `, error);
       })
     }
   },
