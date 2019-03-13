@@ -10,14 +10,14 @@
                        @selectChange="watchSelect" />
 
       <fn1-tabs>
-        <fn1-tab :name="`New (` + [[ newReadyCount ]] + `)`" :selected="true">
+        <fn1-tab :name="`New (` + [[ newCount ]] + `)`" :selected="true">
 
           <div class="title-row">
 
             <h4><strong>New</strong> user Account Requests.</h4>
 
             <template v-if="batchApprovalCount > 1">
-              <fn1-modal title="Ready Request Batch Confirmation"
+              <fn1-modal title="New Request Batch Confirmation"
                          launchButtonText="Batch Approve">
                 <p slot="body">Approve all <strong>({{ batchApprovalCount }})</strong> requests?</p>
                 <fn1-button slot="footerBtnConfirm">I Understand</fn1-button>
@@ -25,16 +25,16 @@
             </template>
           </div>
 
-          <template v-if="!readyAccounts.length">
+          <template v-if="!newAccounts.length">
             <h1>Sorry, no results.</h1>
           </template>
 
-          <table v-if="readyAccounts.length">
+          <table v-if="newAccounts.length">
             <caption class="sr-only">All User Requests</caption>
             <thead>
               <tr>
                 <th scope="col">
-                  <input v-model="batchReadyRequestApproval"
+                  <input v-model="batchNewRequestApproval"
                          id="select-all-requests"
                          value="select-all-requests"
                          type="checkbox"
@@ -49,7 +49,7 @@
             </thead>
 
             <tbody>
-              <tr v-for="(item, index) in readyAccounts" :key="index">
+              <tr v-for="(item, index) in newAccounts" :key="index">
                 <th scope="row">
                   <input v-model="selected"
                          :key="index"
@@ -73,7 +73,7 @@
                   </div>
                 </th>
                 <th>
-                  <fn1-badge :class="{'ready': (item.request_status === 'ready'), 'new': (item.request_status === 'new')}">
+                  <fn1-badge :class="{'new': (item.request_status === 'new')}">
                     {{ item.request_status }}
                   </fn1-badge>
                 </th>
@@ -98,7 +98,7 @@
             <h4>User account requests <strong>pending</strong> creation.</h4>
 
             <template v-if="batchApprovalCount > 1">
-              <fn1-modal title="Ready Request Batch Confirmation"
+              <fn1-modal title="Pending Request Batch Confirmation"
                          launchButtonText="Batch Approve">
                 <p slot="body">Approve all <strong>({{ batchApprovalCount }})</strong> requests?</p>
                 <fn1-button slot="footerBtnConfirm">I Understand</fn1-button>
@@ -154,7 +154,7 @@
                   </div>
                 </th>
                 <th>
-                  <fn1-badge :class="{'ready': (item.request_status === 'ready')}">
+                  <fn1-badge :class="{'new': (item.request_status === 'new')}">
                     {{ item.request_status }}
                   </fn1-badge>
                 </th>
@@ -229,7 +229,7 @@
           <li v-if="showDetailsFor.request_status">
             <span>Request Status</span>
               <fn1-badge
-                :class="{'ready': (showDetailsFor.request_status === 'ready')}">
+                :class="{'new': (showDetailsFor.request_status === 'new')}">
                 {{ showDetailsFor.request_status }}
               </fn1-badge>
           </li>
@@ -424,8 +424,8 @@ export default {
   },
   computed: {
     ...mapFields([
+      'accountRequests.new',
       'accountRequests.pending',
-      'accountRequests.ready',
       'accountRequests.approved',
       'accountRequests.denied',
       'authUser'
@@ -439,10 +439,10 @@ export default {
         console.log(e);
       })
 
-      this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=ready`)
+      this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=new`)
       .then((res) => {
-        let readyResults = res.data.results;
-        this.$store.dispatch('accountRequestsReady', readyResults);
+        let newResults = res.data.results;
+        this.$store.dispatch('accountRequestsNew', newResults);
       })
       .catch((e) => {
         console.log(e);
@@ -451,8 +451,8 @@ export default {
     batchApprovalCount() {
       return this.selected.length;
     },
-    newReadyCount() {
-      return this.ready.length;
+    newCount() {
+      return this.new.length;
     },
     pendingCount() {
       return this.pending.length;
@@ -472,23 +472,23 @@ export default {
         this.selected = selected;
       }
     },
-    batchReadyRequestApproval: {
+    batchNewRequestApproval: {
       get: function () {
-        return this.ready ? this.selected.length == this.ready.length : false;
+        return this.new ? this.selected.length == this.new.length : false;
       },
       set: function (value) {
         var selected = [];
 
         if (value) {
-          this.ready.forEach(function (item) {
+          this.new.forEach(function (item) {
             selected.push(item.id);
           });
         }
         this.selected = selected;
       }
     },
-    readyAccounts() {
-      return this.ready
+    newAccounts() {
+      return this.new
       .filter(user => {
         let firstName  = user.first_name.toLowerCase();
         let middleName = user.middle_name.toLowerCase();
@@ -698,7 +698,6 @@ export default {
     font-size: 14px;
     margin: 0;
 
-    &.ready,
     &.new {
       background-color: $color-green;
     }
