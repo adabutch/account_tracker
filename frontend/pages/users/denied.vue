@@ -35,9 +35,12 @@
           <tbody>
             <tr v-for="(item, index) in deniedAccounts" :key="index">
               <th>
-                <div class="avatar">
-                  {{ userInitial(item.first_name) }}{{ userInitial(item.last_name) }}
-                </div>
+                <div class="profile-image" v-if="item.cropped_image">
+                    <img :src="item.cropped_image">
+                  </div>
+                  <div class="avatar" v-if="!item.cropped_image">
+                    {{ userInitial(item.first_name) }}{{ userInitial(item.last_name) }}
+                  </div>
                 <div class="name">
                   <div>
                     {{ item.first_name }} {{ item.middle_name }} {{ item.last_name }}<template v-if="item.suffix">, {{ item.suffix }}</template>
@@ -159,7 +162,7 @@ export default {
       //   let requestType = status.request_status.toLowerCase();
       //   return requestType === "ready"
       // })
-      .sort((a, b) => new Date(b.requested) - new Date(a.requested))
+      .sort((a, b) => new Date(b.updated) - new Date(a.updated))
     },
   }
 }
@@ -249,6 +252,12 @@ export default {
                   width: 50px;
                   height: 50px;
                   border-radius: 50%;
+                }
+
+                &.profile-image {
+                  margin: 0 20px 0 0;
+                  width: 50px;
+                  height: 50px;
                 }
 
                 &.name {

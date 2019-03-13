@@ -9,6 +9,7 @@
         <div class="success-wrapper">
           <h1 v-if="showSuccessMsg" v-html="successMsg"></h1>
         </div>
+        {{errorMsg}}
         <asideComponent v-if="!showSuccessMsg"
                         :step-active="stepActive"
                         :aside-header="asideHeader" />

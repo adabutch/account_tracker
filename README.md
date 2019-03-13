@@ -12,6 +12,7 @@ pip3 install django-cors-headers
 pip3 install djangorestframework-jwt
 pip3 install django-filter
 pip3 install Pillow
+pip3 install drf-friendly-errors
 ```
 
 ## Migrations

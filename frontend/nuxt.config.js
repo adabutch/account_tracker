@@ -19,6 +19,15 @@ module.exports = {
     ]
   },
 
+  env: {
+    api:            'http://127.0.0.1:8000/api/',
+    obtainJWT:      'auth/obtain_token/',
+    refreshJWT:     'auth/refresh_token/',
+    user:           'user/',
+    profile:        'profile/',
+    image:          'image/',
+  },
+
   /*
   ** Customize the progress-bar color
   */

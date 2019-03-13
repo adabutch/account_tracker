@@ -24,8 +24,8 @@
           89.128418,93.0962906 74.9929733,107.2274933 "/>
       </svg>
 
-      <p v-if="errorMessge">{{errorMessge}}</p>
-      {{isAuthenticated}}
+      <p v-if="loginError">{{loginError}}</p>
+
       <fn1-input v-model="username"
                label="Username"
                placeholder="Username"
@@ -41,7 +41,7 @@
                name="password">
       </div>
 
-      <fn1-button @click.native="postLogin">login</fn1-button>
+      <fn1-button @click.native="login">login</fn1-button>
     </form>
   </div>
 </template>
@@ -54,42 +54,40 @@ import {
 const Cookie = process.client ? require('js-cookie') : undefined
 
 export default {
-  middleware: 'notAuthenticated',
+  middleware:       'notAuthenticated',
   data () {
     return {
-      errorMessge:  '',
       username:     '',
-      password:     ''
+      password:     '',
+      loginError:   ''
     }
   },
   computed: {
-    ...mapFields(['endpoints','isAuthenticated'])
+    ...mapFields(['isAuthenticated'])
   },
   methods: {
-    postLogin() {
+    login() {
       const payload = {
         username: this.username,
         password: this.password
       }
-      axios.post(`${this.endpoints.baseUrl}${this.endpoints.obtainJWT}`, payload)
+      axios.post(`${process.env.api}${process.env.obtainJWT}`, payload)
       .then((response) => {
-        console.log(response);
+        // console.log(`login ::: `, response);
         this.$store.commit('SET_AUTH', response.data.token)
         Cookie.set('auth', response.data.token)
+        this.$axios.get(`${process.env.api}${process.env.user}`)
 
-        this.$axios.get(`${this.endpoints.baseUrl}user/`)
         .then((response) => {
-          console.log(response.data)
+          // console.log(`login user ::: `, response.data)
           this.$store.commit("SET_AUTH_USER", response.data)
           this.$store.commit("SET_IS_AUTHENTICATED", true)
           this.$router.push('/')
         })
       })
       .catch((error) => {
-        this.errorMessge = error.response.data;
-        console.log(error);
-        console.debug(error);
-        console.dir(error);
+        this.loginError = error.response.data;
+        console.log(`login error ::: `, error.response.data);
       })
     }
   }

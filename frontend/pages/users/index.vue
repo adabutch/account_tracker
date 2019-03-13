@@ -28,8 +28,6 @@
             <h1>Sorry, no results.</h1>
           </template>
 
-          {{getAccountRequests}}
-
           <table v-if="readyAccounts.length">
             <caption class="sr-only">All User Requests</caption>
             <thead>
@@ -141,7 +139,10 @@
                          name="select-all-requests">
                 </th>
                 <th>
-                  <div class="avatar">
+                  <div class="profile-image" v-if="item.cropped_image">
+                    <img :src="item.cropped_image">
+                  </div>
+                  <div class="avatar" v-if="!item.cropped_image">
                     {{ userInitial(item.first_name) }}{{ userInitial(item.last_name) }}
                   </div>
                   <div class="name">
@@ -348,7 +349,7 @@ export default {
     }
   },
   mounted() {
-    // this.getAccountRequests();
+    this.getAccountRequests;
   },
   watch: {
     // showModal(val) {
@@ -367,23 +368,18 @@ export default {
       this.$refs.modal.showModal = false;
     },
     confirmModal(payload) {
-      // console.log(`WS :: PAYLOAD ::: ${JSON.stringify(payload)}`)
-      // console.log(`${payload.id}`)
-      // console.log(`${this.denyRequestReason}`)
-      // this.$refs.modal.showModal = false;
-
       this.$axios
       .patch(`${this.endpoints.baseUrl}account-request/${payload.id}/`,{
         "request_status": "denied",
         "comment": this.denyRequestReason
       })
       .then(response => {
-        console.log(response)
+        console.log(`confirmModal Denied :: `, response)
         this.$refs.modal.showModal = false;
         this.showDetailsFor = null;
         this.denyRequestReason = "";
         this.showingUserDetails = false;
-        this.getAccountRequests();
+        this.getAccountRequests;
       })
       .catch(e => {
         console.log(e)
@@ -423,12 +419,11 @@ export default {
         console.log(response)
         this.showDetailsFor = null;
         this.showingUserDetails = false;
-        this.getAccountRequests();
+        this.getAccountRequests;
       })
       .catch(e => {
         console.log(e)
       })
-      // alert(JSON.stringify(account.id))
     },
     denyUserAccountRequest(account) {
       // alert('deny Account Request')
@@ -456,22 +451,6 @@ export default {
       .then((res) => {
         let readyResults = res.data.results;
         this.$store.dispatch('accountRequestsReady', readyResults);
-
-        // readyResults.forEach((p) => {
-        //   let imgID = p.image;
-
-        //   if(imgID != null) {
-        //     this.$axios
-        //     .get(`${this.endpoints.baseUrl}${this.endpoints.image}${imgID}/`)
-        //     .then((res) => {
-        //       p.image_url = res.data.cropped_image
-        //     })
-        //     .catch((e) => {
-        //       console.log(e);
-        //     })
-        //   }
-        // })
-
       })
       .catch((e) => {
         console.log(e);
@@ -528,10 +507,6 @@ export default {
                userDept.includes(this.searchUsers.toLowerCase()) ||
                userGroup.includes(this.searchUsers.toLowerCase())
       })
-      // .filter(status => {
-      //   let requestType = status.request_status.toLowerCase();
-      //   return requestType === "ready"
-      // })
       .sort((a, b) => new Date(b.requested) - new Date(a.requested))
     },
     pendingAccounts() {
@@ -549,10 +524,6 @@ export default {
                userDept.includes(this.searchUsers.toLowerCase()) ||
                userGroup.includes(this.searchUsers.toLowerCase())
       })
-      // .filter(status => {
-      //   let requestType = status.request_status.toLowerCase();
-      //   return requestType === "pending"
-      // })
       .sort((a, b) => new Date(b.requested) - new Date(a.requested))
     }
   }
