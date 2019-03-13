@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from service.models import Service
+from account_request.models import AccountRequest
 
 
 class ServiceRequest(models.Model):
@@ -24,9 +25,11 @@ class ServiceRequest(models.Model):
         User, related_name='requested_services', on_delete=models.SET_NULL,
         blank=True, null=True)
 
-    #
     # TODO: optionally link back to the parent request?
     # only applies to AccountRequest or TerminationRequest
+    account_request = models.ForeignKey(AccountRequest,
+                                        on_delete=models.SET_NULL,
+                                        blank=True, null=True)
 
     # grant access? remove access?
     type_of_change = models.CharField(max_length=50)
