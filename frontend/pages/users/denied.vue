@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     getDeniedAccountRequests() {
-      this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000&request_status=denied`)
+      this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=denied`)
       .then((res) => {
         console.log(res.data.results)
         this.$store.dispatch('accountRequestsDenied', res.data.results)
@@ -140,7 +140,6 @@ export default {
   computed: {
     ...mapFields([
       'accountRequests.denied',
-      'endpoints',
       'authUser'
     ]),
     deniedAccounts() {

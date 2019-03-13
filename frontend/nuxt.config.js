@@ -25,7 +25,8 @@ module.exports = {
     refreshJWT:     'auth/refresh_token/',
     user:           'user/',
     profile:        'profile/',
-    image:          'image/',
+    accountRequest: 'account-request/',
+
 
     ttApi:          'https://tomcat2.bloomington.in.gov/timetrack/',
     deptService:    'DepartmentService',

@@ -9,7 +9,13 @@
         <div class="success-wrapper">
           <h1 v-if="showSuccessMsg" v-html="successMsg"></h1>
         </div>
-        {{errorMsg}}
+
+        <fn1-alert variant="danger" v-if="errorMsg.length">
+          <template v-for="e, i in errorMsg">
+            <p>{{e}}</p>
+          </template>
+        </fn1-alert>
+
         <asideComponent v-if="!showSuccessMsg"
                         :step-active="stepActive"
                         :aside-header="asideHeader" />
@@ -21,7 +27,7 @@
 
             <div v-if="!showSuccessMsg">
               <button class="button"
-                      @click="createUserSubmit">Create User</button>
+                      @click="accountRequestSubmit">Create User</button>
 
               <nuxt-link class="button cancel"
                          :to="{ name: 'index'}">back to last step, </nuxt-link>
@@ -79,7 +85,6 @@ export default {
       return formatted;
     },
     ...mapFields([
-      'endpoints',
       'data',
       'totalSteps',
       'startDateFormat',
@@ -137,45 +142,7 @@ export default {
         return new Blob([ia], {type:mimeString});
       }
     },
-    imageSubmit() {
-      return new Promise((resolve) => {
-        let firstLast = `${this.first}-${this.last}`;
-        let flToLower = firstLast.toLowerCase();
-
-        let imgFD = new FormData();
-        let blobFull = this.dataURItoBlob(this.full);
-        let blobCropped = this.dataURItoBlob(this.cropped);
-
-        imgFD.append(`full_image`, blobFull, `${flToLower}-full`);
-        imgFD.append(`cropped_image`, blobCropped, `${flToLower}-cropped`);
-
-        this.$axios.post(`${this.endpoints.baseUrl}image/`, imgFD, {
-          header: {
-            'Content-Type': 'multipart/form-data',
-          }
-        })
-        .then((response) => {
-          console.log(response.data.id);
-          resolve(response.data.id);
-        })
-        .catch((e) => {
-          console.log(e)
-        })
-      });
-    },
-    submitForm() {
-      // if(this.full || this.cropped) {
-      //   this.imageSubmit().then((resolve) => {
-      //     this.imageID = resolve;
-      //     this.createUserSubmit().then((resolve) => {
-      //       this.responseMsg = resolve;
-      //     })
-      //   });
-      // } else {
-      //   this.createUserSubmit();
-      // }
-    },
-    createUserSubmit() {
+    accountRequestSubmit() {
       let blobFull = this.dataURItoBlob(this.full);
       let blobCropped = this.dataURItoBlob(this.cropped);
       let firstLast = `${this.first}-${this.last}`;
@@ -206,15 +173,15 @@ export default {
       fD.append(`dynamic_options`, JSON.stringify(this.extraQuestionAnswers));
 
       this.$axios
-      .post(`${this.endpoints.baseUrl}account-request/`,fD)
+      .post(`${process.env.api}${process.env.accountRequest}`,fD)
       .then((response) => {
         console.log(response.data);
         this.showSuccessMsg = true;
         this.$store.dispatch('createUser/resetState');
       })
       .catch((e) => {
-        this.errorMsg.push(e)
-        console.log(e)
+        this.errorMsg.push(e.response.data.errors)
+        console.log(e.response.data.errors)
       });
     },
     clearStore() {
@@ -305,5 +272,4 @@ export default {
       line-height: $size-xl;
     }
   }
-
 </style>

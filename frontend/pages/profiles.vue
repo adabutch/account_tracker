@@ -93,7 +93,7 @@ export default {
     exampleCheckbox
   },
   mounted() {
-    axios.get(`https://tomcat2.bloomington.in.gov/timetrack/DepartmentService`)
+    axios.get(`${process.env.ttApi}${process.env.deptService}`)
     .then((res) => {
       console.log(res);
       this.serviceDepts = res.data;
@@ -120,9 +120,7 @@ export default {
   },
   computed: {
     dateFormatted() {},
-    ...mapFields([
-      'endpoints',
-    ]),
+    ...mapFields([]),
     getDepts() {
       let deptSelectArray = [];
 
@@ -157,7 +155,7 @@ export default {
   },
   methods: {
     getGroups() {
-      axios.get(`https://tomcat2.bloomington.in.gov/timetrack/GroupService?department_id=${this.selectedDept.id}`)
+      axios.get(`${process.env.ttApi}${process.env.groupService}?department_id=${this.selectedDept.id}`)
       .then((res) => {
         console.log(res.data);
         this.serviceGroups = res.data;

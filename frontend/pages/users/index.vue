@@ -369,7 +369,7 @@ export default {
     },
     confirmModal(payload) {
       this.$axios
-      .patch(`${this.endpoints.baseUrl}account-request/${payload.id}/`,{
+      .patch(`${process.env.api}${process.env.accountRequest}${payload.id}/`,{
         "request_status": "denied",
         "comment": this.denyRequestReason
       })
@@ -412,7 +412,7 @@ export default {
     },
     approveUserAccountRequest(account) {
       this.$axios
-      .patch(`${this.endpoints.baseUrl}account-request/${account.id}/`,{
+      .patch(`${process.env.api}${process.env.accountRequest}${account.id}/`,{
         "request_status": "pending"
       })
       .then(response => {
@@ -435,11 +435,10 @@ export default {
       'accountRequests.ready',
       'accountRequests.approved',
       'accountRequests.denied',
-      'endpoints',
       'authUser'
     ]),
     getAccountRequests() {
-      this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000&request_status=pending`)
+      this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=pending`)
       .then((res) => {
         this.$store.dispatch('accountRequestsPending', res.data.results)
       })
@@ -447,7 +446,7 @@ export default {
         console.log(e);
       })
 
-      this.$axios.get(`${this.endpoints.baseUrl}account-request/?limit=1000&request_status=ready`)
+      this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=ready`)
       .then((res) => {
         let readyResults = res.data.results;
         this.$store.dispatch('accountRequestsReady', readyResults);
