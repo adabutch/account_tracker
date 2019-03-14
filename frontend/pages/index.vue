@@ -14,14 +14,14 @@
             <div class="image-upload-wrapper">
               <span class="label">Profile Image</span>
               <div class="croppie-wrapper">
-                <vue-croppie
-                  ref="croppieRef"
-                  :enableResize="false"
-                  :viewport="{ width: 180, height: 240}"
-                  :result="blob"
-                  @result="result"
-                  @update="update">
-                </vue-croppie>
+                <no-ssr>
+                  <vue-croppie
+                    ref="croppieRef"
+                    :enableResize="false"
+                    :viewport="{ width: 180, height: 240}"
+                    :result="blob"
+                    @result="result" />
+                </no-ssr>
               </div>
 
               <div class="image-wrapper">
@@ -148,19 +148,21 @@ export default {
     asideComponent,
     exampleSelect
   },
-  mounted() {
-    if(this.full){
-      this.$refs.croppieRef.bind({
-        url: this.full,
-      });
-    } else {
-      this.$refs.croppieRef.bind({
-        url: this.placeholderImg,
-      });
-    }
-    if(this.cropped) {
-      this.croppieCropped = this.cropped;
-    }
+  beforeUpdate() {
+    this.$nextTick(() => {
+      if(this.full){
+        this.$refs.croppieRef.bind({
+          url: this.full,
+        });
+      } else {
+        this.$refs.croppieRef.bind({
+          url: this.placeholderImg,
+        });
+      }
+      if(this.cropped) {
+        this.croppieCropped = this.cropped;
+      }
+    });
   },
   data() {
     return {
@@ -176,6 +178,7 @@ export default {
         { value: 'V',   text: 'V' },
         { value: 'VI',  text: 'VI' }
       ],
+      blob:           '',
       placeholderImg: '/user-upload-placeholder.jpg',
       imgOrientation: '',
       croppieCropped: null,
@@ -220,9 +223,6 @@ export default {
     result(output) {
       this.croppieCropped = output;
       this.cropped = output;
-    },
-    update(val) {
-      //console.log(val);
     },
     rotate(rotationAngle) {
       this.$refs.croppieRef.rotate(rotationAngle);
