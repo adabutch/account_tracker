@@ -73,11 +73,12 @@ export default {
       }
       axios.post(`${process.env.api}${process.env.obtainJWT}`, payload)
       .then((response) => {
-        // console.log(`login ::: `, response);
+        console.log(`login ::: `, response);
         this.$store.commit('SET_AUTH', response.data.token)
         Cookie.set('auth', response.data.token)
-        this.$axios.get(`${process.env.api}${process.env.user}`)
 
+        this.$axios
+        .get(`${process.env.api}${process.env.user}`)
         .then((response) => {
           // console.log(`login user ::: `, response.data)
           this.$store.commit("SET_AUTH_USER", response.data)

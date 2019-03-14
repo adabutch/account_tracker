@@ -3,7 +3,9 @@
     <headerComponent />
 
     <div class="page-wrapper">
-      <progressStepper :step-active="stepActive" />
+      <progressStepper :step-active="stepActive"
+                       :previous-button="previous"
+                       :next-button="nextStep" />
 
       <div>
         <asideComponent />
@@ -14,11 +16,6 @@
           <template v-if="isEmpty(!deptServiceProfile)">
             <p>No associated <strong>Service Profiles</strong>.</p>
           </template>
-
-          <!-- {{hasDeptServices}}<br><br>- - - - <br><br>
-          {{deptServiceProfile}}<br><br>- - - - <br><br>
-          {{hasGroupServices}}<br><br>- - - - <br><br>
-          {{groupServiceProfile}}<br><br>- - - - <br><br> -->
 
           <div class="wrapper">
             <div class="form-group" v-if="!hasDeptServices">
@@ -57,22 +54,6 @@
               </fieldset>
             </div>
           </div>
-
-          <div class="button-wrapper">
-            <button @click.prevent="resetForm"
-                    class="reset-form">reset</button>
-
-            <nuxt-link class="button previous"
-                       :to="{ name: 'three'}">Previous</nuxt-link>
-
-            <nuxt-link v-if="stepActive < totalSteps"
-                       class="button"
-                       :to="{ name: 'five'}">Next</nuxt-link>
-
-            <nuxt-link v-if="stepActive == totalSteps"
-                       class="button"
-                       :to="{ name: 'finish'}">Finish</nuxt-link>
-          </div>
         </form>
       </div>
     </div>
@@ -102,7 +83,8 @@ export default {
   },
   data() {
     return {
-      stepActive: 4,
+      stepActive:   4,
+      previous:     { name: 'three'},
       deptServiceProfile: {},
       groupServiceProfile: {},
     }
@@ -133,6 +115,13 @@ export default {
       'createUser.department',
       'createUser.group'
     ]),
+    nextStep() {
+      if(this.stepActive < this.totalSteps) {
+        return { name: 'five'}
+      } else if (this.stepActive == this.totalSteps) {
+        return { name: 'finish'}
+      }
+    },
     hasDeptServices() {
       return this.isEmpty(this.deptServiceProfile);
     },

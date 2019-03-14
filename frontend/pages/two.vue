@@ -3,7 +3,9 @@
     <headerComponent />
 
     <div class="page-wrapper">
-      <progressStepper :step-active="stepActive" />
+      <progressStepper :step-active="stepActive"
+                       :previous-button="previous"
+                       :next-button="next" />
 
       <div>
         <asideComponent />
@@ -66,18 +68,6 @@
                         placeholder="Select date"
                         name="date"></flat-pickr>
           </div>
-
-          <div class="button-wrapper">
-            <button @click.prevent="resetForm"
-                    class="reset-form">reset</button>
-
-            <nuxt-link class="button previous"
-                       :to="{ name: 'index'}"
-                       @click.native="">Previous</nuxt-link>
-
-            <nuxt-link class="button"
-                       :to="{ name: 'three'}">Next</nuxt-link>
-          </div>
         </form>
       </div>
     </div>
@@ -138,6 +128,9 @@ export default {
   },
   data() {
     return {
+      stepActive:   2,
+      previous:     { name: 'index'},
+      next:         { name: 'three'},
       config: {
         enable: [],
         altInput: true,
@@ -148,7 +141,6 @@ export default {
           console.log(currentMonth.currentYear);
         }
       },
-      stepActive: 2,
       showDivision: false,
       showJob: false,
       groups: [],

@@ -3,7 +3,9 @@
     <headerComponent />
 
     <div class="page-wrapper">
-      <progressStepper :step-active="stepActive" />
+      <progressStepper :step-active="stepActive"
+                       :previous-button="previous"
+                       :next-button="next" />
 
       <div>
         <asideComponent />
@@ -47,17 +49,6 @@
                      maxlength="10"
                      name="employee-phone"
                      id="employee-phone" />
-
-          <div class="button-wrapper">
-            <button @click.prevent="resetForm"
-                    class="reset-form">reset</button>
-
-            <nuxt-link class="button previous"
-                       :to="{ name: 'two'}">Previous</nuxt-link>
-
-            <nuxt-link class="button"
-                       :to="{ name: 'four'}">Next</nuxt-link>
-          </div>
         </form>
       </div>
     </div>
@@ -91,6 +82,8 @@ export default {
   data() {
     return {
       stepActive:       3,
+      previous:         { name: 'two'},
+      next:             { name: 'four'},
       managers:         [],
       phoneValue:       0,
       preventIteration: false,
@@ -138,9 +131,7 @@ export default {
     }
   },
   computed: {
-
     ...mapFields([
-      'data',
       'createUser.department',
       'createUser.facility',
       'createUser.division',

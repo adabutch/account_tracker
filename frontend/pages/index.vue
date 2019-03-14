@@ -2,7 +2,8 @@
   <div>
     <headerComponent />
     <div class="page-wrapper">
-      <progressStepper :step-active="stepActive" />
+      <progressStepper :step-active="stepActive" :next-button="next" />
+
       <div>
         <asideComponent />
         <form>
@@ -76,6 +77,7 @@
                 <li>Click, <code class="create">Create</code></li>
                 <li>The <strong>Profile Image</strong> (on the right) is now set</li>
               </ol>
+              <p><strong>note: </strong>The <strong>Original</strong> (left image) will remain as it was before editing any changes for the <strong>Profile Image</strong>.</p>
             </div>
 
             <div class="fields-wrapper">
@@ -109,14 +111,6 @@
                             id="suffix"
                             :options="suffixOptions" />
             </div>
-          </div>
-
-          <div class="button-wrapper">
-            <button @click.prevent="resetForm"
-                    class="reset-form">reset form</button>
-
-            <nuxt-link class="button"
-                       :to="{ name: 'two'}">Next</nuxt-link>
           </div>
         </form>
       </div>
@@ -167,6 +161,7 @@ export default {
   data() {
     return {
       stepActive: 1,
+      next: { name: 'two'},
       suffixOptions: [
         { value: 'Jr.', text: 'Jr.' },
         { value: 'Sr.', text: 'Sr.' },
@@ -187,7 +182,6 @@ export default {
   computed: {
     ...mapFields([
       'authUser',
-      'totalSteps',
       'createUser.name.first',
       'createUser.name.middle',
       'createUser.name.last',

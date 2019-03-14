@@ -3,7 +3,9 @@
     <headerComponent />
 
     <div class="page-wrapper">
-      <progressStepper :step-active="stepActive" />
+      <progressStepper :step-active="stepActive"
+                       :previous-button="previousStep"
+                       :next-button="next" />
 
       <div>
         <div class="success-wrapper">
@@ -65,13 +67,15 @@ export default {
   },
   data() {
     return {
-      testImg:     'butcherad.jpg',
-      responseMsg: "",
+      stepActive:   "finished",
+      previous:     "",
+      next:         "",
+      testImg:      "butcherad.jpg",
+      responseMsg:  "",
       showSuccessMsg: false,
-      successMsg: "<strong>Thanks</strong>, we've got your request!",
-      errorMsg: [],
-      stepActive: 6,
-      asideHeader: "Review & Create",
+      successMsg:   "<strong>Thanks</strong>, we've got your request!",
+      errorMsg:     [],
+      asideHeader:  "Review & Create",
       imageID:      "",
     }
   },
@@ -84,11 +88,18 @@ export default {
                       .format('YYYY-MM-DD');
       return formatted;
     },
+    previousStep() {
+      if(this.stepActive < this.totalSteps) {
+        return { name: 'five'}
+      } else if (this.stepActive == this.totalSteps) {
+        return { name: 'finish'}
+      }
+    },
     ...mapFields([
-      'data',
-      'totalSteps',
       'startDateFormat',
       'authUser',
+
+      'createUser.totalSteps',
 
       'createUser.image.full',
       'createUser.image.cropped',

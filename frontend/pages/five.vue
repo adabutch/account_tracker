@@ -3,7 +3,9 @@
     <headerComponent />
 
     <div class="page-wrapper">
-      <progressStepper :step-active="stepActive" />
+      <progressStepper :step-active="stepActive"
+                       :previous-button="previous"
+                       :next-button="next" />
 
       <div>
         <asideComponent />
@@ -110,22 +112,6 @@
               </template>
             </template>
           </div>
-
-          <div class="button-wrapper">
-            <button @click.prevent="resetForm"
-                    class="reset-form">reset</button>
-
-            <nuxt-link class="button previous"
-                       :to="{ name: 'four'}">Previous</nuxt-link>
-
-            <nuxt-link v-if="stepActive < totalSteps"
-                       class="button"
-                       :to="{ name: 'six'}">Next</nuxt-link>
-
-            <nuxt-link v-if="stepActive == totalSteps"
-                       class="button"
-                       :to="{ name: 'finish'}">Finish</nuxt-link>
-          </div>
         </form>
       </div>
     </div>
@@ -150,7 +136,9 @@ export default {
   },
   data() {
     return {
-      stepActive: 5,
+      stepActive:   5,
+      previous:     { name: 'four'},
+      next:         { name: 'finish'},
 
       exDeptQsSelects:       {},
       exDeptQsTexts:         {},
