@@ -82,7 +82,7 @@ export default {
           // console.log(`login user ::: `, response.data)
           this.$store.commit("SET_AUTH_USER", response.data)
           this.$store.commit("SET_IS_AUTHENTICATED", true)
-          this.$router.push('/')
+          this.$router.back()
         })
       })
       .catch((error) => {
