@@ -96,10 +96,14 @@
       </template>
 
       <template v-if="extraQuestionAnswers">
-         <li class="step-title" v-if="extraQuestionAnswers">Step Five</li>
-        <li v-if="extraQuestionAnswers">
+        <li class="step-title">Step Five</li>
+        <li>
           <strong>Extras:&nbsp;</strong>
-          <span v-html="extraQuestionAnswers"></span>
+          <ul class="extras">
+            <li v-for="qa,i in extraQuestionAnswers">
+              {{qa.replace(/\\|\//g,'')}}
+            </li>
+          </ul>
         </li>
       </template>
 
