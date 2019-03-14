@@ -94,27 +94,6 @@ form {
   }
 }
 
-.button,
-button {
-  padding: 10px 20px;
-  background-color: $color-green;
-
-  &.previous {
-    background-color: lighten($text-color, 20%);
-  }
-
-  &.reset-form {
-    padding: 0;
-    margin: 0 20px 0 0;
-    background-color: transparent;
-    color: lighten($text-color, 20%);
-
-    &:hover {
-      color: $text-color;
-    }
-  }
-}
-
 /deep/ label,
 span.label {
   // background-color: teal;

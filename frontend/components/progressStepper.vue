@@ -6,6 +6,7 @@
 
       <div v-for="(step, index) in totalSteps"
            @click="goToStep(index)"
+           :title="`Go to Step ` + [[ step ]]"
            :key="index"
            :class="{
             'active': stepActive === step,
@@ -21,18 +22,32 @@
     </div>
 
     <div class="button-wrapper">
-      <button @click.prevent="resetForm"
-              class="reset-form">
-        reset form
-      </button>
+      <exampleModal ref="modal"
+                    title="Reset - Account Request Form"
+                    launchButtonText="reset form">
+
+        <p slot="body"><strong>Are you sure</strong> you want to clear all current data entered for this Account Request?</p>
+
+        <fn1-button slot="footer"
+                    title="Confirm - Account Request Reset"
+                    @click.native.prevent="resetForm">Confirm
+        </fn1-button>
+
+        <fn1-button slot="footer"
+                    title="Cancel - Account Request Reset"
+                    @click.native="cancelModal">Cancel
+        </fn1-button>
+      </exampleModal>
 
       <nuxt-link v-if="showPreviousBtn"
                  class="button previous"
+                 title="Previous Step"
                  :to="previousButton">
         Previous
       </nuxt-link>
 
       <nuxt-link class="button"
+                 title="Next Step"
                  :to="nextButton">
         <template v-if="stepActive < totalSteps">
           Next
@@ -55,8 +70,13 @@ import {
 import {
   mapFields }           from 'vuex-map-fields';
 
+import exampleModal     from '~/components/exampleModal'
+
 export default {
   props: ['stepActive','stepComplete','previousButton','nextButton'],
+  components: {
+    exampleModal
+  },
   computed: {
     ...mapFields([
       'createUser.totalSteps'
@@ -83,7 +103,10 @@ export default {
     },
     finishedStep(step) {
       return this.stepActive > step || this.stepActive == 'finished'
-    }
+    },
+    cancelModal() {
+      this.$refs.modal.showModal = false;
+    },
   },
 }
 </script>
@@ -100,13 +123,86 @@ export default {
 }
 
 .button-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   margin-left: auto;
   padding: 0;
 
-  a {
+  .modal-footer {
+    .button,
+    button {
+      &:first-child {
+        background-color: $color-green;
+
+        &:hover {
+          color: white !important;
+          background-color: darken($color-green, 5%) !important;
+        }
+      }
+
+      &:last-child {
+        background-color: $color-orange-darker;
+
+        &:hover {
+          color: white !important;
+          background-color: darken($color-orange-darker, 5%) !important;
+        }
+      }
+    }
+  }
+
+  div {
+    .button,
+    button {
+      padding: 0;
+      margin-right: 20px !important;
+      background-color: transparent;
+      color: lighten($text-color, 20%);
+
+      &:hover {
+        background-color: transparent !important;
+        color: $text-color !important;
+      }
+    }
+  }
+
+  .button,
+  button {
+    padding: 10px 20px;
+    background-color: $color-green;
+
     &:last-of-type {
       margin-right: 0;
+
+      &:hover {
+        background-color: darken($color-green, 5%);
+      }
     }
+
+    &.previous {
+      background-color: lighten($text-color, 20%);
+
+      &:hover {
+        background-color: lighten($text-color, 10%);
+      }
+    }
+
+    &.reset-form {
+      padding: 0;
+      margin: 0 20px 0 0;
+      background-color: transparent;
+      color: lighten($text-color, 20%);
+
+      &:hover {
+        background-color: transparent;
+        color: $text-color;
+      }
+    }
+  }
+
+  a {
+
   }
 }
 
