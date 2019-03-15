@@ -5,7 +5,6 @@
     <div class="page-wrapper">
       <fn1-tabs>
         <fn1-tab :name="`New (` + [[ newCount ]] + `)`" :selected="true">
-
           <div class="title-row">
             <h4><strong>New</strong> user Account Requests.</h4>
 
@@ -25,8 +24,6 @@
                      placeholder="Search by Name or Dept.">
             </div>
           </div>
-
-
 
           <template v-if="!newAccounts.length">
             <h1>Sorry, no results.</h1>
@@ -193,7 +190,8 @@
 
     <transition name="slideover-slide">
       <div v-if="showingUserDetails"
-           :class="['slideover']">
+           :class="['slideover']"
+           ref="slideover">
         <button @click="hideDetails" class="close">close</button>
         <h4>Detailed Information</h4>
         <fn1-button-group>
@@ -366,6 +364,11 @@ export default {
   },
   watch: {},
   methods: {
+    outside(e) {
+      alert('clicked');
+      console.log(e);
+      this.showingUserDetails = false;
+    },
     parseExtras(extras){
       return JSON.parse(extras);
     },
@@ -461,6 +464,7 @@ export default {
 
       this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=new`)
       .then((res) => {
+        // let newResults = res.data;
         let newResults = res.data.results;
         this.$store.dispatch('accountRequestsNew', newResults);
       })

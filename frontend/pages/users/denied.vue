@@ -3,18 +3,19 @@
     <headerComponent />
 
     <div class="page-wrapper">
-
-      <adminUsersAside :searchUsersProp="searchUsers"
-                       :selectFilterProp="selectFilter"
-                       @inputChange="watchInput"
-                       @selectChange="watchSelect" />
-
-
       <div class="table-wrapper">
         <h1>Denied Account Requests</h1>
 
         <div class="title-row">
           <h4>User Account Requests <strong>deined ({{deniedCount}})</strong> after review.</h4>
+
+          <div class="field-group">
+            <input v-model="searchUsers"
+                   id="search"
+                   type="search"
+                   name="search"
+                   placeholder="Search by Name or Dept.">
+          </div>
         </div>
 
         <template v-if="!deniedAccounts.length">
@@ -80,7 +81,6 @@ import {
   createHelpers }       from 'vuex-map-fields';
 
 import headerComponent  from '~/components/headerComponent'
-import adminUsersAside  from '~/components/users/adminUsersAside'
 import exampleSelect    from '~/components/exampleSelect'
 import exampleDropdown  from '~/components/exampleDropdown'
 import exampleModal     from '~/components/exampleModal'
@@ -94,7 +94,6 @@ export default {
   middleware: 'authenticated',
   components: {
     headerComponent,
-    adminUsersAside,
     exampleSelect,
     exampleDropdown,
     exampleModal
@@ -208,6 +207,28 @@ export default {
         color: $text-color;
         font-size: 18px;
         line-height: 18px;
+      }
+
+      .field-group {
+        display: flex;
+        width: 350px;
+        min-width: 350px;
+        max-width: 350px;
+        margin: 0 0 0 20px;
+
+        &:hover {
+          input {
+            border-color: lighten($text-color, 30%);
+          }
+        }
+
+        input {
+          border-radius: $radius-default;
+
+          &:focus {
+            border-color: lighten($text-color, 30%);
+          }
+        }
       }
     }
 
