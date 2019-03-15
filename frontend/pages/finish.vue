@@ -14,7 +14,9 @@
 
         <fn1-alert variant="danger" v-if="errorMsg.length">
           <template v-for="e, i in errorMsg">
-            <p>{{e}}</p>
+            <template v-for="m, i in e">
+              <p><strong>{{m.field}}: </strong> {{m.message}}</p>
+            </template>
           </template>
         </fn1-alert>
 
@@ -131,6 +133,13 @@ export default {
       this.full = this.full.replace(/^data:image\/[a-z]+;base64,/, "");
       this.cropped = this.cropped.replace(/^data:image\/[a-z]+;base64,/, "");
     },
+    checkServices() {
+      if(this.selectedServiceRequestIds.length) {
+        return JSON.stringify(this.selectedServiceRequestIds)
+      } else {
+        return ''
+      }
+    },
     dataURItoBlob(dataURI) {
       if(dataURI) {
         var byteString;
@@ -176,7 +185,7 @@ export default {
       fD.append(`start_date`, this.dateFormatted);
       fD.append(`request_status`, `new`);
       fD.append(`requester`, this.authUser.id);
-      fD.append(`requested_services`, JSON.stringify(this.selectedServiceRequestIds));
+      fD.append(`requested_services`, this.checkServices());
       fD.append(`dynamic_options`, JSON.stringify(this.extraQuestionAnswers));
 
       this.$axios
@@ -218,6 +227,12 @@ export default {
     margin: 0 0 $space-m 0;
     padding: 0 0 $space-s 0;
     border-bottom: 1px solid lighten($text-color, 50%);
+  }
+
+  .alert {
+    width: 700px;
+    margin: 0 auto 40px auto;
+    display: block;
   }
 
   aside {
