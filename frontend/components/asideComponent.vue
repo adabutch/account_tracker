@@ -93,7 +93,7 @@
         </li>
       </template>
 
-      <template v-if="extraQuestionAnswers">
+      <template v-if="extraQuestionAnswers.length">
         <li class="step-title">Step Five</li>
         <li>
           <strong>Extras:&nbsp;</strong>
