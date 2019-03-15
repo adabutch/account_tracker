@@ -146,16 +146,28 @@ span.label {
 
 table {
   thead {
-    background-color: darken($color-grey, 5%);
-
-
     th {
-      padding: 16px 8px 8px 8px;
+      background-color: lighten($color-grey, 10%);
+      padding: 16px 8px;
       text-align: left;
+
+      &:first-of-type {
+        border-top-left-radius: $radius-default;
+      }
+
+      &:last-of-type {
+        border-top-right-radius: $radius-default;
+      }
     }
   }
 
   tbody {
+    tr {
+      &:hover {
+        background-color: lighten($color-grey, 10%);
+      }
+    }
+
     th, td {
       text-align: left;
     }

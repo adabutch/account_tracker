@@ -3,17 +3,10 @@
     <headerComponent />
 
     <div class="page-wrapper">
-
-      <adminUsersAside :searchUsersProp="searchUsers"
-                       :selectFilterProp="selectFilter"
-                       @inputChange="watchInput"
-                       @selectChange="watchSelect" />
-
       <fn1-tabs>
         <fn1-tab :name="`New (` + [[ newCount ]] + `)`" :selected="true">
 
           <div class="title-row">
-
             <h4><strong>New</strong> user Account Requests.</h4>
 
             <template v-if="batchApprovalCount > 1">
@@ -23,7 +16,17 @@
                 <fn1-button slot="footerBtnConfirm">I Understand</fn1-button>
               </fn1-modal>
             </template>
+
+            <div class="field-group">
+              <input v-model="searchUsers"
+                     id="search"
+                     type="search"
+                     name="search"
+                     placeholder="Search by Name or Dept.">
+            </div>
           </div>
+
+
 
           <template v-if="!newAccounts.length">
             <h1>Sorry, no results.</h1>
@@ -40,8 +43,8 @@
                          type="checkbox"
                          name="select-all-requests">
                 </th>
+                <th scope="col">Status</th>
                 <th scope="col">Name</th>
-                <th scope="col">Type</th>
                 <th scope="col">Dept.</th>
                 <th scope="col">Created</th>
                 <th scope="col">Actions</th>
@@ -59,6 +62,11 @@
                          name="select-all-requests">
                 </th>
                 <th>
+                  <fn1-badge :class="{'new': (item.request_status === 'new')}">
+                    {{ item.request_status }}
+                  </fn1-badge>
+                </th>
+                <th>
                   <div class="profile-image" v-if="item.cropped_image">
                     <img :src="item.cropped_image">
                   </div>
@@ -71,11 +79,6 @@
                     </div>
                     <div>{{ item.job }}</div>
                   </div>
-                </th>
-                <th>
-                  <fn1-badge :class="{'new': (item.request_status === 'new')}">
-                    {{ item.request_status }}
-                  </fn1-badge>
                 </th>
                 <th>
                   <div>{{ item.department }}</div>
@@ -104,6 +107,14 @@
                 <fn1-button slot="footerBtnConfirm">I Understand</fn1-button>
               </fn1-modal>
             </template>
+
+            <div class="field-group">
+              <input v-model="searchUsers"
+                     id="search"
+                     type="search"
+                     name="search"
+                     placeholder="Search by Name or Dept.">
+            </div>
           </div>
 
           <template v-if="!pendingAccounts.length">
@@ -121,8 +132,8 @@
                          type="checkbox"
                          name="select-all-requests">
                 </th>
+                <th scope="col">Status</th>
                 <th scope="col">Name</th>
-                <th scope="col">Type</th>
                 <th scope="col">Dept.</th>
                 <th scope="col">Created</th>
                 <th scope="col">Actions</th>
@@ -140,6 +151,11 @@
                          name="select-all-requests">
                 </th>
                 <th>
+                  <fn1-badge :class="{'new': (item.request_status === 'new')}">
+                    {{ item.request_status }}
+                  </fn1-badge>
+                </th>
+                <th>
                   <div class="profile-image" v-if="item.cropped_image">
                     <img :src="item.cropped_image">
                   </div>
@@ -152,11 +168,6 @@
                     </div>
                     <div>{{ item.job }}</div>
                   </div>
-                </th>
-                <th>
-                  <fn1-badge :class="{'new': (item.request_status === 'new')}">
-                    {{ item.request_status }}
-                  </fn1-badge>
                 </th>
                 <th>
                   <div>{{ item.department }}</div>
@@ -320,7 +331,6 @@ import {
   createHelpers }       from 'vuex-map-fields';
 
 import headerComponent  from '~/components/headerComponent'
-import adminUsersAside  from '~/components/users/adminUsersAside'
 import exampleSelect    from '~/components/exampleSelect'
 import exampleDropdown  from '~/components/exampleDropdown'
 import exampleModal     from '~/components/exampleModal'
@@ -334,7 +344,6 @@ export default {
   middleware:       'authenticated',
   components: {
     headerComponent,
-    adminUsersAside,
     exampleSelect,
     exampleDropdown,
     exampleModal
@@ -412,13 +421,13 @@ export default {
         "request_status": "pending"
       })
       .then(response => {
-        console.log(`approveUserAccountRequest req. :: `, response);
+        // console.log(`approveUserAccountRequest req. :: `, response);
 
         // note: `/pending/` below triggers the Service Req.
         this.$axios
         .get(`${process.env.api}${process.env.accountRequest}${account.id}/pending/`)
         .then(response => {
-          console.log(`/pending/ Service Req. :: `, response)
+          // console.log(`/pending/ Service Req. :: `, response)
         })
         .catch(e => {
           console.log(`/pending/ Service Req. error :: `, e)
@@ -498,6 +507,9 @@ export default {
         this.selected = selected;
       }
     },
+    fullName() {
+      return `${user.first_name}`
+    },
     newAccounts() {
       return this.new
       .filter(user => {
@@ -562,13 +574,12 @@ export default {
       }
 
       thead {
-        background-color: transparent;
 
         tr {
           th {
-            &:nth-of-type(2) {
+            &:nth-of-type(1),
+            &:nth-of-type(2)  {
               width: 1px;
-              min-width: 350px;
               white-space: nowrap;
             }
           }
@@ -578,7 +589,7 @@ export default {
       tbody {
         tr {
           th {
-            &:nth-of-type(2) {
+            &:nth-of-type(3) {
               display: flex;
               flex-wrap: wrap;
               // background-color: pink;
@@ -697,6 +708,28 @@ export default {
               padding: 0 20px;
               background-color: $color-green;
               white-space: nowrap;
+            }
+
+            .field-group {
+              display: flex;
+              width: 350px;
+              min-width: 350px;
+              max-width: 350px;
+              margin: 0 0 0 20px;
+
+              &:hover {
+                input {
+                  border-color: lighten($text-color, 30%);
+                }
+              }
+
+              input {
+                border-radius: $radius-default;
+
+                &:focus {
+                  border-color: lighten($text-color, 30%);
+                }
+              }
             }
           }
         }
