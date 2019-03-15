@@ -412,13 +412,24 @@ export default {
         "request_status": "pending"
       })
       .then(response => {
-        console.log(response)
+        console.log(`approveUserAccountRequest req. :: `, response);
+
+        // note: `/pending/` below triggers the Service Req.
+        this.$axios
+        .get(`${process.env.api}${process.env.accountRequest}${account.id}/pending/`)
+        .then(response => {
+          console.log(`/pending/ Service Req. :: `, response)
+        })
+        .catch(e => {
+          console.log(`/pending/ Service Req. error :: `, e)
+        });
+
         this.showDetailsFor = null;
         this.showingUserDetails = false;
         this.getAccountRequests;
       })
       .catch(e => {
-        console.log(e)
+        console.log(`approveUserAccountRequest req. error :: `, e)
       })
     },
   },
