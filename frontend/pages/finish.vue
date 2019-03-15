@@ -29,13 +29,9 @@
 
             <div v-if="!showSuccessMsg">
               <button class="button"
-                      @click="accountRequestSubmit">Create User</button>
-
-              <nuxt-link class="button cancel"
-                         :to="{ name: 'index'}">back to last step, </nuxt-link>
-
-              <nuxt-link class="button cancel"
-                         :to="{ name: 'index'}">or cancel</nuxt-link>
+                      @click="accountRequestSubmit">
+                Create
+              </button>
             </div>
           </nav>
         </div>
@@ -70,12 +66,11 @@ export default {
       stepActive:   "finished",
       previous:     "",
       next:         "",
-      testImg:      "butcherad.jpg",
       responseMsg:  "",
       showSuccessMsg: false,
       successMsg:   "<strong>Thanks</strong>, we've got your request!",
       errorMsg:     [],
-      asideHeader:  "Review & Create",
+      asideHeader:  "Review & Create Account Request",
       imageID:      "",
     }
   },
@@ -89,11 +84,12 @@ export default {
       return formatted;
     },
     previousStep() {
-      if(this.stepActive < this.totalSteps) {
-        return { name: 'five'}
-      } else if (this.stepActive == this.totalSteps) {
-        return { name: 'finish'}
-      }
+      return true;
+      // if(this.stepActive < this.totalSteps) {
+      //   return { name: 'five'}
+      // } else if (this.stepActive == this.totalSteps) {
+      //   return { name: 'finish'}
+      // }
     },
     ...mapFields([
       'startDateFormat',
@@ -180,7 +176,7 @@ export default {
       fD.append(`start_date`, this.dateFormatted);
       fD.append(`request_status`, `new`);
       fD.append(`requester`, this.authUser.id);
-      fD.append(`requested_services`, this.selectedServiceRequestIds);
+      fD.append(`requested_services`, JSON.stringify(this.selectedServiceRequestIds));
       fD.append(`dynamic_options`, JSON.stringify(this.extraQuestionAnswers));
 
       this.$axios
@@ -205,6 +201,15 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
 
+  @keyframes shadow-pulse {
+    0% {
+      box-shadow: 0 0 0 0px rgba(76, 174, 79, 0.35);
+    }
+    100% {
+      box-shadow: 0 0 0 20px rgba(76, 174, 79, 0);
+    }
+  }
+
   h1 {
     color: $text-color;
     font-size: $size-l;
@@ -215,7 +220,7 @@ export default {
   }
 
   aside {
-    width: 500px;
+    width: 700px;
     margin: 0 auto;
     display: block;
 
@@ -223,15 +228,17 @@ export default {
       display: none;
     }
 
-    ul {
-      li {
-        font-size: 18px;
-        margin: 0 0 20px 0;
+    /deep/ ul:not(.extras) {
+      column-count: 2;
 
-        strong {
-          margin: 0;
-        }
-      }
+      // li {
+      //   font-size: 18px;
+      //   margin: 0 0 20px 0;
+
+      //   strong {
+      //     margin: 0;
+      //   }
+      // }
     }
   }
 
@@ -243,33 +250,17 @@ export default {
 
     .button {
       display: block;
+      padding: 10px 20px;
       margin: 40px auto 0 auto;
       width: 350px;
       text-align: center;
       font-size: 18px;
       text-transform: uppercase;
+      background-color: $color-green;
+      animation: shadow-pulse 1s infinite;
 
       &:hover {
         background-color: darken($color-green, 5%);
-      }
-
-      &.cancel {
-        display: inline-block;
-        width: auto;
-        background-color: transparent;
-        text-transform: none;
-        font-size: $size-s;
-        color: $text-color;
-        margin: 10px auto 0 auto;
-        padding: 0;
-
-        &:nth-of-type(3) {
-          color: lighten($text-color, 15%);
-        }
-
-        &:hover {
-          text-decoration: underline;
-        }
       }
     }
   }

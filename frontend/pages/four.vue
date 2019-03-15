@@ -138,9 +138,9 @@ export default {
         selectedServiceIDsArray.push(service.id);
       });
 
-      let selectedServiceIDsString = selectedServiceIDsArray.join(', ');
+      // let selectedServiceIDsString = selectedServiceIDsArray.join(', ');
 
-      return this.selectedServiceRequestIds = selectedServiceIDsString;
+      return this.selectedServiceRequestIds = selectedServiceIDsArray;
     },
     selectedServiceNames() {
       let selectedServiceNamesArray = [];

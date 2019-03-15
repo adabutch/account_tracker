@@ -1,12 +1,10 @@
 <template>
   <aside>
-    <template v-if="asideHeader">
-      <h1><strong>Finished :</strong> {{asideHeader}}</h1>
-    </template>
+    <h1 v-if="asideHeader">
+      <strong>Finished: </strong> {{asideHeader}}
+    </h1>
 
-    <template v-if="!asideHeader">
-      <h1>Overview</h1>
-    </template>
+    <h1 v-if="!asideHeader">Overview</h1>
 
     <p v-if="!stepOneData">Details of the <strong>User Creation Wizard</strong> will appear here as they become available.</p>
 
@@ -106,11 +104,6 @@
           </ul>
         </li>
       </template>
-
-      <li v-if="asideHeader">
-        <strong>Requester:&nbsp;</strong>
-        <span v-html="authUser.username"></span>
-      </li>
     </ul>
   </aside>
 </template>

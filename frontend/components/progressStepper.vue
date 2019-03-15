@@ -46,7 +46,8 @@
         Previous
       </nuxt-link>
 
-      <nuxt-link class="button"
+      <nuxt-link v-if="showNextBtn"
+                 class="button"
                  title="Next Step"
                  :to="nextButton">
         <template v-if="stepActive < totalSteps">
@@ -82,8 +83,14 @@ export default {
       'createUser.totalSteps'
     ]),
     showPreviousBtn() {
-      return this.stepActive != 1 && this.stepActive <= this.totalSteps
-    }
+      return (this.stepActive != 1 &&
+             this.stepActive <= this.totalSteps) ||
+             this.stepActive == 'finished'
+    },
+    showNextBtn() {
+      return this.stepActive <= this.totalSteps &&
+             this.stepActive != 'finished'
+    },
   },
   methods: {
     goToStep(index) {
