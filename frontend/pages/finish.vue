@@ -184,6 +184,7 @@ export default {
       .then((response) => {
         console.log(response.data);
         this.showSuccessMsg = true;
+        this.stepActive = 1;
         this.$store.dispatch('createUser/resetState');
       })
       .catch((e) => {

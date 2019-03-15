@@ -13,7 +13,7 @@
         <form>
           <h1><strong>Step Four:</strong>&nbsp;Software information</h1>
 
-          <template v-if="isEmpty(!deptServiceProfile)">
+          <template v-if="isEmpty(deptServiceProfile)">
             <p>No associated <strong>Service Profiles</strong>.</p>
           </template>
 
