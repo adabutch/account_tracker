@@ -24,7 +24,7 @@ class AccountRequestViewSet(viewsets.ModelViewSet):
     filterset_class = ProfileFilter
 
     @action(detail=True)
-    def approve(self, request, *args, **kwargs):
+    def pending(self, request, *args, **kwargs):
         ar = self.get_object()
         service_list = json.loads(ar.requested_services)
         for service_id in service_list:
