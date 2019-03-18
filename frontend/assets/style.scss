@@ -91,6 +91,14 @@ form {
   input {
     box-shadow: none;
     border: 1px solid lighten($text-color, 50%);
+
+    &:disabled {
+      // border: 1px solid $text-color;
+      // background-color: darken($text-color, 15%);
+      color: $text-color;
+      box-shadow: none;
+      opacity: 1;
+    }
   }
 }
 

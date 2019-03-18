@@ -8,6 +8,7 @@
       :type="type"
       @input="onInput($event.target.value)"
       @change="onChange($event.target.value)"
+      :disabled="disabled"
     >
       <option :value="undefined">---</option>
       <option
@@ -15,7 +16,6 @@
         :value="item.value"
         :key="index"
         v-html="item.text"
-        :disabled="item.disabled"
       ></option>
     </select>
   </component>
