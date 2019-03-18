@@ -175,7 +175,9 @@
                   <div>{{ requestedTimeAgo(item.requested) }}</div>
                 </th>
                 <th>
-                  <fn1-button @click.native="showDetails(item)">view</fn1-button>
+                  <nuxt-link class="button" :to="'/account-requests/'+item.id">
+                    view
+                  </nuxt-link>
                 </th>
               </tr>
             </tbody>

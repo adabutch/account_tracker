@@ -11,10 +11,11 @@ import json
 
 class ProfileFilter(filters.FilterSet):
     request_status = filters.CharFilter(field_name="request_status")
+    id = filters.NumberFilter(field_name="id")
 
     class Meta:
         model = AccountRequest
-        fields = ['request_status']
+        fields = ['request_status', 'id']
 
 
 class AccountRequestViewSet(viewsets.ModelViewSet):

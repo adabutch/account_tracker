@@ -18,12 +18,12 @@
       }"
 
       :navItems="[
-        {name: 'Users',            href: '/users'},
+        {name: 'Account Requests', href: '/account-requests'},
         {name: 'Profiles',         href: '/profiles'}
       ]"
 
       :subNavItems="[
-        {name: 'Denied Users',             href: '/users/denied'}
+        {name: 'Denied Users',             href: '/account-requests/denied'}
       ]">
 
       <!-- <nav slot="dropdown"
