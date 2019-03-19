@@ -156,8 +156,13 @@ table {
   thead {
     th {
       background-color: lighten($color-grey, 10%);
-      padding: 16px 8px;
+      padding: 16px 0;
       text-align: left;
+
+      &:first-of-type,
+      &:last-of-type {
+        padding: 16px 8px;
+      }
 
       &:first-of-type {
         border-top-left-radius: $radius-default;

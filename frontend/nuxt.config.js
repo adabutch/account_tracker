@@ -25,6 +25,8 @@ module.exports = {
     refreshJWT:     'auth/refresh_token/',
     user:           'user/',
     profile:        'profile/',
+    service:        'service/',
+    serviceReq:     'service-request/',
     accountRequest: 'account-request/',
 
 
@@ -56,7 +58,7 @@ module.exports = {
     { src: '~/plugins/axios' },
     { src: '~/plugins/filters' },
     { src: '~/plugins/localStorage', ssr: false },
-    { src: '~/plugins/emptyObjTest' },
+    { src: '~/plugins/mixins' },
     { src: '~/plugins/resetForm' },
     { src: '~/plugins/croppie.js', ssr: false }
   ],

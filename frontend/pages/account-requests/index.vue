@@ -33,13 +33,13 @@
             <caption class="sr-only">All User Requests</caption>
             <thead>
               <tr>
-                <th scope="col">
+                <!-- <th scope="col">
                   <input v-model="batchNewRequestApproval"
                          id="select-all-requests"
                          value="select-all-requests"
                          type="checkbox"
                          name="select-all-requests">
-                </th>
+                </th> -->
                 <th scope="col">Status</th>
                 <th scope="col">Name</th>
                 <th scope="col">Dept.</th>
@@ -50,20 +50,20 @@
 
             <tbody>
               <tr v-for="(item, index) in newAccounts" :key="index">
-                <th scope="row">
+                <!-- <th scope="row">
                   <input v-model="selected"
                          :key="index"
                          id="select-all-requests"
                          :value="item.id"
                          type="checkbox"
                          name="select-all-requests">
-                </th>
-                <th>
+                </th> -->
+                <th class="status">
                   <fn1-badge :class="{'new': (item.request_status === 'new')}">
                     {{ item.request_status }}
                   </fn1-badge>
                 </th>
-                <th>
+                <th class="icon">
                   <div class="profile-image" v-if="item.cropped_image">
                     <img :src="item.cropped_image">
                   </div>
@@ -82,8 +82,8 @@
                   <div>{{ item.group }}</div>
                 </th>
                 <th>
-                  <div>{{ requestedDateFormat(item.requested) }}</div>
-                  <div>{{ requestedTimeAgo(item.requested) }}</div>
+                  <div>{{ MMDYYYYDateFormat(item.requested) }}</div>
+                  <div>{{ timeAgo(item.requested) }}</div>
                 </th>
                 <th>
                   <fn1-button @click.native="showDetails(item)">view</fn1-button>
@@ -122,13 +122,13 @@
             <caption class="sr-only">All User Requests</caption>
             <thead>
               <tr>
-                <th scope="col">
+                <!-- <th scope="col">
                   <input v-model="batchPendingRequestApproval"
                          id="select-all-requests"
                          value="select-all-requests"
                          type="checkbox"
                          name="select-all-requests">
-                </th>
+                </th> -->
                 <th scope="col">Status</th>
                 <th scope="col">Name</th>
                 <th scope="col">Dept.</th>
@@ -139,20 +139,20 @@
 
             <tbody>
               <tr v-for="(item, index) in pendingAccounts" :key="index">
-                <th scope="row">
+                <!-- <th scope="row">
                   <input v-model="selected"
                          :key="index"
                          id="select-all-requests"
                          :value="item.id"
                          type="checkbox"
                          name="select-all-requests">
-                </th>
-                <th>
+                </th> -->
+                <th class="status">
                   <fn1-badge :class="{'new': (item.request_status === 'new')}">
                     {{ item.request_status }}
                   </fn1-badge>
                 </th>
-                <th>
+                <th class="icon">
                   <div class="profile-image" v-if="item.cropped_image">
                     <img :src="item.cropped_image">
                   </div>
@@ -171,8 +171,8 @@
                   <div>{{ item.group }}</div>
                 </th>
                 <th>
-                  <div>{{ requestedDateFormat(item.requested) }}</div>
-                  <div>{{ requestedTimeAgo(item.requested) }}</div>
+                  <div>{{ MMDYYYYDateFormat(item.updated) }}</div>
+                  <div>{{ timeAgo(item.updated) }}</div>
                 </th>
                 <th>
                   <nuxt-link class="button" :to="'/account-requests/'+item.id">
@@ -414,12 +414,6 @@ export default {
       console.log(`WS :: PAYLOAD ::: ${payload}`)
       this.selectFilter = payload;
     },
-    requestedDateFormat(requestedDate) {
-      return moment(requestedDate).format('MM/D/YYYY');
-    },
-    requestedTimeAgo(requestedDate) {
-      return moment(requestedDate).fromNow();
-    },
     approveUserAccountRequest(account) {
       this.$axios
       .patch(`${process.env.api}${process.env.accountRequest}${account.id}/`,{
@@ -580,11 +574,10 @@ export default {
       }
 
       thead {
-
         tr {
           th {
-            &:nth-of-type(1),
-            &:nth-of-type(2)  {
+            &.status,
+            &.icon  {
               width: 1px;
               white-space: nowrap;
             }
@@ -595,10 +588,18 @@ export default {
       tbody {
         tr {
           th {
-            &:nth-of-type(3) {
+            padding: 8px 0;
+
+            &.status {
+              width: 1px;
+              white-space: nowrap;
+              padding: 5px 20px 5px 8px;
+            }
+
+            &.icon {
               display: flex;
               flex-wrap: wrap;
-              // background-color: pink;
+              margin: 0;
 
               div {
                 &.avatar {
@@ -636,8 +637,7 @@ export default {
               }
             }
 
-            &:nth-child(4),
-            &:nth-child(5) {
+            &:nth-child(n+3) {
               div {
                 &:nth-child(2) {
                   font-size: 14px;
