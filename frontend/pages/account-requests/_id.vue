@@ -246,7 +246,9 @@
         </fn1-tab>
 
         <fn1-tab name="Extras" v-if="acctReq.dynamic_options">
-          {{acctReq.dynamic_options}}
+          <p v-for="ex, index in JSON.parse(acctReq.dynamic_options)" class="extras">
+            {{ex}}
+          </p><br>
         </fn1-tab>
 
         <fn1-tab name="History">
@@ -361,10 +363,7 @@ export default {
   computed: {
     ...mapFields([
       'services.services'
-    ]),
-    serviceProgress() {
-
-    }
+    ])
   },
 }
 </script>
@@ -372,160 +371,144 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
 
-$image-left-margin: 40px;
-$image-width-height: 100px;
+  $image-left-margin: 40px;
+  $image-width-height: 100px;
 
-h2 {
-  display: inline-flex;
-  align-items: center;
-  width: 100%;
-  border-bottom: 1px solid lighten($text-color, 50%);
-  margin: 0 0 20px 0;
-  padding: 0 0 10px 0;
+  h2 {
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid lighten($text-color, 50%);
+    margin: 0 0 20px 0;
+    padding: 0 0 10px 0;
 
-  span {
-    margin: 0 0 0 20px;
+    span {
+      margin: 0 0 0 20px;
+    }
   }
-}
 
-/deep/ .tabs-group {
-  .tab-content {
-    margin: 20px 0 0 0;
-    padding: 0;
+  p {
+    &.extras {
+      display: block;
+      margin: 0 0 20px 0;
+    }
+  }
 
-    .tab-pane {
-      // background-color: blue !important;
-      display: flex;
-      flex-wrap: wrap;
+  /deep/ .tabs-group {
+    .tab-content {
+      margin: 20px 0 0 0;
+      padding: 0;
 
-      .title-row {
+      .tab-pane {
+        // background-color: blue !important;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 20px 0 40px 0;
-        min-height: 25px;
-        width: 100%;
-        // background-color: red;
+        flex-wrap: wrap;
 
-        h4 {
-          color: $text-color;
-          font-size: 18px;
-          line-height: 18px;
-        }
-
-        .filters {
+        .title-row {
           display: flex;
+          justify-content: center;
+          align-items: center;
+          margin: 20px 0 40px 0;
+          min-height: 25px;
+          width: 100%;
+          // background-color: red;
 
-          .badge {
-            margin: 0 10px 0 0;
+          h4 {
+            color: $text-color;
+            font-size: 18px;
+            line-height: 18px;
+          }
 
-            &:last-of-type {
-              margin: 0;
+          .filters {
+            display: flex;
+
+            .badge {
+              margin: 0 10px 0 0;
+
+              &:last-of-type {
+                margin: 0;
+              }
             }
           }
         }
-      }
 
-      .left {
-        margin: 0 $image-left-margin 0 0;
-        justify-content: center;
-      }
-
-      .right {
-        // background-color: orange;
-        width: 100%;
-
-        &.has-image {
-          width: calc(100% - #{$image-width-height} - #{$image-left-margin});
+        .left {
+          margin: 0 $image-left-margin 0 0;
+          justify-content: center;
         }
-      }
-    }
-  }
-}
 
-.profile-image {
-  margin: 0 0 $image-left-margin 0;
-  width: $image-width-height;
-  height: $image-width-height;
-}
+        .right {
+          // background-color: orange;
+          width: 100%;
 
-.account-fields {
-  // display: none;
-  width: 100;
-  // background-color: red;
-  column-count: 3;
-  column-gap: 40px;
-}
-
-.badge {
-  &.new {
-    background-color: $color-ucla-gold-dark;
-  }
-
-  &.pending {}
-
-  &.approved {
-    background-color: $color-green-light;
-  }
-
-  &.active {
-    background-color: $color-green;
-  }
-
-  &.denied {
-    background-color: $color-vermilion-darker;
-  }
-
-  &.inactive {
-    background-color: $text-color;
-    color: white;
-  }
-}
-
-table {
-  color: $text-color;
-
-  thead tr th,
-  tbody tr th {
-    &:last-of-type {
-      // background-color: green;
-      text-align: right;
-      padding: 8px 8px 8px 0;
-    }
-  }
-
-  thead {
-    tr {
-      th {
-        &.status {
-          width: 1px;
-          white-space: nowrap;
+          &.has-image {
+            width: calc(100% - #{$image-width-height} - #{$image-left-margin});
+          }
         }
       }
     }
   }
 
-  tbody {
-    tr {
-      th {
-        padding: 20px 0;
+  .profile-image {
+    margin: 0 0 $image-left-margin 0;
+    width: $image-width-height;
+    height: $image-width-height;
+  }
 
-        &.status {
-          width: 1px;
-          white-space: nowrap;
-          padding: 5px 20px 5px 8px;
+  .account-fields {
+    // display: none;
+    width: 100;
+    // background-color: red;
+    column-count: 3;
+    column-gap: 40px;
+  }
+
+
+
+  table {
+    color: $text-color;
+
+    thead tr th,
+    tbody tr th {
+      &:last-of-type {
+        // background-color: green;
+        text-align: right;
+        padding: 8px 8px 8px 0;
+      }
+    }
+
+    thead {
+      tr {
+        th {
+          &.status {
+            width: 1px;
+            white-space: nowrap;
+          }
         }
+      }
+    }
 
-        &:nth-child(n+3) {
-          div {
-            &:nth-child(2) {
-              font-size: 14px;
-              color: lighten($text-color, 25%);
+    tbody {
+      tr {
+        th {
+          padding: 20px 0;
+
+          &.status {
+            width: 1px;
+            white-space: nowrap;
+            padding: 5px 20px 5px 8px;
+          }
+
+          &:nth-child(n+3) {
+            div {
+              &:nth-child(2) {
+                font-size: 14px;
+                color: lighten($text-color, 25%);
+              }
             }
           }
         }
       }
     }
   }
-}
 </style>

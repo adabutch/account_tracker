@@ -187,6 +187,32 @@ table {
   }
 }
 
+.badge {
+
+  &.new {
+    background-color: $color-ucla-gold-dark;
+  }
+
+  &.pending {}
+
+  &.approved {
+    background-color: $color-green-light;
+  }
+
+  &.active {
+    background-color: $color-green;
+  }
+
+  &.denied {
+    background-color: $color-vermilion-darker;
+  }
+
+  &.inactive {
+    background-color: $text-color;
+    color: white;
+  }
+}
+
 .modal-wrapper {
   height: 100vh;
 }
