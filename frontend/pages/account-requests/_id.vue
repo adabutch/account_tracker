@@ -246,13 +246,50 @@
         </fn1-tab>
 
         <fn1-tab name="Extras" v-if="acctReq.dynamic_options">
+          <div class="title-row">
+            <h4><strong>Extra Q&amp;A</strong> associated with this <strong>Account Request</strong>.</h4>
+          </div>
+
           <p v-for="ex, index in JSON.parse(acctReq.dynamic_options)" class="extras">
             {{ex}}
           </p><br>
         </fn1-tab>
 
         <fn1-tab name="History">
-          history
+          <div class="title-row">
+            <h4><strong>Action History</strong> associated with this <strong>Account Request</strong>.</h4>
+          </div>
+
+          <table>
+            <caption class="sr-only">User Action History</caption>
+            <thead>
+              <tr>
+                <th scope="col">Action</th>
+                <th scope="col">Comment</th>
+                <th scope="col">Created</th>
+                <th scope="col">Updated</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="a, i in acctReqActions" :key="i">
+                <th>
+                  {{a.action}}
+                </th>
+                <th>
+                  {{a.comment}}
+                </th>
+                <th>
+                  <div>{{MMDYYYYDateFormat(a.created)}}</div>
+                  <div>{{timeAgo(a.created)}}</div>
+                </th>
+                <th>
+                  <div>{{MMDYYYYDateFormat(a.updated)}}</div>
+                  <div>{{timeAgo(a.updated)}}</div>
+                </th>
+              </tr>
+            </tbody>
+          </table>
         </fn1-tab>
       </fn1-tabs>
     </div>
@@ -297,6 +334,7 @@ export default {
 
     this.getServices();
     this.getUserServices();
+    this.getAcctReqActions();
   },
   middleware:       'authenticated',
   components: {
@@ -305,14 +343,26 @@ export default {
   },
   data() {
     return {
-      paramID:      "",
-      acctReq:      "",
+      paramID:        "",
+      acctReq:        "",
       serviceDetails: [],
       servicesStatus: [],
-      userServices: [],
+      userServices:   [],
+      acctReqActions: [],
     }
   },
   methods: {
+    getAcctReqActions() {
+      this.$axios
+      .get(`${process.env.api}${process.env.action}?account=${this.paramID}&limit=1000`)
+      .then((res) => {
+        console.log(`getAcctReqActions() :: `, res.data.results);
+        this.acctReqActions = res.data.results;
+      })
+      .catch((error) => {
+        console.log(`getAcctReqActions() error:: `, error);
+      })
+    },
     getServices() {
       this.$axios
       .get(`${process.env.api}${process.env.service}?limit=1000`)
@@ -342,8 +392,6 @@ export default {
         return attachedServices.includes(s.id);
       });
 
-      console.log(results);
-
       this.serviceDetails = results;
 
       this.usersServices();
@@ -352,8 +400,6 @@ export default {
       let masterServices = [];
 
       this.serviceDetails.forEach((item, i) => {
-        // masterServices.push(item)
-        // masterServices.push(Object.assign({}, item, this.servicesStatus[i]));
         masterServices.push({...item, ...this.servicesStatus[i]})
       });
 

@@ -59,7 +59,7 @@
                          name="select-all-requests">
                 </th> -->
                 <th class="status">
-                  <fn1-badge :class="{'new': (item.request_status === 'new')}">
+                  <fn1-badge :class="item.request_status">
                     {{ item.request_status }}
                   </fn1-badge>
                 </th>
@@ -148,7 +148,7 @@
                          name="select-all-requests">
                 </th> -->
                 <th class="status">
-                  <fn1-badge :class="{'new': (item.request_status === 'new')}">
+                  <fn1-badge :class="item.request_status">
                     {{ item.request_status }}
                   </fn1-badge>
                 </th>
@@ -240,7 +240,7 @@
           <li v-if="showDetailsFor.request_status">
             <span>Request Status</span>
               <fn1-badge
-                :class="{'new': (showDetailsFor.request_status === 'new')}">
+                :class="showDetailsFor.request_status">
                 {{ showDetailsFor.request_status }}
               </fn1-badge>
           </li>
@@ -352,6 +352,9 @@ export default {
     return {
       denyRequestReason:   "",
       denyModalButtonText: "Deny Request",
+      acctReqActionDenied: "Account Request: Denied",
+      acctReqActionApprove:"Account Request: Pending",
+      acctReqActionApproveMsg: "Account Request advanced from 'new' to 'pending'.",
       showModal:           false,
       showDetailsFor:      null,
       showingUserDetails:  false,
@@ -362,7 +365,7 @@ export default {
     }
   },
   mounted() {
-    this.getAccountRequests;
+    this.getAccountRequests();
   },
   watch: {},
   methods: {
@@ -385,11 +388,26 @@ export default {
       })
       .then(response => {
         console.log(`confirmModal Denied :: `, response)
+
+        this.$axios
+        .post(`${process.env.api}${process.env.action}`,{
+          "user":    this.authUser.id,
+          "account": payload.id,
+          "action":  this.acctReqActionDenied,
+          "comment": this.denyRequestReason
+        })
+        .then(response => {
+          console.log(`ACTION AR denied :: `, response)
+        })
+        .catch(e => {
+          console.log(`ACTION AR denied error :: `, e)
+        });
+
         this.$refs.modal.showModal = false;
         this.showDetailsFor = null;
         this.denyRequestReason = "";
         this.showingUserDetails = false;
-        this.getAccountRequests;
+        this.getAccountRequests();
       })
       .catch(e => {
         console.log(e)
@@ -414,9 +432,9 @@ export default {
       console.log(`WS :: PAYLOAD ::: ${payload}`)
       this.selectFilter = payload;
     },
-    approveUserAccountRequest(account) {
+    approveUserAccountRequest(payload) {
       this.$axios
-      .patch(`${process.env.api}${process.env.accountRequest}${account.id}/`,{
+      .patch(`${process.env.api}${process.env.accountRequest}${payload.id}/`,{
         "request_status": "pending"
       })
       .then(response => {
@@ -424,7 +442,7 @@ export default {
 
         // note: `/pending/` below triggers the Service Req.
         this.$axios
-        .get(`${process.env.api}${process.env.accountRequest}${account.id}/pending/`)
+        .get(`${process.env.api}${process.env.accountRequest}${payload.id}/pending/`)
         .then(response => {
           // console.log(`/pending/ Service Req. :: `, response)
         })
@@ -432,23 +450,28 @@ export default {
           console.log(`/pending/ Service Req. error :: `, e)
         });
 
+        this.$axios
+        .post(`${process.env.api}${process.env.action}`,{
+          "user":    this.authUser.id,
+          "account": payload.id,
+          "action":  this.acctReqActionApprove,
+          "comment": this.acctReqActionApproveMsg
+        })
+        .then(response => {
+          console.log(`ACTION AR approve :: `, response)
+        })
+        .catch(e => {
+          console.log(`ACTION AR approve error :: `, e)
+        });
+
         this.showDetailsFor = null;
         this.showingUserDetails = false;
-        this.getAccountRequests;
+        this.getAccountRequests();
       })
       .catch(e => {
         console.log(`approveUserAccountRequest req. error :: `, e)
       })
     },
-  },
-  computed: {
-    ...mapFields([
-      'accountRequests.new',
-      'accountRequests.pending',
-      'accountRequests.approved',
-      'accountRequests.denied',
-      'authUser'
-    ]),
     getAccountRequests() {
       this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=pending`)
       .then((res) => {
@@ -468,6 +491,16 @@ export default {
         console.log(e);
       })
     },
+  },
+  computed: {
+    ...mapFields([
+      'accountRequests.new',
+      'accountRequests.pending',
+      'accountRequests.approved',
+      'accountRequests.denied',
+      'authUser'
+    ]),
+
     batchApprovalCount() {
       return this.selected.length;
     },
@@ -764,7 +797,6 @@ export default {
     z-index: 10;
     display: flex;
     flex-wrap: wrap;
-    flex-direction: column;
     top: 0;
     right: 0;
     bottom: 0;
@@ -806,6 +838,7 @@ export default {
 
     .button-group {
       display: flex;
+      width: 100%;
       margin: 15px 0 0 0;
       padding: 15px 0;
       border-top: 1px solid lighten($text-color, 50%);
