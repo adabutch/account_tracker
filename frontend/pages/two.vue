@@ -376,7 +376,7 @@ export default {
       return this.config.enable = mondays;;
     },
     getJobs() {
-      axios.get(`${process.env.ttApi}${process.env.jobService}?group_id=${this.group.id}`)
+      axios.get(`${process.env.ttApi}${process.env.posService}?group_id=${this.group.id}`)
       .then((res) => {
         console.log(`getJobs res :: `, res.data);
         this.jobs = res.data;

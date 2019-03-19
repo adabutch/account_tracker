@@ -35,6 +35,7 @@ module.exports = {
     deptService:    'DepartmentService',
     groupService:   'GroupService',
     jobService:     'JobTitleService',
+    posService:     'PositionService',
     managerService: 'ManagerService',
   },
 
