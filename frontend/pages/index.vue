@@ -19,9 +19,8 @@
                   <vue-croppie
                     ref="croppieRef"
                     :enableResize="false"
-                    :viewport="{ width: 180, height: 240}"
-                    :result="blob"
-                    @result="result" />
+                    :showZoomer="true"
+                    :viewport="{ width: 180, height: 240 }" />
                 </no-ssr>
               </div>
 
@@ -201,12 +200,14 @@ export default {
   methods: {
     crop() {
       let options = {
+        type: 'base64',
         format: 'jpeg',
         size:   {width: 1150, height: 1533}
       }
       this.$refs.croppieRef.result(options, (output) => {
         console.log(options);
-        this.croppieCropped = output;
+        console.log(output);
+        // this.croppieCropped = output;
         this.cropped = output;
       });
     },
@@ -221,11 +222,6 @@ export default {
       const context = canvas.getContext('2d');
       context.clearRect(0, 0, canvas.width, canvas.height);
     },
-    result(output) {
-      alert('result')
-      this.croppieCropped = output;
-      this.cropped = output;
-    },
     rotate(rotationAngle) {
       this.$refs.croppieRef.rotate(rotationAngle);
     },
@@ -233,7 +229,7 @@ export default {
       let canvas = this.$refs.imageCanvas;
       let ctx = canvas.getContext("2d");
 
-      ctx.clearRect(0, 0, 1200, 1000)
+      ctx.clearRect(0, 0, 1150, 1533)
       this.$refs.fileInput.value = '';
     },
     updateCanvasImage(e) {
