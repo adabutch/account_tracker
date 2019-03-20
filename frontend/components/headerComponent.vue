@@ -22,23 +22,7 @@
         {name: 'Profiles',         href: '/profiles'}
       ]"
 
-      :subNavItems="[
-        {name: 'Denied Users',             href: '/account-requests/denied'}
-      ]">
-
-      <!-- <nav slot="dropdown"
-           role="navigation dropdown"
-           aria-label="navigation dropdown"
-           class="navigation-dropdown">
-        <details>
-          <summary>User</summary>
-          <ul class="right">
-            <li @click="logout()">
-              Logout
-            </li>
-          </ul>
-        </details>
-      </nav> -->
+      :subNavItems="subNavItems">
 
       <fn1-button slot="dropdown"
                   v-if="isAuthenticated"
@@ -62,8 +46,16 @@ import exampleDropdown from '~/components/exampleDropdown'
 const Cookie = process.client ? require('js-cookie') : undefined
 
 export default {
+  mounted(context) {
+    this.routeParam = this.$route.name;
+  },
   components: {
     exampleDropdown
+  },
+  data() {
+    return {
+      routeParam:   '',
+    }
   },
   created() {},
   computed: {
@@ -73,7 +65,23 @@ export default {
       'authUser.username',
       'isAuthenticated',
       'endpoints'
-    ])
+    ]),
+    subNavItems() {
+      if(this.routeParam.includes('account-requests') ||
+         this.routeParam.includes('create')) {
+        let accountReqLinks = [
+          {
+            name: 'New Account Request',
+            href: '/create/'
+          },
+          {
+            name: 'Denied Users',
+            href: '/account-requests/denied'
+          }
+        ]
+        return accountReqLinks;
+      }
+    }
   },
   methods: {
     logout() {

@@ -20,8 +20,6 @@ module.exports = {
   },
 
   env: {
-    arCreateBase:   'create/',
-
     api:            'http://127.0.0.1:8000/api/',
     obtainJWT:      'auth/obtain_token/',
     refreshJWT:     'auth/refresh_token/',
