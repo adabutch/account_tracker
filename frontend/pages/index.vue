@@ -135,6 +135,13 @@ import asideComponent   from '~/components/asideComponent'
 import exampleSelect    from '~/components/exampleSelect'
 
 export default {
+  head () {
+    return {
+      script: [
+        { src: 'js/exif.js' }
+      ],
+    }
+  },
   middleware: 'authenticated',
   components: {
     headerComponent,
@@ -215,6 +222,7 @@ export default {
       context.clearRect(0, 0, canvas.width, canvas.height);
     },
     result(output) {
+      alert('result')
       this.croppieCropped = output;
       this.cropped = output;
     },
