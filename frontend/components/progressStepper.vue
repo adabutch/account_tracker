@@ -141,6 +141,7 @@ export default {
     button {
       &:first-child {
         background-color: $color-green;
+        margin-right: 10px !important;
 
         &:hover {
           color: white !important;
@@ -206,10 +207,6 @@ export default {
         color: $text-color;
       }
     }
-  }
-
-  a {
-
   }
 }
 

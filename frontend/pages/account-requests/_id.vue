@@ -4,12 +4,29 @@
 
     <div class="page-wrapper">
 
+      <!-- <fn1-breadcrumbs active="Settings"
+        :navItems="[
+          {name: 'Dashboard', component: 'Dashboard', href: '/example/'},
+          {name: 'Posts',     component: 'Posts',     href: '/example/'},
+          {name: 'Users',     component: 'Users',     href: '/example/'},
+          {name: 'Settings',  component: 'Settings',  href: '/example/'}]"
+        /> -->
+
       <fn1-tabs>
         <fn1-tab name="Account" :selected="true">
           <div class="left" v-if="acctReq.cropped_image">
             <div class="profile-image">
               <img :src="acctReq.cropped_image" :alt="acctReq.first_name + ' ' + acctReq.last_name">
             </div>
+
+            <fn1-button
+              class="image-download"
+              @click.native="downloadARImages(acctReq.cropped_image, acctReq.first_name + '-' + acctReq.last_name)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                <path fill="currentColor" d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm76.45 211.36l-96.42 95.7c-6.65 6.61-17.39 6.61-24.04 0l-96.42-95.7C73.42 337.29 80.54 320 94.82 320H160v-80c0-8.84 7.16-16 16-16h32c8.84 0 16 7.16 16 16v80h65.18c14.28 0 21.4 17.29 11.27 27.36zM377 105L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9z"></path>
+              </svg>
+              Save Image
+            </fn1-button>
           </div>
 
           <div class="right" :class="[{'has-image': acctReq.cropped_image }]">
@@ -297,14 +314,16 @@
 </template>
 
 <script>
+import FileSaver, { saveAs } from 'file-saver'
 
 import {
   mapState,
   mapMutations,
   mapGetters,
   mapActions }          from 'vuex'
+
 import {
-  createHelpers }       from 'vuex-map-fields';
+  createHelpers }       from 'vuex-map-fields'
 
 import headerComponent  from '~/components/headerComponent'
 import exampleSelect    from '~/components/exampleSelect'
@@ -352,6 +371,10 @@ export default {
     }
   },
   methods: {
+    downloadARImages(image, name) {
+      let nameToLower = name.toLowerCase();
+      FileSaver.saveAs(image, `${nameToLower}.jpg`);
+    },
     getAcctReqActions() {
       this.$axios
       .get(`${process.env.api}${process.env.action}?account=${this.paramID}&limit=1000`)
@@ -418,7 +441,7 @@ export default {
 @import '@/assets/style.scss';
 
   $image-left-margin: 40px;
-  $image-width-height: 100px;
+  $image-width-height: 130px;
 
   h2 {
     display: inline-flex;
@@ -496,9 +519,22 @@ export default {
   }
 
   .profile-image {
-    margin: 0 0 $image-left-margin 0;
+    margin: 0 0 ($image-left-margin / 2) 0;
     width: $image-width-height;
     height: $image-width-height;
+  }
+
+  .image-download {
+    background-color: $text-color;
+    color: white;
+    margin: 0 0 10px 0;
+
+    svg {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin: 0 10px 0 0;
+    }
   }
 
   .account-fields {
