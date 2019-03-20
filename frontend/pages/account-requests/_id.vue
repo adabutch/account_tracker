@@ -50,7 +50,10 @@
               <template v-if="acctReq.suffix">
                 {{acctReq.suffix}}
               </template>
-              <fn1-badge>{{acctReq.request_status}}</fn1-badge>
+
+              <fn1-badge :class="acctReq.request_status">
+                {{acctReq.request_status}}
+              </fn1-badge>
             </h2>
 
             <div class="account-fields">
@@ -233,7 +236,13 @@
             <tbody>
               <tr v-for="s, i in userServices" :key="i">
                 <th class="status">
-                  <fn1-badge :class="s.request_status">
+                  <fn1-badge v-if="s.request_status == null"
+                             class="new">
+                    new
+                  </fn1-badge>
+
+                  <fn1-badge v-if="s.request_status != null"
+                             :class="s.request_status">
                     {{ s.request_status }}
                   </fn1-badge>
                 </th>

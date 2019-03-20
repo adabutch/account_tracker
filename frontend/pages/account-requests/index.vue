@@ -4,7 +4,8 @@
 
     <div class="page-wrapper">
       <fn1-tabs>
-        <fn1-tab :name="`New (` + [[ newCount ]] + `)`" :selected="true">
+        <fn1-tab :name="`New (` + [[ newCount ]] + `)`"
+                 :selected="true">
           <div class="title-row">
             <h4><strong>New</strong> user <strong>Account Requests</strong>.</h4>
 
@@ -95,7 +96,7 @@
 
         <fn1-tab :name="`Pending (` + [[ pendingCount ]] + `)`">
           <div class="title-row">
-            <h4><strong>Pending</strong> user <strong>Account Requests</strong> .</h4>
+            <h4><strong>Pending</strong> user <strong>Account Requests</strong>.</h4>
 
             <template v-if="batchApprovalCount > 1">
               <fn1-modal title="Pending Request Batch Confirmation"
