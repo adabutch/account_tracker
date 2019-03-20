@@ -129,8 +129,8 @@ export default {
   data() {
     return {
       stepActive:   2,
-      previous:     { name: 'index'},
-      next:         { name: 'three'},
+      previous:     { name: 'create'},
+      next:         { name: 'create-three'},
       config: {
         enable: [],
         altInput: true,

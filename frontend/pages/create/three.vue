@@ -82,8 +82,8 @@ export default {
   data() {
     return {
       stepActive:       3,
-      previous:         { name: 'two'},
-      next:             { name: 'four'},
+      previous:         { name: 'create-two'},
+      next:             { name: 'create-four'},
       managers:         [],
       phoneValue:       0,
       preventIteration: false,

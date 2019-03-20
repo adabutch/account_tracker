@@ -137,8 +137,8 @@ export default {
   data() {
     return {
       stepActive:   5,
-      previous:     { name: 'four'},
-      next:         { name: 'finish'},
+      previous:     { name: 'create-four'},
+      next:         { name: 'create-finish'},
 
       exDeptQsSelects:       {},
       exDeptQsTexts:         {},
