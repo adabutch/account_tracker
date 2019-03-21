@@ -5,7 +5,7 @@
     <div class="search">
       <fn1-input v-model="acctReqSearch"
                  label="Account Request Search"
-                 placeholder="Search by Name"
+                 placeholder="Search by Name, Department or Group"
                  name="acct-req-search"
                  id="acct-req-search" />
     </div>
@@ -40,18 +40,24 @@
           </div>
 
           <div>
-            <p v-if="a.first_name">
+            <p class="label">
               <span v-if="a.first_name">{{a.first_name}}</span>
               <span v-if="a.nickname">{{a.nickname}}</span>
               <span v-if="a.middle_name">{{a.middle_name}}</span>
               <span v-if="a.last_name">{{a.last_name}}</span>
             </p>
-            <p v-if="a.department || a.job">{{a.department}} - {{a.job}}</p>
+            <p v-if="a.department">{{a.department}}</p>
+            <p v-if="a.job">{{a.job}}</p>
           </div>
 
           <div>
+            <p class="label">Last Update</p>
+            <p v-if="a.updated">{{MMDYYYYDateFormat(a.updated)}}</p>
+            <p v-if="a.updated">{{timeAgo(a.updated)}}</p>
+          </div>
 
-            <p v-if="a.created">{{a.created}}</p>
+          <div>
+            <fn1-button @click.native="viewAcctReq(a.id)">view</fn1-button>
           </div>
         </div>
       </div>
@@ -79,7 +85,7 @@ export default {
     return {
       acctReqSearch: '',
       accountReqs:   [],
-      statusLegend: ['new','pending','approved','active','denied','inactive']
+      statusLegend:  ['new','pending','approved','active','denied','inactive']
     }
   },
   mounted() {
@@ -94,7 +100,10 @@ export default {
   },
   methods: {
     goCreateAR() {
-      this.$router.push('/create');
+      this.$router.push(`/create/`);
+    },
+    viewAcctReq(id) {
+      this.$router.push(`/account-requests/${id}`);
     }
   },
   computed: {
@@ -104,15 +113,14 @@ export default {
         let firstName  = user.first_name.toLowerCase();
         let middleName = user.middle_name.toLowerCase();
         let lastName   = user.last_name.toLowerCase();
-
-        let fullName = `${firstName} ${middleName} ${lastName}`;
-
-        console.log(fullName);
+        let userDept   = user.department.toLowerCase();
+        let userGroup  = user.group.toLowerCase();
 
         return firstName.includes(this.acctReqSearch.toLowerCase()) ||
                middleName.includes(this.acctReqSearch.toLowerCase()) ||
                lastName.includes(this.acctReqSearch.toLowerCase()) ||
-               fullName.includes(this.acctReqSearch.toLowerCase())
+               userDept.includes(this.acctReqSearch.toLowerCase()) ||
+               userGroup.includes(this.acctReqSearch.toLowerCase())
       })
       .sort((a, b) => new Date(b.requested) - new Date(a.requested))
     },
@@ -131,7 +139,6 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
     padding: 50px 0 0 0;
     z-index: 1;
 
@@ -243,7 +250,6 @@ export default {
     padding: 15px 20px;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     border-bottom: 1px solid darken($color-grey-lighter, 7%);
     border-left: 10px solid;
 
@@ -277,6 +283,33 @@ export default {
 
     &:last-of-type {
       border-bottom: none;
+    }
+
+    div {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+
+      &:nth-of-type(2) {
+        // background-color: red;
+        width: 300px;
+        margin-right: 20px;
+        padding-right: 20px;
+        border-right: 1px solid darken($color-grey-lighter, 7%);
+      }
+
+      &:last-of-type {
+        justify-content: center;
+        margin-left: auto;
+
+        button {
+          background-color: $color-green;
+
+          &:hover {
+            background-color: darken($color-green, 5%);
+          }
+        }
+      }
     }
 
     p {
