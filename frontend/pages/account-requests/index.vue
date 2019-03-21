@@ -422,9 +422,6 @@ export default {
       this.showDetailsFor = null;
       this.showingUserDetails = false;
     },
-    userInitial(name) {
-      return name.charAt(0);
-    },
     watchInput(payload) {
       console.log(`WI :: PAYLOAD ::: ${payload}`)
       this.searchUsers = payload;

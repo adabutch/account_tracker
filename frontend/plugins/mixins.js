@@ -12,5 +12,9 @@ Vue.mixin({
     timeAgo(date) {
       return moment(date).fromNow();
     },
-  }
+    userInitial(name) {
+      return name.charAt(0);
+    },
+  },
+  computed: {},
 })
