@@ -104,6 +104,7 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    margin: -120px 0 0 0;
   }
 
   .login-wrapper {

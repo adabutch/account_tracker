@@ -8,6 +8,7 @@
                  placeholder="Search by Name, Department or Group"
                  name="acct-req-search"
                  id="acct-req-search" />
+      <!-- {{filteredAcctReqs.length}} -->
     </div>
 
     <div class="results-wrapper">
@@ -131,6 +132,18 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
 
+  .page-wrapper {
+    margin: -120px 0 0 0;
+    padding: 0;
+    height: 100vh;
+    // border-top: 1px solid lighten($text-color, 50%);
+    background: $color-grey-lighter;
+    // display: flex;
+    // flex-wrap: wrap;
+    // justify-content: center;
+    // height: calc(100vh - 90px);
+  }
+
   .search {
     position: absolute;
     top: 90px;
@@ -154,17 +167,6 @@ export default {
         color: rgba(255, 255, 255, 0.9%);
       }
     }
-  }
-
-  .page-wrapper {
-    padding: 0;
-    height: 100vh;
-    // border-top: 1px solid lighten($text-color, 50%);
-    background: $color-grey-lighter;
-    // display: flex;
-    // flex-wrap: wrap;
-    // justify-content: center;
-    // height: calc(100vh - 90px);
   }
 
   .results-wrapper {

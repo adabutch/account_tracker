@@ -30,5 +30,8 @@ html {
   margin: 0;
 }
 
-.main-wrapper {}
+.main-wrapper {
+  position: relative;
+  top: 120px;
+}
 </style>
