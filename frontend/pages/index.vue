@@ -122,11 +122,17 @@ export default {
         let userDept   = user.department.toLowerCase();
         let userGroup  = user.group.toLowerCase();
 
+        let hasMiddleName = middleName != '';
+        console.log(hasMiddleName);
+
+        let fullName   = `${firstName} ${lastName}`;
+
         return firstName.includes(this.acctReqSearch.toLowerCase()) ||
                middleName.includes(this.acctReqSearch.toLowerCase()) ||
                lastName.includes(this.acctReqSearch.toLowerCase()) ||
                userDept.includes(this.acctReqSearch.toLowerCase()) ||
-               userGroup.includes(this.acctReqSearch.toLowerCase())
+               userGroup.includes(this.acctReqSearch.toLowerCase()) ||
+               fullName.includes(this.acctReqSearch.toLowerCase())
       })
       .sort((a, b) => new Date(b.requested) - new Date(a.requested))
     },
