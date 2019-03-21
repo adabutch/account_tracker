@@ -24,7 +24,10 @@ module.exports = {
     obtainJWT:      'auth/obtain_token/',
     refreshJWT:     'auth/refresh_token/',
     user:           'user/',
+    action:         'action/',
     profile:        'profile/',
+    service:        'service/',
+    serviceReq:     'service-request/',
     accountRequest: 'account-request/',
 
 
@@ -32,6 +35,7 @@ module.exports = {
     deptService:    'DepartmentService',
     groupService:   'GroupService',
     jobService:     'JobTitleService',
+    posService:     'PositionService',
     managerService: 'ManagerService',
   },
 
@@ -56,9 +60,9 @@ module.exports = {
     { src: '~/plugins/axios' },
     { src: '~/plugins/filters' },
     { src: '~/plugins/localStorage', ssr: false },
-    { src: '~/plugins/emptyObjTest' },
+    { src: '~/plugins/mixins' },
     { src: '~/plugins/resetForm' },
-    { src: '~/plugins/croppie.js', ssr: false }
+    { src: '~/plugins/croppie.js', ssr: false },
   ],
 
   /*

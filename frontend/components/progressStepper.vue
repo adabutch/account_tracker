@@ -85,31 +85,32 @@ export default {
     showPreviousBtn() {
       return (this.stepActive != 1 &&
              this.stepActive <= this.totalSteps) ||
-             this.stepActive == 'finished'
+             this.stepActive == `/create/finished`
     },
     showNextBtn() {
       return this.stepActive <= this.totalSteps &&
-             this.stepActive != 'finished'
+             this.stepActive != `/create/finished`
     },
   },
   methods: {
     goToStep(index) {
       if(index === 0) {
-        this.$router.push('/');
+        this.$router.push(`./`);
       } else if(index === 1) {
-        this.$router.push('two')
+        this.$router.push(`/create/two`)
       } else if(index === 2) {
-        this.$router.push('three')
+        this.$router.push(`/create/three`)
       } else if(index === 3) {
-        this.$router.push('four')
+        this.$router.push(`/create/four`)
       } else if(index === 4) {
-        this.$router.push('five')
+        this.$router.push(`/create/five`)
       } else if(index === 5) {
-        this.$router.push('six')
+        this.$router.push(`/create/six`)
       } else {}
     },
     finishedStep(step) {
-      return this.stepActive > step || this.stepActive == 'finished'
+      return this.stepActive > step ||
+             this.stepActive == `finished`
     },
     cancelModal() {
       this.$refs.modal.showModal = false;
@@ -141,6 +142,7 @@ export default {
     button {
       &:first-child {
         background-color: $color-green;
+        margin-right: 10px !important;
 
         &:hover {
           color: white !important;
@@ -206,10 +208,6 @@ export default {
         color: $text-color;
       }
     }
-  }
-
-  a {
-
   }
 }
 

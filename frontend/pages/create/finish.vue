@@ -30,7 +30,7 @@
                        :to="{ name: 'index'}">Return Home</nuxt-link>
 
             <div v-if="!showSuccessMsg">
-              <button class="button"
+              <button class="button create"
                       @click="accountRequestSubmit">
                 Create
               </button>
@@ -74,6 +74,8 @@ export default {
       errorMsg:     [],
       asideHeader:  "Review & Create Account Request",
       imageID:      "",
+      acctReqActionNew: "Account Request: New",
+      acctReqActionNewMsg: "Account Request 'new' submission.",
     }
   },
   mounted() {
@@ -191,7 +193,24 @@ export default {
       this.$axios
       .post(`${process.env.api}${process.env.accountRequest}`,fD)
       .then((response) => {
-        console.log(response.data);
+        console.log(`accountRequestSubmit res :: `, response.data);
+
+        let arID = response.data.id;
+
+        this.$axios
+        .post(`${process.env.api}${process.env.action}`,{
+          "user":    this.authUser.id,
+          "account": arID,
+          "action":  this.acctReqActionNew,
+          "comment": this.acctReqActionNewMsg
+        })
+        .then(response => {
+          console.log(`ACTION AR new :: `, response)
+        })
+        .catch(e => {
+          console.log(`ACTION AR new error :: `, e)
+        });
+
         this.showSuccessMsg = true;
         this.stepActive = 1;
         this.$store.dispatch('createUser/resetState');
@@ -272,11 +291,19 @@ export default {
       text-align: center;
       font-size: 18px;
       text-transform: uppercase;
-      background-color: $color-green;
-      animation: shadow-pulse 1s infinite;
+      background-color: $text-color;
 
       &:hover {
-        background-color: darken($color-green, 5%);
+        background-color: darken($text-color, 5%);
+      }
+
+      &.create {
+        background-color: $color-green;
+        animation: shadow-pulse 1s infinite;
+
+        &:hover {
+          background-color: darken($color-green, 5%);
+        }
       }
     }
   }

@@ -31,10 +31,10 @@ class ServiceRequest(models.Model):
                                         on_delete=models.SET_NULL,
                                         blank=True, null=True)
 
-    # grant access? remove access?
+    # grant access? revoke access?
     type_of_change = models.CharField(max_length=50)
 
-    # is it new? pending? approved? completed? denied? inactive?
+    # is it new? pending? approved? active? denied? inactive?
     request_status = models.CharField(max_length=50)
 
     requested = models.DateTimeField(auto_now_add=True)

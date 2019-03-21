@@ -84,7 +84,7 @@ export default {
   data() {
     return {
       stepActive:   4,
-      previous:     { name: 'three'},
+      previous:     { name: 'create-three'},
       deptServiceProfile: {},
       groupServiceProfile: {},
     }
@@ -117,9 +117,9 @@ export default {
     ]),
     nextStep() {
       if(this.stepActive < this.totalSteps) {
-        return { name: 'five'}
+        return { name: 'create-five'}
       } else if (this.stepActive == this.totalSteps) {
-        return { name: 'finish'}
+        return { name: 'create-finish'}
       }
     },
     hasDeptServices() {
