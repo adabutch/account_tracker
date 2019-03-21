@@ -32,12 +32,15 @@ class AccountRequestViewSet(viewsets.ModelViewSet):
             # get the corresponding Service
             # to facilitate creating ServiceRequests
             service = Service.objects.get(id=service_id)
-            sr = ServiceRequest()
-            sr.account_request = ar
-            sr.service = service
-            sr.type_of_change = 'grant'
-            sr.request_status = 'new'
-            sr.save()
+            existing = ServiceRequest.objects.filter(service=service, account_request=ar)
+            print(existing)
+            if not existing.count:
+                sr = ServiceRequest()
+                sr.account_request = ar
+                sr.service = service
+                sr.type_of_change = 'grant'
+                sr.request_status = 'new'
+                sr.save()
 
         # TODO:
         # This is where any automated tasks could be handled
