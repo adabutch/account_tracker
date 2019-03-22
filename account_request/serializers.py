@@ -17,12 +17,15 @@ class AccountRequestSerializer(FriendlyErrorMessagesMixin,
 
     def get_full_name(self, obj):
 
-        if obj.middle_name:
-            fn = "%s (%s) %s %s" % (obj.first_name, obj.nickname,
-                                    obj.middle_name, obj.last_name)
+        if obj.nickname:
+            beginning = "%s (%s)" % (obj.first_name, obj.nickname)
         else:
-            fn = "%s (%s) %s" % (obj.first_name, obj.nickname,
-                                 obj.last_name)
+            beginning = obj.first_name
+
+        if obj.middle_name:
+            fn = "%s %s %s" % (beginning, obj.middle_name, obj.last_name)
+        else:
+            fn = "%s %s" % (beginning, obj.last_name)
 
         if obj.suffix:
             fn += " " + obj.suffix
