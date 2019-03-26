@@ -116,18 +116,15 @@ export default {
     filteredAcctReqs() {
       return this.accountReqs
       .filter(user => {
-        let firstName  = user.first_name.toLowerCase();
-        let middleName = user.middle_name.toLowerCase();
-        let lastName   = user.last_name.toLowerCase();
-        let userDept   = user.department.toLowerCase();
-        let userGroup  = user.group.toLowerCase();
+        let fullName   = user.full_name.toLowerCase(),
+        firstName      = user.first_name.toLowerCase(),
+        middleName     = user.middle_name.toLowerCase(),
+        lastName       = user.last_name.toLowerCase(),
+        userDept       = user.department.toLowerCase(),
+        userGroup      = user.group.toLowerCase();
 
-        let hasMiddleName = middleName != '';
-        console.log(hasMiddleName);
-
-        let fullName   = `${firstName} ${lastName}`;
-
-        return firstName.includes(this.acctReqSearch.toLowerCase()) ||
+        return fullName.includes(this.acctReqSearch.toLowerCase()) ||
+               firstName.includes(this.acctReqSearch.toLowerCase()) ||
                middleName.includes(this.acctReqSearch.toLowerCase()) ||
                lastName.includes(this.acctReqSearch.toLowerCase()) ||
                userDept.includes(this.acctReqSearch.toLowerCase()) ||

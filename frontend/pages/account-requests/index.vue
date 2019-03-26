@@ -544,13 +544,15 @@ export default {
     newAccounts() {
       return this.new
       .filter(user => {
-        let firstName  = user.first_name.toLowerCase();
-        let middleName = user.middle_name.toLowerCase();
-        let lastName   = user.last_name.toLowerCase();
-        let userDept   = user.department.toLowerCase();
-        let userGroup  = user.group.toLowerCase();
+        let fullName   = user.full_name.toLowerCase(),
+        firstName      = user.first_name.toLowerCase(),
+        middleName     = user.middle_name.toLowerCase(),
+        lastName       = user.last_name.toLowerCase(),
+        userDept       = user.department.toLowerCase(),
+        userGroup      = user.group.toLowerCase();
 
-        return firstName.includes(this.searchUsers.toLowerCase()) ||
+        return fullName.includes(this.searchUsers.toLowerCase()) ||
+               firstName.includes(this.searchUsers.toLowerCase()) ||
                middleName.includes(this.searchUsers.toLowerCase()) ||
                lastName.includes(this.searchUsers.toLowerCase()) ||
                userDept.includes(this.searchUsers.toLowerCase()) ||
@@ -561,13 +563,15 @@ export default {
     pendingAccounts() {
       return this.pending
       .filter(user => {
-        let firstName  = user.first_name.toLowerCase();
-        let middleName = user.middle_name.toLowerCase();
-        let lastName   = user.last_name.toLowerCase();
-        let userDept   = user.department.toLowerCase();
-        let userGroup  = user.group.toLowerCase();
+        let fullName   = user.full_name.toLowerCase(),
+        firstName      = user.first_name.toLowerCase(),
+        middleName     = user.middle_name.toLowerCase(),
+        lastName       = user.last_name.toLowerCase(),
+        userDept       = user.department.toLowerCase(),
+        userGroup      = user.group.toLowerCase();
 
-        return firstName.includes(this.searchUsers.toLowerCase()) ||
+        return fullName.includes(this.searchUsers.toLowerCase()) ||
+               firstName.includes(this.searchUsers.toLowerCase()) ||
                middleName.includes(this.searchUsers.toLowerCase()) ||
                lastName.includes(this.searchUsers.toLowerCase()) ||
                userDept.includes(this.searchUsers.toLowerCase()) ||
