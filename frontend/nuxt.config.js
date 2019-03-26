@@ -62,7 +62,7 @@ module.exports = {
     { src: '~/plugins/localStorage', ssr: false },
     { src: '~/plugins/mixins' },
     { src: '~/plugins/resetForm' },
-    { src: '~/plugins/croppie.js', ssr: false },
+    { src: '~/plugins/croppie.js', ssr: false }
   ],
 
   /*

@@ -18,9 +18,13 @@
                 <no-ssr>
                   <vue-croppie
                     ref="croppieRef"
+                    :enableExif="true"
+                    :enableOrientation="true"
                     :enableResize="false"
                     :showZoomer="true"
-                    :viewport="{ width: 180, height: 240 }" />
+                    @update="update"
+                    :viewport="{ width: 180, height: 240 }"
+                    :boundary="{ width: 180, height: 240 }" />
                 </no-ssr>
               </div>
 
@@ -31,7 +35,6 @@
 
               <input type="file"
                      accept=".jpeg, .jpg, .png, .gif, .jp2, .jpx, .jpm, .tiff, .tiff-fx, .bmp, .x-bmp, .webp, .heif, .heic"
-
                      @change="updateCanvasImage"
                      ref="fileInput"
                      name="media">
@@ -134,13 +137,13 @@ import asideComponent   from '~/components/asideComponent'
 import exampleSelect    from '~/components/exampleSelect'
 
 export default {
-  head () {
-    return {
-      script: [
-        { src: 'js/exif.js' }
-      ],
-    }
-  },
+  // head () {
+  //   return {
+  //     script: [
+  //       { src: '../js/exif.js' }
+  //     ],
+  //   }
+  // },
   middleware: 'authenticated',
   components: {
     headerComponent,
@@ -200,9 +203,9 @@ export default {
   methods: {
     crop() {
       let options = {
-        type: 'base64',
+        type:   'base64',
         format: 'jpeg',
-        size:   {width: 1150, height: 1533}
+        size:   { width: 1150, height: 1533 }
       }
       this.$refs.croppieRef.result(options, (output) => {
         console.log(options);
@@ -225,12 +228,11 @@ export default {
     rotate(rotationAngle) {
       this.$refs.croppieRef.rotate(rotationAngle);
     },
-    removeImage(){
-      let canvas = this.$refs.imageCanvas;
-      let ctx = canvas.getContext("2d");
-
-      ctx.clearRect(0, 0, 1150, 1533)
-      this.$refs.fileInput.value = '';
+    update(val) {
+      // let imgor = val.orientation;
+      // alert(imgor)
+      // let imgor = this.imgOrientation;
+      console.log(val);
     },
     updateCanvasImage(e) {
       let files     = e.target.files;
@@ -238,13 +240,78 @@ export default {
 
       reader.onload = (e) => {
         let img = new Image();
-        this.full = e.target.result;
+
+        let self = this;
+        img.onload = function() {
+          self.getExif(img);
+        }
+        img.src = e.target.result;
+
+        this.full = img.src;
         this.$refs.croppieRef.bind({
           url: this.full,
         });
       };
       reader.readAsDataURL(files[0]);
     },
+    getExif(img) {
+      let self = this;
+      const EXIF     = require('exif-js');
+      EXIF.getData(img, function() {
+        self.imgOrientation = this.exifdata.Orientation;
+        console.log(this.exifdata.Orientation);
+      });
+
+      let canvas = this.$el.querySelector('.cr-image');
+      const ctx = canvas.getContext('2d');
+      var max_width  = 1150;
+      var max_height = 1533;
+      var width      = img.width;
+      var height     = img.height;
+
+      if (4 < self.imgOrientation && self.imgOrientation < 9) {
+        if (width > height) {
+          if (width > max_width) {
+            img.height *= max_width / img.width;
+            img.width   = max_width;
+
+            height  = img.height;
+            width   = img.width;
+
+            canvas.width = img.height;
+            canvas.height = img.width;
+          }
+        } else {
+          // console.log('this here 1');
+        }
+      } else {
+        if (height > max_height) {
+          // console.log('this here 2');
+          img.height *= max_height / img.width;
+          img.width   = max_width;
+
+          height  = img.height;
+          width   = img.width;
+
+          canvas.width = img.height;
+          canvas.height = img.width;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      switch (self.imgOrientation) {
+        case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
+        case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
+        case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
+        case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
+        case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
+        case 7: ctx.transform(0, -1, -1, 0, height, width); break;
+        case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
+        default: break;
+      }
+    }
   }
 }
 </script>
