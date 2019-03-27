@@ -55,7 +55,7 @@
                     v-model="job">
               <option v-for="(item, index) in groupJobs"
                       :value="{id: item.value, name: item.text, salaryGroup: item.salaryGroup, clockInRequired: item.clockInRequired}">
-                {{ item.text }}
+                {{ item.text }} ({{item.salaryGroup}})
               </option>
             </select>
           </div>
@@ -323,7 +323,14 @@ export default {
         });
       });
 
-      return jobSelectArray;
+      var uniqueJobs = jobSelectArray.reduce((job, o) => {
+          if(!job.some(obj => obj.name === o.name &&
+                              obj.salaryGroup === o.salaryGroup)
+          ){ job.push(o); }
+          return job;
+      },[]);
+
+      return uniqueJobs;
     },
     getExtraDeptQuestions() {
       return new Promise((resolve) => {
