@@ -143,16 +143,16 @@
 
               <div>
                 <template v-if="acctReq.start_date">
-                  <fn1-input v-model="acctReq.start_date"
-                             label="Start Date"
+                  <fn1-input :value="MMDYYYYDateFormat(acctReq.start_date)"
+                             :label="`Start Date: ${timeAgo(acctReq.start_date)}`"
                              name="start-date"
                              id="start-date"
                              disabled />
                 </template>
 
                 <template v-if="acctReq.end_date">
-                  <fn1-input v-model="acctReq.end_date"
-                             label="End Date"
+                  <fn1-input :value="MMDYYYYDateFormat(acctReq.end_date)"
+                             :label="`End Date: ${timeAgo(acctReq.end_date)}`"
                              name="end-date"
                              id="end-date"
                              disabled />
@@ -160,24 +160,24 @@
 
 
                 <template v-if="acctReq.requested">
-                  <fn1-input v-model="acctReq.requested"
-                             label="Requested"
+                  <fn1-input :value="MMDYYYYDateFormat(acctReq.requested)"
+                             :label="`Requested: ${timeAgo(acctReq.requested)}`"
                              name="requested"
                              id="requested"
                              disabled />
                 </template>
 
                 <template v-if="acctReq.updated">
-                  <fn1-input v-model="acctReq.updated"
-                             label="Updated"
+                  <fn1-input :value="MMDYYYYDateFormat(acctReq.updated)"
+                             :label="`Updated: ${timeAgo(acctReq.updated)}`"
                              name="updated"
                              id="updated"
                              disabled />
                 </template>
 
                 <template v-if="acctReq.created">
-                  <fn1-input v-model="acctReq.created"
-                             label="Created"
+                  <fn1-input :value="MMDYYYYDateFormat(acctReq.created)"
+                             :label="`Created: ${timeAgo(acctReq.created)}`"
                              name="created"
                              id="created"
                              disabled />
@@ -379,6 +379,9 @@ export default {
       return this.acctReqActions.sort(
         (a, b) => new Date(b.updated) - new Date(a.updated)
         );
+    },
+    updatedDateFormat() {
+
     }
   },
   methods: {
