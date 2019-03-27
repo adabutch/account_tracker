@@ -288,7 +288,7 @@
             </thead>
 
             <tbody>
-              <tr v-for="a, i in acctReqActions" :key="i">
+              <tr v-for="a, i in historyByUpdated" :key="i">
                 <th>
                   <div>{{a.action}}</div>
                   <div>{{a.comment}}</div>
@@ -374,12 +374,15 @@ export default {
       'authUser',
       'services.services',
       'requestStatuses'
-    ])
+    ]),
+    historyByUpdated() {
+      return this.acctReqActions.sort(
+        (a, b) => new Date(b.updated) - new Date(a.updated)
+        );
+    }
   },
   methods: {
     serviceStatusChange(acctReqID, servReqID, oldStatus, newStatus) {
-      alert(`${acctReqID}, ${servReqID}, ${oldStatus}, ${newStatus}`);
-
       let payload = {
         "request_status": newStatus,
       }

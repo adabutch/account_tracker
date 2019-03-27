@@ -104,7 +104,7 @@ header {
   padding: 15px 20px;
   position: fixed;
   top: 0;
-  z-index: 1;
+  z-index: 10;
 
   /deep/ button {
     font-size: $size-s;
