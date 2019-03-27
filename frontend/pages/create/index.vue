@@ -137,13 +137,6 @@ import asideComponent   from '~/components/asideComponent'
 import exampleSelect    from '~/components/exampleSelect'
 
 export default {
-  // head () {
-  //   return {
-  //     script: [
-  //       { src: '../js/exif.js' }
-  //     ],
-  //   }
-  // },
   middleware: 'authenticated',
   components: {
     headerComponent,
@@ -156,6 +149,8 @@ export default {
       if(this.full){
         this.$refs.croppieRef.bind({
           url: this.full,
+          zoom: 0,
+          enableOrientation: true,
         });
       } else {
         this.$refs.croppieRef.bind({
@@ -185,6 +180,7 @@ export default {
       blob:           '',
       placeholderImg: '/user-upload-placeholder.jpg',
       imgOrientation: '',
+      imgOrientation2: '',
       croppieCropped: null,
     }
   },
@@ -229,10 +225,17 @@ export default {
       this.$refs.croppieRef.rotate(rotationAngle);
     },
     update(val) {
-      // let imgor = val.orientation;
-      // alert(imgor)
-      // let imgor = this.imgOrientation;
       console.log(val);
+    },
+    base64ToArrayBuffer (base64) {
+        base64 = base64.replace(/^data\:([^\;]+)\;base64,/gmi, '');
+        var binary_string =  window.atob(base64);
+        var len = binary_string.length;
+        var bytes = new Uint8Array( len );
+        for (var i = 0; i < len; i++)        {
+            bytes[i] = binary_string.charCodeAt(i);
+        }
+        return bytes.buffer;
     },
     updateCanvasImage(e) {
       let files     = e.target.files;
@@ -245,11 +248,12 @@ export default {
         img.onload = function() {
           self.getExif(img);
         }
-        img.src = e.target.result;
 
-        this.full = img.src;
+        img.src = e.target.result;
+        // this.full = img.src;
+
         this.$refs.croppieRef.bind({
-          url: this.full,
+          url: img.src
         });
       };
       reader.readAsDataURL(files[0]);
@@ -262,55 +266,27 @@ export default {
         console.log(this.exifdata.Orientation);
       });
 
-      let canvas = this.$el.querySelector('.cr-image');
-      const ctx = canvas.getContext('2d');
-      var max_width  = 1150;
-      var max_height = 1533;
-      var width      = img.width;
-      var height     = img.height;
+      // let canvas = this.$el.querySelector('.cr-image');
+      // const ctx = canvas.getContext('2d');
 
-      if (4 < self.imgOrientation && self.imgOrientation < 9) {
-        if (width > height) {
-          if (width > max_width) {
-            img.height *= max_width / img.width;
-            img.width   = max_width;
+      // var max_width  = 1150;
+      // var max_height = 1533;
+      // var width      = img.width;
+      // var height     = img.height;
 
-            height  = img.height;
-            width   = img.width;
+      // console.log(ctx);
 
-            canvas.width = img.height;
-            canvas.height = img.width;
-          }
-        } else {
-          // console.log('this here 1');
-        }
-      } else {
-        if (height > max_height) {
-          // console.log('this here 2');
-          img.height *= max_height / img.width;
-          img.width   = max_width;
-
-          height  = img.height;
-          width   = img.width;
-
-          canvas.width = img.height;
-          canvas.height = img.width;
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-      }
-
-      switch (self.imgOrientation) {
-        case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
-        case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
-        case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
-        case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
-        case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
-        case 7: ctx.transform(0, -1, -1, 0, height, width); break;
-        case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
-        default: break;
-      }
+      // switch (this.imgOrientation) {
+      //   case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
+      //   case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
+      //   case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
+      //   case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
+      //   case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
+      //   case 7: ctx.transform(0, -1, -1, 0, height, width); break;
+      //   case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
+      //   default: break;
+      // }
+      // ctx.drawImage(img, 0, 0, width, height);
     }
   }
 }
