@@ -105,7 +105,8 @@ export default {
     flatPickr
   },
   mounted() {
-    this.mondays();
+    this.mondays;
+    this.thursdays;
 
     axios.get(`${process.env.ttApi}${process.env.deptService}`)
     .then((res) => {
@@ -353,14 +354,6 @@ export default {
           console.log(`getExtraGroupQuestions error :: `, error)
         })
       });
-    }
-  },
-  methods: {
-    ...mapActions([
-      'createUser/addToTotalSteps'
-    ]),
-    customFormatter(date) {
-      return moment(date).format(this.startDateFormat);
     },
     mondays() {
       let currentDate = new Date(),
@@ -380,8 +373,40 @@ export default {
         currentDate.setDate(currentDate.getDate() + 14);
       }
 
-      return this.config.enable = mondays;;
+      return mondays;
     },
+    thursdays() {
+      let currentDate = new Date(),
+      year = currentDate.getFullYear(),
+      thursdays = [];
+
+      while (currentDate.getDay() !== 4) {
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      while (currentDate.getFullYear() === year) {
+        thursdays.push(
+          new Date(currentDate.getTime()).toISOString().split('T')[0]
+        );
+        currentDate.setDate(currentDate.getDate() + 14);
+      }
+
+      return thursdays;
+    },
+    fullTimeStartDays() {
+      let mondaysAndThursdays = [...this.mondays, ...this.thursdays];
+      return this.config.enable = mondaysAndThursdays;
+    },
+  },
+  methods: {
+    ...mapActions([
+      'createUser/addToTotalSteps'
+    ]),
+    customFormatter(date) {
+      return moment(date).format(this.startDateFormat);
+    },
+
+
     getJobs() {
       axios.get(`${process.env.ttApi}${process.env.jobService}?group_id=${this.group.id}`)
       .then((res) => {
