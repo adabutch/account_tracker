@@ -192,28 +192,10 @@
             <h4><strong>Service Profiles</strong> associated with this <strong>Account Request</strong>.</h4>
 
             <div class="filters">
-              <fn1-badge class="new">
-                new
-              </fn1-badge>
-
-              <fn1-badge class="pending">
-                pending
-              </fn1-badge>
-
-              <fn1-badge class="approved">
-                approved
-              </fn1-badge>
-
-              <fn1-badge class="active">
-                active
-              </fn1-badge>
-
-              <fn1-badge class="inactive">
-                inactive
-              </fn1-badge>
-
-              <fn1-badge class="denied">
-                denied
+              <fn1-badge
+                v-for="s, i in requestStatuses"
+                :class="s">
+                {{s}}
               </fn1-badge>
             </div>
           </div>
@@ -259,12 +241,21 @@
                 </th>
                 <th>
                   <template v-if="s.created == null">
-                    not yet created
+                    <div></div>
+                    <div>&mdash;</div>
                   </template>
                   {{s.created}}
                 </th>
                 <th>
-                  <fn1-button>yo</fn1-button>
+                  <exampleDropdown
+                    text="status"
+                    navAlign="right">
+                    <li v-for="rs, i in requestStatuses"
+                        :class="rs"
+                        @click="serviceStatusChange(s.account_request, s.id, s.request_status, rs)">
+                        <span>{{rs}}</span>
+                    </li>
+                  </exampleDropdown>
                 </th>
               </tr>
             </tbody>
@@ -290,8 +281,7 @@
             <caption class="sr-only">User Action History</caption>
             <thead>
               <tr>
-                <th scope="col">Action</th>
-                <th scope="col">Comment</th>
+                <th scope="col">Details</th>
                 <th scope="col">Created</th>
                 <th scope="col">Updated</th>
               </tr>
@@ -300,10 +290,8 @@
             <tbody>
               <tr v-for="a, i in acctReqActions" :key="i">
                 <th>
-                  {{a.action}}
-                </th>
-                <th>
-                  {{a.comment}}
+                  <div>{{a.action}}</div>
+                  <div>{{a.comment}}</div>
                 </th>
                 <th>
                   <div>{{MMDYYYYDateFormat(a.created)}}</div>
@@ -336,6 +324,7 @@ import {
 
 import headerComponent  from '~/components/headerComponent'
 import exampleSelect    from '~/components/exampleSelect'
+import exampleDropdown  from '~/components/exampleDropdown'
 
 const { mapFields } = createHelpers({
   getterType: `getField`,
@@ -367,7 +356,8 @@ export default {
   middleware:       'authenticated',
   components: {
     headerComponent,
-    exampleSelect
+    exampleSelect,
+    exampleDropdown,
   },
   data() {
     return {
@@ -379,7 +369,48 @@ export default {
       acctReqActions: [],
     }
   },
+  computed: {
+    ...mapFields([
+      'authUser',
+      'services.services',
+      'requestStatuses'
+    ])
+  },
   methods: {
+    serviceStatusChange(acctReqID, servReqID, oldStatus, newStatus) {
+      alert(`${acctReqID}, ${servReqID}, ${oldStatus}, ${newStatus}`);
+
+      let payload = {
+        "request_status": newStatus,
+      }
+
+      this.$axios
+      .patch(`${process.env.api}${process.env.serviceReq}${servReqID}/`,payload)
+      .then((res) => {
+        console.log(`serviceStatusChange() :: `, res.data.results);
+
+        this.$axios
+        .post(`${process.env.api}${process.env.action}`,{
+          "user":    this.authUser.id,
+          "account": acctReqID,
+          "action":  `Service Request: ${newStatus}.`,
+          "comment": `Service Request for ${servReqID} changed from '${oldStatus}' to '${newStatus}'.`
+        })
+        .then(response => {
+          console.log(`ACTION SR serviceStatusChange :: `, response);
+          this.getServices();
+          this.getUserServices();
+          this.getAcctReqActions();
+        })
+        .catch(e => {
+          console.log(`ACTION SR serviceStatusChange error :: `, e)
+        });
+
+      })
+      .catch((error) => {
+        console.log(`serviceStatusChange() error:: `, error);
+      })
+    },
     downloadARImages(image, name) {
       let nameToLower = name.toLowerCase();
       FileSaver.saveAs(image, `${nameToLower}.jpg`);
@@ -438,11 +469,6 @@ export default {
       this.userServices = masterServices;
     },
   },
-  computed: {
-    ...mapFields([
-      'services.services'
-    ])
-  },
 }
 </script>
 
@@ -469,6 +495,83 @@ export default {
     &.extras {
       display: block;
       margin: 0 0 20px 0;
+    }
+  }
+
+  .navigation-dropdown {
+    /deep/ ul {
+      width: auto !important;
+
+      li {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin: 0;
+        padding: 5px 10px;
+        color: $text-color;
+        font-weight: $weight-semi-bold;
+        text-align: left;
+        border: none;
+        border-bottom: 1px solid lighten($text-color, 60%);
+
+        span {
+          margin: 0 0 0 25px;
+        }
+
+        &:hover {
+          border-radius: 0;
+          border-top: none;
+          border-right: none;
+          border-left: none;
+        }
+
+        &:before {
+          position: absolute;
+          content: '';
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+        }
+
+        &.new {
+          &:before {
+            background-color: $color-ucla-gold-dark;
+          }
+        }
+
+        &.pending {
+          &:before {
+            background-color: $color-blue;
+          }
+        }
+
+        &.approved {
+          &:before {
+            background-color: $color-green-light;
+          }
+        }
+
+        &.active {
+          border-radius: 0;
+
+          &:before {
+            background-color: $color-green;
+          }
+        }
+
+        &.denied {
+          &:before {
+            background-color: $color-vermilion-darker;
+          }
+        }
+
+        &.inactive {
+          &:before {
+            background-color: $text-color;
+          }
+        }
+      }
     }
   }
 
@@ -590,12 +693,10 @@ export default {
             padding: 5px 20px 5px 8px;
           }
 
-          &:nth-child(n+3) {
-            div {
-              &:nth-child(2) {
-                font-size: 14px;
-                color: lighten($text-color, 25%);
-              }
+          div {
+            &:nth-child(2) {
+              font-size: 14px;
+              color: lighten($text-color, 25%);
             }
           }
         }

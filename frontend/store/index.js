@@ -32,7 +32,8 @@ const state = () => ({
     approved:     [],
     denied:       [],
   },
-  startDateFormat:  "MMMM Do, YYYY"
+  startDateFormat:  "MMMM Do, YYYY",
+  requestStatuses:  ['new','pending','approved','active','inactive','denied']
 })
 
 const mutations = {
