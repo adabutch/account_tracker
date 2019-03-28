@@ -193,7 +193,9 @@ table {
     background-color: $color-ucla-gold-dark;
   }
 
-  &.pending {}
+  &.pending {
+    background-color: $color-blue;
+  }
 
   &.approved {
     background-color: $color-green-light;

@@ -95,6 +95,7 @@ export default {
     }
   },
   mounted() {
+    this.filteredAcctReqs =
     this.$axios
     .get(`${process.env.api}${process.env.accountRequest}?limit=1000`)
     .then(response => {

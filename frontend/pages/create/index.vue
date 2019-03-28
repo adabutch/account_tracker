@@ -137,7 +137,7 @@ import asideComponent   from '~/components/asideComponent'
 import exampleSelect    from '~/components/exampleSelect'
 
 export default {
-  middleware: 'authenticated',
+  middleware: ['authenticated','isAdmin'],
   components: {
     headerComponent,
     progressStepper,
@@ -187,6 +187,7 @@ export default {
   computed: {
     ...mapFields([
       'authUser',
+      'groupLevels',
       'createUser.name.first',
       'createUser.name.middle',
       'createUser.name.last',

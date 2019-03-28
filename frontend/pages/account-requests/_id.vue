@@ -194,6 +194,7 @@
             <div class="filters">
               <fn1-badge
                 v-for="s, i in requestStatuses"
+                :key="i"
                 :class="s">
                 {{s}}
               </fn1-badge>

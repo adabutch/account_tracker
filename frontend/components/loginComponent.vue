@@ -80,9 +80,9 @@ export default {
         this.$axios
         .get(`${process.env.api}${process.env.user}`)
         .then((response) => {
-          // console.log(`login user ::: `, response.data)
-          this.$store.commit("SET_AUTH_USER", response.data)
-          this.$store.commit("SET_IS_AUTHENTICATED", true)
+          console.log(`login user ::: `, response.data)
+          this.$store.dispatch('authUser', response.data)
+          this.$store.dispatch('authUserAuthenticated', true)
           this.$router.push('/')
         })
       })

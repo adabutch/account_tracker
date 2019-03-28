@@ -16,7 +16,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 const cookieparser = process.server ? require('cookieparser') : undefined;
 export const strict = false;
 
-const state = () => ({
+export const state = () => ({
   isAuthenticated:  false,
   auth:             null,
   authUser: {
@@ -32,11 +32,15 @@ const state = () => ({
     approved:     [],
     denied:       [],
   },
+  groupLevels: {
+    admin:          1,
+    regular:        2,
+  },
   startDateFormat:  "MMMM Do, YYYY",
   requestStatuses:  ['new','pending','approved','active','inactive','denied']
 })
 
-const mutations = {
+export const mutations = {
   updateField,
   SET_AUTH(state, auth) {
     state.auth = auth
@@ -64,7 +68,14 @@ const mutations = {
   }
 }
 
-const actions = {
+export const actions = {
+  authUser(context, payload) {
+    context.commit('SET_AUTH_USER', payload)
+    console.log(payload);
+  },
+  authUserAuthenticated(context, payload) {
+    context.commit('SET_IS_AUTHENTICATED', payload)
+  },
   accountRequestsNew(context, payload) {
     context.commit('ACCOUNT_REQUESTS_NEW', payload)
   },
@@ -74,27 +85,50 @@ const actions = {
   accountRequestsDenied(context, payload) {
     context.commit('ACCOUNT_REQUESTS_DENIED', payload)
   },
-  nuxtServerInit({ commit }, { req }) {
-    let auth = null
+  async nuxtServerInit({ commit, state }, { req }) {
+    let auth = null;
     if (req.headers.cookie) {
       const parsed = cookieparser.parse(req.headers.cookie)
       try {
         auth = parsed.auth;
-        // authUser = "Yo";
-        // isAuthenticated = true;
-        console.dir('🍪 found');
+        commit('SET_AUTH', auth)
+        commit('SET_IS_AUTHENTICATED', true)
+
+        let user = await
+        this.$axios.get(`${process.env.api}${process.env.user}`)
+
+        commit('SET_AUTH_USER', user.data);
+        console.log(user.data);
+
+        // this.$axios
+        // .get(`${process.env.api}${process.env.user}`)
+        // .then((res) => {
+        //   commit('SET_AUTH_USER', res.data);
+        //   console.log(res.data);
+        // })
+        // .catch((e) => {
+        //   console.log(`SET_AUTH_USER error :: `, e)
+        // });
+
+        console.log(`👤 & 🍪 = ✅`);
       } catch (err) {
-        console.dir('No 🍪 found 😪');
+
+        console.log(err);
+        console.log(`👤 & 🍪 = ⛔`);
+
+        commit('SET_AUTH')
+        commit('SET_AUTH_USER')
+        commit('SET_IS_AUTHENTICATED', false)
       }
     }
-    commit('SET_AUTH', auth)
-    commit('SET_AUTH_USER')
-    commit('SET_IS_AUTHENTICATED', true)
   }
 }
 
-const getters = {
-  getField
+export const getters = {
+  getField,
+  getAuthUser(state){
+    return state.authUser;
+  }
 }
 
 export default {

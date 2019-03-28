@@ -26,6 +26,7 @@
 
       <fn1-button slot="dropdown"
                   v-if="isAuthenticated"
+                  :title="`Logout: ${authUser.username}`"
                   @click.native="logout()">
         Logout
       </fn1-button>
@@ -41,6 +42,7 @@ import {
   mapActions }         from 'vuex'
 import {
   mapFields }          from 'vuex-map-fields'
+
 import exampleDropdown from '~/components/exampleDropdown'
 
 const Cookie = process.client ? require('js-cookie') : undefined
@@ -62,7 +64,6 @@ export default {
     ...mapFields([
       'auth',
       'authUser',
-      'authUser.username',
       'isAuthenticated',
       'endpoints'
     ]),
@@ -86,6 +87,7 @@ export default {
   methods: {
     logout() {
       localStorage.clear('vuex');
+      localStorage.removeItem('vuex');
       sessionStorage.clear('vuex');
       Cookie.remove('auth')
       this.$store.commit('SET_AUTH', null)
