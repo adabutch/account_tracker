@@ -1,56 +1,53 @@
 <template>
   <div>
-    <headerComponent />
+    <progressStepper
+      :step-active="stepActive"
+      :previous-button="previous"
+      :next-button="next" />
 
-    <div class="page-wrapper">
-      <progressStepper :step-active="stepActive"
-                       :previous-button="previous"
-                       :next-button="next" />
+    <div class="page-inner-wrapper">
+      <asideComponent />
 
-      <div>
-        <asideComponent />
+      <form>
+        <h1><strong>Step Three:</strong>&nbsp;Supervisor information</h1>
 
-        <form>
-          <h1><strong>Step Three:</strong>&nbsp;Supervisor information</h1>
+        <div class="field-group">
+          <label for="supervisor">Supervisor</label>
+          <select name="supervisor"
+                  id="supervisor"
+                  type="select"
+                  v-model="supervisor">
+            <option v-for="(item, index) in groupManagers"
+                    :value="item.value">
+              {{ item.text }}
+            </option>
+          </select>
+        </div>
 
-          <div class="field-group">
-            <label for="supervisor">Supervisor</label>
-            <select name="supervisor"
-                    id="supervisor"
-                    type="select"
-                    v-model="supervisor">
-              <option v-for="(item, index) in groupManagers"
-                      :value="item.value">
-                {{ item.text }}
-              </option>
-            </select>
-          </div>
+        <div class="field-group">
+          <label for="supervisor-phone">Supervisor Phone</label>
+          <select name="supervisor-phone"
+                  id="supervisor-phone"
+                  type="select"
+                  v-model="supervisorPhone">
+            <option v-for="(item, index) in managersPhone"
+                    :value="item.value">
+              {{ item.text }}
+            </option>
+          </select>
+        </div>
 
-          <div class="field-group">
-            <label for="supervisor-phone">Supervisor Phone</label>
-            <select name="supervisor-phone"
-                    id="supervisor-phone"
-                    type="select"
-                    v-model="supervisorPhone">
-              <option v-for="(item, index) in managersPhone"
-                      :value="item.value">
-                {{ item.text }}
-              </option>
-            </select>
-          </div>
-
-          <fn1-input v-model="employeePhone"
-                     label="Employee Phone (desk)"
-                     @keyup.native="yooo"
-                     @blur.native="yooo"
-                     type="tel"
-                     placeholder="888-888-8888"
-                     pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                     maxlength="10"
-                     name="employee-phone"
-                     id="employee-phone" />
-        </form>
-      </div>
+        <fn1-input v-model="employeePhone"
+                   label="Employee Phone (desk)"
+                   @keyup.native="yooo"
+                   @blur.native="yooo"
+                   type="tel"
+                   placeholder="888-888-8888"
+                   pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                   maxlength="10"
+                   name="employee-phone"
+                   id="employee-phone" />
+      </form>
     </div>
   </div>
 </template>
@@ -66,26 +63,25 @@ import {
 
 import axios            from 'axios'
 
-import headerComponent  from '~/components/headerComponent'
 import progressStepper  from '~/components/progressStepper'
 import asideComponent   from '~/components/asideComponent'
 import exampleSelect    from '~/components/exampleSelect'
 
 export default {
-  middleware: 'authenticated',
+  layout:           'create',
+  middleware:       'authenticated',
   components: {
-    headerComponent,
     progressStepper,
     asideComponent,
     exampleSelect
   },
   data() {
     return {
-      stepActive:       3,
-      previous:         { name: 'create-two'},
-      next:             { name: 'create-four'},
-      managers:         [],
-      phoneValue:       0,
+      stepActive:   3,
+      previous:     { name: 'create-two'},
+      next:         { name: 'create-four'},
+      managers:     [],
+      phoneValue:   0,
       preventIteration: false,
       managersPhone: [
         {"value": "123-456-7890", "text": "123-456-7890"},

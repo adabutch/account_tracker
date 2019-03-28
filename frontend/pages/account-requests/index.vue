@@ -1,6 +1,6 @@
 <template>
   <div>
-    <headerComponent />
+    <headerNav />
 
     <div class="page-wrapper">
       <fn1-tabs>
@@ -331,7 +331,7 @@ import {
 import {
   createHelpers }       from 'vuex-map-fields';
 
-import headerComponent  from '~/components/headerComponent'
+import headerNav        from '~/components/headerNav'
 import exampleSelect    from '~/components/exampleSelect'
 import exampleDropdown  from '~/components/exampleDropdown'
 import exampleModal     from '~/components/exampleModal'
@@ -344,7 +344,7 @@ const { mapFields } = createHelpers({
 export default {
   middleware:       'authenticated',
   components: {
-    headerComponent,
+    headerNav,
     exampleSelect,
     exampleDropdown,
     exampleModal

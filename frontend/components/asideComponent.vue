@@ -210,6 +210,7 @@ export default {
   aside {
     color: $text-color;
     width: 350px;
+    margin: 0 40px 0 0;
 
     h1 {
       color: $text-color;

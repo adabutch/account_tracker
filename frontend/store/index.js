@@ -127,12 +127,12 @@ export const getters = {
 }
 
 export default {
-  namespaced: true,
+  namespaced:   true,
   modules: {
     createUser: createUser,
     facilities: facilities,
-    depts: depts,
-    services: services,
+    depts:      depts,
+    services:   services,
   },
   mutations,
   actions,

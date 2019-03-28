@@ -1,6 +1,6 @@
 <template>
   <div>
-    <headerComponent />
+    <headerNav />
 
     <div class="page-wrapper">
 
@@ -323,7 +323,7 @@ import {
 import {
   createHelpers }       from 'vuex-map-fields'
 
-import headerComponent  from '~/components/headerComponent'
+import headerNav       from '~/components/headerNav'
 import exampleSelect    from '~/components/exampleSelect'
 import exampleDropdown  from '~/components/exampleDropdown'
 
@@ -334,7 +334,7 @@ const { mapFields } = createHelpers({
 
 export default {
   validate({ params }) {
-    console.log('run valid', params)
+    console.log('param valid', params)
     return !isNaN(+params.id)
   },
   mounted(context) {
@@ -356,7 +356,7 @@ export default {
   },
   middleware:       'authenticated',
   components: {
-    headerComponent,
+    headerNav,
     exampleSelect,
     exampleDropdown,
   },

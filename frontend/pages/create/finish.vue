@@ -1,42 +1,39 @@
 <template>
   <div>
-    <headerComponent />
+    <progressStepper
+      :step-active="stepActive"
+      :previous-button="previousStep"
+      :next-button="next" />
 
-    <div class="page-wrapper">
-      <progressStepper :step-active="stepActive"
-                       :previous-button="previousStep"
-                       :next-button="next" />
+    <div>
+      <div class="success-wrapper">
+        <h1 v-if="showSuccessMsg" v-html="successMsg"></h1>
+      </div>
 
-      <div>
-        <div class="success-wrapper">
-          <h1 v-if="showSuccessMsg" v-html="successMsg"></h1>
-        </div>
-
-        <fn1-alert variant="danger" v-if="errorMsg.length">
-          <template v-for="e, i in errorMsg">
-            <template v-for="m, i in e">
-              <p><strong>{{m.field}}: </strong> {{m.message}}</p>
-            </template>
+      <fn1-alert variant="danger" v-if="errorMsg.length">
+        <template v-for="e, i in errorMsg">
+          <template v-for="m, i in e">
+            <p><strong>{{m.field}}: </strong> {{m.message}}</p>
           </template>
-        </fn1-alert>
+        </template>
+      </fn1-alert>
 
-        <asideComponent v-if="!showSuccessMsg"
-                        :step-active="stepActive"
-                        :aside-header="asideHeader" />
+      <asideComponent v-if="!showSuccessMsg"
+                      :step-active="stepActive"
+                      :aside-header="asideHeader" />
 
-          <nav>
-            <nuxt-link v-if="showSuccessMsg"
-                       class="button"
-                       :to="{ name: 'index'}">Return Home</nuxt-link>
+        <nav>
+          <nuxt-link v-if="showSuccessMsg"
+                     class="button"
+                     :to="{ name: 'index'}">Return Home</nuxt-link>
 
-            <div v-if="!showSuccessMsg">
-              <button class="button create"
-                      @click="accountRequestSubmit">
-                Create
-              </button>
-            </div>
-          </nav>
-        </div>
+          <div v-if="!showSuccessMsg">
+            <button class="button create"
+                    @click="accountRequestSubmit">
+              Create
+            </button>
+          </div>
+        </nav>
       </div>
     </div>
   </div>
@@ -51,15 +48,14 @@ import {
 import { mapFields }   from 'vuex-map-fields'
 import moment          from 'moment'
 
-import headerComponent from '~/components/headerComponent'
 import progressStepper from '~/components/progressStepper'
 import asideComponent  from '~/components/asideComponent'
 import exampleCheckbox from '~/components/exampleCheckbox'
 
 export default {
-  middleware: 'authenticated',
+  layout:           'create',
+  middleware:       'authenticated',
   components: {
-    headerComponent,
     progressStepper,
     asideComponent
   },

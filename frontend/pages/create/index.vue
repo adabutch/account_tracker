@@ -1,121 +1,123 @@
 <template>
   <div>
-    <headerComponent />
-    <div class="page-wrapper">
-      <progressStepper :step-active="stepActive" :next-button="next" />
+    <progressStepper
+      :step-active="stepActive"
+      :previous-button="previous"
+      :next-button="next"
+    />
 
-      <div>
-        <asideComponent />
-        <form>
-          <h1>
-            <strong>Step One:</strong>&nbsp;User information
-          </h1>
+    <div class="page-inner-wrapper">
+      <asideComponent />
 
-          <div class="wrapper">
-            <div class="image-upload-wrapper">
-              <span class="label">Profile Image</span>
-              <div class="croppie-wrapper">
-                <no-ssr>
-                  <vue-croppie
-                    ref="croppieRef"
-                    :enableExif="true"
-                    :enableOrientation="true"
-                    :enableResize="false"
-                    :showZoomer="true"
-                    @update="update"
-                    :viewport="{ width: 180, height: 240 }"
-                    :boundary="{ width: 180, height: 240 }" />
-                </no-ssr>
-              </div>
+      <form>
+        <h1>
+          <strong>Step One:</strong>&nbsp;User information
+        </h1>
 
-              <div class="image-wrapper">
-                <svg v-if="cropped" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="check"><path fill="#FFFFFF" d="M413.505 91.951L133.49 371.966l-98.995-98.995c-4.686-4.686-12.284-4.686-16.971 0L6.211 284.284c-4.686 4.686-4.686 12.284 0 16.971l118.794 118.794c4.686 4.686 12.284 4.686 16.971 0l299.813-299.813c4.686-4.686 4.686-12.284 0-16.971l-11.314-11.314c-4.686-4.686-12.284-4.686-16.97 0z" class=""></path></svg>
-                <img ref="croppedRef" v-if="cropped" v-bind:src="cropped">
-              </div>
-
-              <input type="file"
-                     accept=".jpeg, .jpg, .png, .gif, .jp2, .jpx, .jpm, .tiff, .tiff-fx, .bmp, .x-bmp, .webp, .heif, .heic"
-                     @change="updateCanvasImage"
-                     ref="fileInput"
-                     name="media">
-
-              <div class="image-controls">
-                <fn1-button-group>
-                  <fn1-button type="button"
-                              class="image-input"
-                              @click.native="$refs.fileInput.click()">
-                    Upload
-                  </fn1-button>
-
-                  <fn1-button type="button"
-                              v-if="full"
-                              class="rotate"
-                              @click.native="rotate(-90)">
-                    Rotate
-                  </fn1-button>
-                </fn1-button-group><br>
-
-                <fn1-button-group>
-                  <fn1-button type="button"
-                              v-if="full"
-                              class="create"
-                              @click.native="crop()">
-                    Create
-                  </fn1-button>
-
-                  <fn1-button type="button"
-                              v-if="full"
-                              class="clear"
-                              @click.native="clearImage()">
-                    Clear
-                  </fn1-button>
-                </fn1-button-group>
-              </div>
-
-              <span class="label">How to set a Profile Image:</span>
-              <ol>
-                <li>Click, <code class="upload">Upload Photo</code></li>
-                <li>Adjust as desired</li>
-                <li>Click, <code class="create">Create</code></li>
-                <li>The <strong>Profile Image</strong> (on the right) is now set</li>
-              </ol>
-              <p><strong>note: </strong>The <strong>Original</strong> (left image) will remain as it was before editing any changes for the <strong>Profile Image</strong>.</p>
+        <div class="wrapper">
+          <div class="image-upload-wrapper">
+            <span class="label">Profile Image</span>
+            <div class="croppie-wrapper">
+              <no-ssr>
+                <vue-croppie
+                  ref="croppieRef"
+                  :enableExif="true"
+                  :enableOrientation="true"
+                  :enableResize="false"
+                  :showZoomer="true"
+                  @update="update"
+                  :viewport="{ width: 180, height: 240 }"
+                  :boundary="{ width: 180, height: 240 }" />
+              </no-ssr>
             </div>
 
-            <div class="fields-wrapper">
-              <fn1-input v-model="first"
-                       label="First Name *"
-                       placeholder="First name"
-                       name="first-name"
-                       id="first-name" />
-
-              <fn1-input v-model="middle"
-                         label="Middle Name"
-                         placeholder="Middle name"
-                         name="middle-name"
-                         id="middle-name" />
-
-              <fn1-input v-model="last"
-                         label="Last Name *"
-                         placeholder="Last name"
-                         name="last-name"
-                         id="last-name" />
-
-              <fn1-input v-model="nickname"
-                         label="Nickname"
-                         placeholder="Nickname"
-                         name="nickname"
-                         id="nickname" />
-
-              <exampleSelect v-model="suffix"
-                            label="Suffix"
-                            name="suffix"
-                            id="suffix"
-                            :options="suffixOptions" />
+            <div class="image-wrapper">
+              <svg v-if="cropped" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="check"><path fill="#FFFFFF" d="M413.505 91.951L133.49 371.966l-98.995-98.995c-4.686-4.686-12.284-4.686-16.971 0L6.211 284.284c-4.686 4.686-4.686 12.284 0 16.971l118.794 118.794c4.686 4.686 12.284 4.686 16.971 0l299.813-299.813c4.686-4.686 4.686-12.284 0-16.971l-11.314-11.314c-4.686-4.686-12.284-4.686-16.97 0z" class=""></path></svg>
+              <img ref="croppedRef" v-if="cropped" v-bind:src="cropped">
             </div>
+
+            <input type="file"
+                   accept=".jpeg, .jpg, .png, .gif, .jp2, .jpx, .jpm, .tiff, .tiff-fx, .bmp, .x-bmp, .webp, .heif, .heic"
+                   @change="updateCanvasImage"
+                   ref="fileInput"
+                   name="media">
+
+            <div class="image-controls">
+              <fn1-button-group>
+                <fn1-button type="button"
+                            class="image-input"
+                            @click.native="$refs.fileInput.click()">
+                  Upload
+                </fn1-button>
+
+                <fn1-button type="button"
+                            v-if="full"
+                            class="rotate"
+                            @click.native="rotate(-90)">
+                  Rotate
+                </fn1-button>
+              </fn1-button-group><br>
+
+              <fn1-button-group>
+                <fn1-button type="button"
+                            v-if="full"
+                            class="create"
+                            @click.native="crop()">
+                  Create
+                </fn1-button>
+
+                <fn1-button type="button"
+                            v-if="full"
+                            class="clear"
+                            @click.native="clearImage()">
+                  Clear
+                </fn1-button>
+              </fn1-button-group>
+            </div>
+
+            <span class="label">How to set a Profile Image:</span>
+            <ol>
+              <li>Click, <code class="upload">Upload Photo</code></li>
+              <li>Adjust as desired</li>
+              <li>Click, <code class="create">Create</code></li>
+              <li>The <strong>Profile Image</strong> (on the right) is now set</li>
+            </ol>
+            <p><strong>note: </strong>The <strong>Original</strong> (left image) will remain as it was before editing any changes for the <strong>Profile Image</strong>.</p>
           </div>
-        </form>
-      </div>
+
+          <div>
+            <fn1-input v-model="first"
+                     label="First Name *"
+                     placeholder="First name"
+                     name="first-name"
+                     id="first-name" />
+
+            <fn1-input v-model="middle"
+                       label="Middle Name"
+                       placeholder="Middle name"
+                       name="middle-name"
+                       id="middle-name" />
+
+            <fn1-input v-model="last"
+                       label="Last Name *"
+                       placeholder="Last name"
+                       name="last-name"
+                       id="last-name" />
+
+            <fn1-input v-model="nickname"
+                       label="Nickname"
+                       placeholder="Nickname"
+                       name="nickname"
+                       id="nickname" />
+
+            <exampleSelect v-model="suffix"
+                          label="Suffix"
+                          name="suffix"
+                          id="suffix"
+                          :options="suffixOptions" />
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -131,15 +133,14 @@ import {
 
 import axios            from 'axios'
 
-import headerComponent  from '~/components/headerComponent'
 import progressStepper  from '~/components/progressStepper'
 import asideComponent   from '~/components/asideComponent'
 import exampleSelect    from '~/components/exampleSelect'
 
 export default {
-  middleware: ['authenticated','isAdmin'],
+  layout:           'create',
+  middleware:       ['authenticated','isAdmin'],
   components: {
-    headerComponent,
     progressStepper,
     asideComponent,
     exampleSelect
@@ -166,6 +167,7 @@ export default {
     return {
       stepActive: 1,
       next: { name: `create-two`},
+      previous: false,
       suffixOptions: [
         { value: 'Jr.', text: 'Jr.' },
         { value: 'Sr.', text: 'Sr.' },
@@ -295,45 +297,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
-
-  form {
-    div {
-      display: flex;
-      flex-wrap: wrap;
-    }
-  }
-
-  div {
-    &:nth-of-type(2) {
-      display: flex;
-      flex-wrap: wrap;
-    }
-  }
-
-  .wrapper {}
-
-  .fields-wrapper {
-    width: 400px;
-
-    &:first-of-type {
-      .field-group {
-
-        &:last-of-type {
-          margin: 0;
-
-          /deep/ label {
-            margin-bottom: 0;
-          }
-        }
-      }
-    }
-
-    &:nth-of-type(2) {
-      width: 492px;
-      height: fit-content;
-    }
-  }
-
   .image-upload-wrapper {
     border-right: 1px solid lighten($text-color, 50%);
     margin: 0 40px 0 0;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <headerComponent />
+    <headerNav />
 
     <div class="page-wrapper">
       <h3>Service Profile Composer</h3>
@@ -83,13 +83,13 @@ import {
 import { mapFields }   from 'vuex-map-fields'
 import axios           from 'axios'
 
-import headerComponent from '~/components/headerComponent'
+import headerNav from '~/components/headerNav'
 import exampleCheckbox from '~/components/exampleCheckbox'
 
 export default {
   middleware: 'authenticated',
   components: {
-    headerComponent,
+    headerNav,
     exampleCheckbox
   },
   mounted() {

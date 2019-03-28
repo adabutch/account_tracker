@@ -1,6 +1,6 @@
 <template>
   <div class="page-wrapper">
-    <headerComponent />
+    <headerNav />
 
     <div class="search">
       <div class="wrapper">
@@ -80,12 +80,12 @@
 import { mapFields }   from 'vuex-map-fields'
 import axios           from 'axios'
 
-import headerComponent from '~/components/headerComponent'
+import headerNav from '~/components/headerNav'
 
 export default {
   middleware: 'authenticated',
   components: {
-    headerComponent
+    headerNav
   },
   data() {
     return {

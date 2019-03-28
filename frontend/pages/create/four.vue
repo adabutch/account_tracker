@@ -1,61 +1,58 @@
 <template>
   <div>
-    <headerComponent />
+    <progressStepper
+      :step-active="stepActive"
+      :previous-button="previous"
+      :next-button="nextStep" />
 
-    <div class="page-wrapper">
-      <progressStepper :step-active="stepActive"
-                       :previous-button="previous"
-                       :next-button="nextStep" />
+    <div class="page-inner-wrapper">
+      <asideComponent />
 
-      <div>
-        <asideComponent />
+      <form>
+        <h1><strong>Step Four:</strong>&nbsp;Software information</h1>
 
-        <form>
-          <h1><strong>Step Four:</strong>&nbsp;Software information</h1>
+        <template v-if="isEmpty(deptServiceProfile)">
+          <p>No associated <strong>Service Profiles</strong>.</p>
+        </template>
 
-          <template v-if="isEmpty(deptServiceProfile)">
-            <p>No associated <strong>Service Profiles</strong>.</p>
-          </template>
+        <div class="wrapper">
+          <div class="form-group" v-if="!hasDeptServices">
+            <fieldset>
+              <legend>Department Services</legend>
+              <div v-for="(item, index) in deptServiceProfile">
+                <input v-model="selectedDeptServices"
+                       :key="index"
+                       :id="item.id"
+                       :value="{id: item.id, name: item.name}"
+                       type="checkbox"
+                       name="software">
 
-          <div class="wrapper">
-            <div class="form-group" v-if="!hasDeptServices">
-              <fieldset>
-                <legend>Department Services</legend>
-                <div v-for="(item, index) in deptServiceProfile">
-                  <input v-model="selectedDeptServices"
-                         :key="index"
-                         :id="item.id"
-                         :value="{id: item.id, name: item.name}"
-                         type="checkbox"
-                         name="software">
-
-                  <label v-if="item"
-                         :for="item.id"
-                         v-html="item.name"></label>
-                </div>
-              </fieldset>
-            </div>
-
-            <div class="form-group" v-if="!hasGroupServices">
-              <fieldset>
-                <legend>Group Services</legend>
-                <div v-for="(item, index) in groupServiceProfile">
-                  <input v-model="selectedGroupServices"
-                         :key="index"
-                         :id="item.id"
-                         :value="{id: item.id, name: item.name}"
-                         type="checkbox"
-                         name="software">
-
-                  <label v-if="item"
-                         :for="item.id"
-                         v-html="item.name"></label>
-                </div>
-              </fieldset>
-            </div>
+                <label v-if="item"
+                       :for="item.id"
+                       v-html="item.name"></label>
+              </div>
+            </fieldset>
           </div>
-        </form>
-      </div>
+
+          <div class="form-group" v-if="!hasGroupServices">
+            <fieldset>
+              <legend>Group Services</legend>
+              <div v-for="(item, index) in groupServiceProfile">
+                <input v-model="selectedGroupServices"
+                       :key="index"
+                       :id="item.id"
+                       :value="{id: item.id, name: item.name}"
+                       type="checkbox"
+                       name="software">
+
+                <label v-if="item"
+                       :for="item.id"
+                       v-html="item.name"></label>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -68,15 +65,14 @@ import {
   mapActions }          from 'vuex'
 import { mapFields }    from 'vuex-map-fields';
 
-import headerComponent  from '~/components/headerComponent'
 import progressStepper  from '~/components/progressStepper'
 import asideComponent   from '~/components/asideComponent'
 import exampleCheckbox  from '~/components/exampleCheckbox'
 
 export default {
-  middleware: 'authenticated',
+  layout:           'create',
+  middleware:       'authenticated',
   components: {
-    headerComponent,
     progressStepper,
     asideComponent,
     exampleCheckbox

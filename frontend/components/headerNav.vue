@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="header-wrapper" ref="headerWrapper">
     <fn1-header
       :logo="{
         url:          'https://bloomington.in.gov/',

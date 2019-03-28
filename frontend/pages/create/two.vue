@@ -1,75 +1,72 @@
 <template>
   <div>
-    <headerComponent />
+    <progressStepper
+      :step-active="stepActive"
+      :previous-button="previous"
+      :next-button="next" />
 
-    <div class="page-wrapper">
-      <progressStepper :step-active="stepActive"
-                       :previous-button="previous"
-                       :next-button="next" />
+    <div class="page-inner-wrapper">
+      <asideComponent />
 
-      <div>
-        <asideComponent />
+      <form>
+        <h1>
+          <strong>Step Two:</strong>&nbsp;Facility specific information
+        </h1>
 
-        <form>
-          <h1>
-            <strong>Step Two:</strong>&nbsp;Facility specific information
-          </h1>
+        <exampleSelect v-model="facility"
+                        label="Facility"
+                        name="facility"
+                        id="facility"
+                        :options="deptFacilities" />
 
-          <exampleSelect v-model="facility"
-                          label="Facility"
-                          name="facility"
-                          id="facility"
-                          :options="deptFacilities" />
+        <div class="field-group">
+          <label for="department">Department</label>
+          <select name="department"
+                  id="department"
+                  type="select"
+                  v-model="department">
+            <option v-for="(item, index) in getDepts"
+                    :value="{id: item.value, name: item.text}">
+              {{ item.text }}
+            </option>
+          </select>
+        </div>
 
-          <div class="field-group">
-            <label for="department">Department</label>
-            <select name="department"
-                    id="department"
-                    type="select"
-                    v-model="department">
-              <option v-for="(item, index) in getDepts"
-                      :value="{id: item.value, name: item.text}">
-                {{ item.text }}
-              </option>
-            </select>
-          </div>
+        <div class="field-group">
+          <label for="group">Group</label>
+          <select name="group"
+                  id="group"
+                  type="select"
+                  v-model="group">
+            <option v-for="(item, index) in deptGroups"
+                    :value="{id: item.value, name: item.text}">
+              {{ item.text }}
+            </option>
+          </select>
+        </div>
 
-          <div class="field-group">
-            <label for="group">Group</label>
-            <select name="group"
-                    id="group"
-                    type="select"
-                    v-model="group">
-              <option v-for="(item, index) in deptGroups"
-                      :value="{id: item.value, name: item.text}">
-                {{ item.text }}
-              </option>
-            </select>
-          </div>
+        <div class="field-group">
+          <label for="job">Job</label>
+          <select name="job"
+                  id="job"
+                  type="select"
+                  v-model="job">
+            <option v-for="(item, index) in groupJobs"
+                    :value="{id: item.value, name: item.text, salaryGroup: item.salaryGroup, clockInRequired: item.clockInRequired}">
+              {{ item.text }} ({{item.salaryGroup}})
+            </option>
+          </select>
+        </div>
 
-          <div class="field-group">
-            <label for="job">Job</label>
-            <select name="job"
-                    id="job"
-                    type="select"
-                    v-model="job">
-              <option v-for="(item, index) in groupJobs"
-                      :value="{id: item.value, name: item.text, salaryGroup: item.salaryGroup, clockInRequired: item.clockInRequired}">
-                {{ item.text }} ({{item.salaryGroup}})
-              </option>
-            </select>
-          </div>
-
-          <div class="field-group">
-            <label for="start-date">Start Date</label>
-            <flat-pickr v-model="startDate"
-                        ref="datepicker"
-                        :config="config"
-                        placeholder="Select date"
-                        name="date"></flat-pickr>
-          </div>
-        </form>
-      </div>
+        <div class="field-group">
+          <label for="start-date">Start Date</label>
+          <flat-pickr v-model="startDate"
+                      ref="datepicker"
+                      :config="config"
+                      placeholder="Select date"
+                      name="date"></flat-pickr>
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -86,7 +83,6 @@ import {
 import axios            from 'axios'
 import moment           from 'moment'
 
-import headerComponent  from '~/components/headerComponent'
 import progressStepper  from '~/components/progressStepper'
 import asideComponent   from '~/components/asideComponent'
 import exampleSelect    from '~/components/exampleSelect'
@@ -96,9 +92,9 @@ import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 
 export default {
-  middleware: 'authenticated',
+  layout:           'create',
+  middleware:       'authenticated',
   components: {
-    headerComponent,
     progressStepper,
     asideComponent,
     exampleSelect,
