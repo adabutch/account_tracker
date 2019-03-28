@@ -89,11 +89,14 @@ export default {
       localStorage.clear('vuex');
       localStorage.removeItem('vuex');
       sessionStorage.clear('vuex');
-      Cookie.remove('auth')
-      this.$store.commit('SET_AUTH', null)
-      this.$store.commit("SET_AUTH_USER", null)
-      this.$store.commit("SET_IS_AUTHENTICATED", false)
-      this.$router.push('/login')
+      Cookie.remove('auth');
+      this.$store.dispatch('resetState');
+      this.$store.dispatch('createUser/resetState');
+      this.$store.dispatch('depts/resetState');
+      this.$store.commit('SET_AUTH', null);
+      this.$store.commit("SET_AUTH_USER", null);
+      this.$store.commit("SET_IS_AUTHENTICATED", false);
+      this.$router.push('/login');
     },
   },
 }

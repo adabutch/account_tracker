@@ -16,7 +16,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 const cookieparser = process.server ? require('cookieparser') : undefined;
 export const strict = false;
 
-export const state = () => ({
+export const defaultState = () => ({
   isAuthenticated:  false,
   auth:             null,
   authUser: {
@@ -40,8 +40,13 @@ export const state = () => ({
   requestStatuses:  ['new','pending','approved','active','inactive','denied']
 })
 
+const state = () => defaultState();
+
 export const mutations = {
   updateField,
+  RESET_STATE(state) {
+    Object.assign(state, defaultState())
+  },
   SET_AUTH(state, auth) {
     state.auth = auth
   },
@@ -69,6 +74,9 @@ export const mutations = {
 }
 
 export const actions = {
+  resetState({ commit }) {
+    commit('RESET_STATE')
+  },
   authUser(context, payload) {
     context.commit('SET_AUTH_USER', payload)
     console.log(payload);
@@ -100,16 +108,6 @@ export const actions = {
         commit('SET_AUTH_USER', user.data);
         console.log(user.data);
 
-        // this.$axios
-        // .get(`${process.env.api}${process.env.user}`)
-        // .then((res) => {
-        //   commit('SET_AUTH_USER', res.data);
-        //   console.log(res.data);
-        // })
-        // .catch((e) => {
-        //   console.log(`SET_AUTH_USER error :: `, e)
-        // });
-
         console.log(`👤 & 🍪 = ✅`);
       } catch (err) {
 
@@ -125,10 +123,7 @@ export const actions = {
 }
 
 export const getters = {
-  getField,
-  getAuthUser(state){
-    return state.authUser;
-  }
+  getField
 }
 
 export default {
