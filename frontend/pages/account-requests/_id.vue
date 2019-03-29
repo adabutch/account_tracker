@@ -199,14 +199,14 @@
                 {{s}}
               </fn1-badge>
             </div>
+
+            <div class="notes">
+              <p v-if="acctReqIsNew"><strong>Note:</strong> <strong>Service Request</strong> actions become available when the <strong>Account Request</strong> reaches <fn1-badge class="pending">pending</fn1-badge>.</p>
+            </div>
           </div>
-
-
-
 
           <table>
             <caption class="sr-only">All User Requests</caption>
-            <caption><p v-if="acctReqIsNew"><strong>Note:</strong> <strong>Service Request</strong> actions become available when the <strong>Account Request</strong> advances from <fn1-badge class="new">new</fn1-badge>.</p></caption>
             <thead>
               <tr>
                 <th scope="col">Status</th>
@@ -604,20 +604,22 @@ export default {
 
         .title-row {
           display: flex;
-          justify-content: center;
           align-items: center;
-          margin: 20px 0 40px 0;
+          flex-wrap: wrap;
+          margin: 20px 0;
           min-height: 25px;
           width: 100%;
           // background-color: red;
 
           h4 {
+            width: fit-content;
             color: $text-color;
             font-size: 18px;
             line-height: 18px;
           }
 
           .filters {
+            margin-left: auto;
             display: flex;
 
             .badge {
@@ -627,6 +629,11 @@ export default {
                 margin: 0;
               }
             }
+          }
+
+          .notes {
+            flex-basis: 100%;
+            margin: 20px 0 0 0;
           }
         }
 
