@@ -109,6 +109,11 @@ export default {
   display: inline-flex;
   flex-wrap: wrap;
 
+  &[disabled="disabled"] {
+    pointer-events: none;
+    opacity: 0.4;
+  }
+
   summary {
     // @include reset;
     z-index: 1;

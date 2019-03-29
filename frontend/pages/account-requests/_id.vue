@@ -57,7 +57,7 @@
             </h2>
 
             <div class="account-fields">
-              <div>
+              <div class="one">
                 <template v-if="acctReq.facility">
                   <fn1-input v-model="acctReq.facility"
                              label="Facility"
@@ -99,7 +99,7 @@
                 </template>
               </div>
 
-              <div>
+              <div class="two">
                 <template v-if="acctReq.supervisor">
                   <fn1-input v-model="acctReq.supervisor"
                              label="Supervisor"
@@ -141,7 +141,7 @@
                 </template>
               </div>
 
-              <div>
+              <div class="three">
                 <template v-if="acctReq.start_date">
                   <fn1-input :value="MMDYYYYDateFormat(acctReq.start_date)"
                              :label="`Start Date: ${timeAgo(acctReq.start_date)}`"
@@ -201,8 +201,12 @@
             </div>
           </div>
 
+
+
+
           <table>
             <caption class="sr-only">All User Requests</caption>
+            <caption><p v-if="acctReqIsNew"><strong>Note:</strong> <strong>Service Request</strong> actions become available when the <strong>Account Request</strong> advances from <fn1-badge class="new">new</fn1-badge>.</p></caption>
             <thead>
               <tr>
                 <th scope="col">Status</th>
@@ -247,10 +251,11 @@
                   </template>
                   {{s.created}}
                 </th>
-                <th>
+                <th :class="{'disabled': acctReqIsNew}">
                   <exampleDropdown
                     text="status"
-                    navAlign="right">
+                    navAlign="right"
+                    :disabled="acctReqIsNew">
                     <li v-for="rs, i in requestStatuses"
                         :class="rs"
                         @click="serviceStatusChange(s.account_request, s.id, s.request_status, rs)">
@@ -381,8 +386,13 @@ export default {
         (a, b) => new Date(b.updated) - new Date(a.updated)
         );
     },
-    updatedDateFormat() {
+    acctReqIsNew() {
+      let arStatus  = this.acctReq.request_status,
+      isNew         = "new";
 
+      if(arStatus == isNew) {
+        return true
+      }
     }
   },
   methods: {
@@ -657,11 +667,29 @@ export default {
   }
 
   .account-fields {
-    // display: none;
-    width: 100;
-    // background-color: red;
-    column-count: 3;
-    column-gap: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+
+    .field-group {
+      width: 100%;
+    }
+
+    div {
+      flex-basis: 33.3%;
+
+      &.one {
+        padding: 0 20px 0 0;
+      }
+
+      &.two {
+        padding: 0 20px;
+      }
+
+      &.three {
+        padding: 0 0 0 20px;
+      }
+    }
   }
 
 
@@ -705,6 +733,10 @@ export default {
               font-size: 14px;
               color: lighten($text-color, 25%);
             }
+          }
+
+          &.disabled {
+            cursor: not-allowed;
           }
         }
       }
