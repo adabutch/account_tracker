@@ -202,6 +202,8 @@ export default {
   methods: {
     crop() {
       let options = {
+        enableResize: true,
+        enableOrientation: true,
         type:   'base64',
         format: 'jpeg',
         size:   { width: 1150, height: 1533 }
@@ -209,7 +211,7 @@ export default {
       this.$refs.croppieRef.result(options, (output) => {
         console.log(options);
         console.log(output);
-        // this.croppieCropped = output;
+        this.croppieCropped = output;
         this.cropped = output;
       });
     },
@@ -219,6 +221,8 @@ export default {
       this.cropped = "";
       this.$refs.croppieRef.bind({
         url: "",
+        zoom: 0,
+        // orientation: this.imgOrientation,
       });
       let canvas = this.$el.querySelector('.cr-image');
       const context = canvas.getContext('2d');
@@ -253,10 +257,39 @@ export default {
         }
 
         img.src = e.target.result;
-        // this.full = img.src;
+
+
+        // let canvas = this.$el.querySelector('.cr-image');
+        // const ctx = canvas.getContext('2d');
+
+        // var max_width  = 1150;
+        // var max_height = 1533;
+        // var width      = img.width;
+        // var height     = img.height;
+
+        // console.log(`canvas element :: `, ctx);
+
+        // switch (self.imgOrientation) {
+        //   case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
+        //   case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
+        //   case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
+        //   case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
+        //   case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
+        //   case 7: ctx.transform(0, -1, -1, 0, height, width); break;
+        //   case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
+        //   default: break;
+        // }
+
+        // ctx.drawImage(img, 0, 0, width, height);
+
+        this.full = img.src;
+
 
         this.$refs.croppieRef.bind({
-          url: img.src
+          url: this.full,
+          zoom: 0,
+          enableOrientation: true,
+          // orientation: this.imgOrientation,
         });
       };
       reader.readAsDataURL(files[0]);
@@ -266,7 +299,7 @@ export default {
       const EXIF     = require('exif-js');
       EXIF.getData(img, function() {
         self.imgOrientation = this.exifdata.Orientation;
-        console.log(this.exifdata.Orientation);
+        console.log(`getExif() :: ${self.imgOrientation}`);
       });
 
       // let canvas = this.$el.querySelector('.cr-image');
@@ -277,9 +310,9 @@ export default {
       // var width      = img.width;
       // var height     = img.height;
 
-      // console.log(ctx);
+      // console.log(`canvas element :: `, ctx);
 
-      // switch (this.imgOrientation) {
+      // switch (self.imgOrientation) {
       //   case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
       //   case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
       //   case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
@@ -289,7 +322,9 @@ export default {
       //   case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
       //   default: break;
       // }
+
       // ctx.drawImage(img, 0, 0, width, height);
+      // alert('we made it here')
     }
   }
 }
@@ -298,6 +333,9 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
   .image-upload-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    // background-color: red;
     border-right: 1px solid lighten($text-color, 50%);
     margin: 0 40px 0 0;
     align-items: flex-start;
@@ -305,10 +343,10 @@ export default {
 
     .croppie-wrapper {
       width: 180px;
-      height: 240px;
-      margin: 0 40px 40px 0;
+      margin: 0 40px 0 0;
 
       /deep/ .croppie-container {
+        // background-color: green;
 
         .cr-viewport  {
           position: relative;
@@ -335,7 +373,7 @@ export default {
 
         .cr-slider-wrap {
           width: 180px;
-          margin: 20px 0;
+          margin: 20px 0 0 0;
         }
       }
     }
@@ -344,7 +382,7 @@ export default {
       margin: 0;
       padding: 0 0 0 20px;
 
-      li {
+      /deep/ li {
         margin: 0 0 10px 0;
       }
     }

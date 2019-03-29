@@ -249,7 +249,11 @@
                     <div></div>
                     <div>&mdash;</div>
                   </template>
-                  {{s.created}}
+
+                  <template v-if="s.created != null">
+                    <div>{{MMDYYYYDateFormat(s.created)}}</div>
+                    <div>{{timeAgo(s.created)}}</div>
+                  </template>
                 </th>
                 <th :class="{'disabled': acctReqIsNew}">
                   <exampleDropdown
