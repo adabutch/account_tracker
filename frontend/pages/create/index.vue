@@ -340,7 +340,7 @@ export default {
       }
     }
 
-    ol, ul {
+    /deep/  ol, ul {
       margin: 0;
       padding: 0 0 0 20px;
 

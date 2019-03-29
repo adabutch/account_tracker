@@ -1,7 +1,5 @@
 <template>
-  <div class="page-wrapper">
-    <headerNav />
-
+  <div>
     <div class="search">
       <div class="wrapper">
         <fn1-input v-model="acctReqSearch"
@@ -80,13 +78,10 @@
 import { mapFields }   from 'vuex-map-fields'
 import axios           from 'axios'
 
-import headerNav from '~/components/headerNav'
-
 export default {
-  middleware: 'authenticated',
-  components: {
-    headerNav
-  },
+  layout:           'search',
+  middleware:       'authenticated',
+  components:       {},
   data() {
     return {
       acctReqSearch: '',
@@ -141,21 +136,9 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
 
-  .page-wrapper {
-    margin: -120px 0 0 0;
-    padding: 0;
-    height: 100vh;
-    // border-top: 1px solid lighten($text-color, 50%);
-    background: $color-grey-lighter;
-    // display: flex;
-    // flex-wrap: wrap;
-    // justify-content: center;
-    // height: calc(100vh - 90px);
-  }
-
   .search {
     position: absolute;
-    top: 90px;
+    top: 0;
     width: 100%;
     background-color: $color-blue;
     display: flex;
@@ -196,7 +179,7 @@ export default {
     height: calc(100vh - 320px);
     position: fixed;
     overflow-y: scroll;
-    top: 303px;
+    top: 310px;
     bottom: 0;
     display: flex;
     flex-wrap: wrap;

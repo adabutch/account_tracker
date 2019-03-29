@@ -81,6 +81,8 @@ export default {
           }
         ]
         return accountReqLinks;
+      } else {
+        return [{}]
       }
     }
   },
