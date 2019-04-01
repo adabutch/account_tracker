@@ -124,9 +124,6 @@ export default {
     ])
   },
   methods: {
-    ...mapActions([
-      'createUser.clearUser'
-    ]),
     base64Strip() {
       this.full = this.full.replace(/^data:image\/[a-z]+;base64,/, "");
       this.cropped = this.cropped.replace(/^data:image\/[a-z]+;base64,/, "");
@@ -209,7 +206,7 @@ export default {
 
         this.showSuccessMsg = true;
         this.stepActive = 1;
-        this.$store.dispatch('createUser/resetState');
+        this.$store.dispatch('createUser/resetCrUsrState');
       })
       .catch((e) => {
         this.errorMsg.push(e.response.data.errors)
