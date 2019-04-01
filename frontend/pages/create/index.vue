@@ -222,7 +222,6 @@ export default {
       this.$refs.croppieRef.bind({
         url: "",
         zoom: 0,
-        // orientation: this.imgOrientation,
       });
       let canvas = this.$el.querySelector('.cr-image');
       const context = canvas.getContext('2d');
@@ -240,7 +239,7 @@ export default {
         var len = binary_string.length;
         var bytes = new Uint8Array( len );
         for (var i = 0; i < len; i++)        {
-            bytes[i] = binary_string.charCodeAt(i);
+          bytes[i] = binary_string.charCodeAt(i);
         }
         return bytes.buffer;
     },
@@ -255,41 +254,13 @@ export default {
         img.onload = function() {
           self.getExif(img);
         }
-
         img.src = e.target.result;
 
-
-        // let canvas = this.$el.querySelector('.cr-image');
-        // const ctx = canvas.getContext('2d');
-
-        // var max_width  = 1150;
-        // var max_height = 1533;
-        // var width      = img.width;
-        // var height     = img.height;
-
-        // console.log(`canvas element :: `, ctx);
-
-        // switch (self.imgOrientation) {
-        //   case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
-        //   case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
-        //   case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
-        //   case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
-        //   case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
-        //   case 7: ctx.transform(0, -1, -1, 0, height, width); break;
-        //   case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
-        //   default: break;
-        // }
-
-        // ctx.drawImage(img, 0, 0, width, height);
-
         this.full = img.src;
-
-
         this.$refs.croppieRef.bind({
           url: this.full,
           zoom: 0,
           enableOrientation: true,
-          // orientation: this.imgOrientation,
         });
       };
       reader.readAsDataURL(files[0]);
@@ -301,30 +272,6 @@ export default {
         self.imgOrientation = this.exifdata.Orientation;
         console.log(`getExif() :: ${self.imgOrientation}`);
       });
-
-      // let canvas = this.$el.querySelector('.cr-image');
-      // const ctx = canvas.getContext('2d');
-
-      // var max_width  = 1150;
-      // var max_height = 1533;
-      // var width      = img.width;
-      // var height     = img.height;
-
-      // console.log(`canvas element :: `, ctx);
-
-      // switch (self.imgOrientation) {
-      //   case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
-      //   case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
-      //   case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
-      //   case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
-      //   case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
-      //   case 7: ctx.transform(0, -1, -1, 0, height, width); break;
-      //   case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
-      //   default: break;
-      // }
-
-      // ctx.drawImage(img, 0, 0, width, height);
-      // alert('we made it here')
     }
   }
 }
@@ -332,10 +279,10 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
+
   .image-upload-wrapper {
     display: flex;
     flex-wrap: wrap;
-    // background-color: red;
     border-right: 1px solid lighten($text-color, 50%);
     margin: 0 40px 0 0;
     align-items: flex-start;
@@ -346,7 +293,6 @@ export default {
       margin: 0 40px 0 0;
 
       /deep/ .croppie-container {
-        // background-color: green;
 
         .cr-viewport  {
           position: relative;

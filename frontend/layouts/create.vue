@@ -23,8 +23,6 @@ export default {
 @import '@/assets/style.scss';
 
 .create-wrapper {
-  background-color: purple;
-
   /deep/ .page-wrapper {
     position: relative;
     top: 115px;

@@ -7,6 +7,7 @@ Vue.mixin({
       sessionStorage.clear('vuex');
       this.$refs.modal.showModal = false;
       this.$store.dispatch('createUser/resetState');
+      this.$store.dispatch('depts/resetState');
       this.$router.push('/create/')
     }
   }
