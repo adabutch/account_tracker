@@ -44,7 +44,7 @@ const state = () => defaultState();
 
 export const mutations = {
   updateField,
-  RESET_STATE(state) {
+  RESET_BASE_STATE(state) {
     Object.assign(state, defaultState())
   },
   SET_AUTH(state, auth) {
@@ -74,8 +74,8 @@ export const mutations = {
 }
 
 export const actions = {
-  resetState({ commit }) {
-    commit('RESET_STATE')
+  resetBaseState({ commit }) {
+    commit('RESET_BASE_STATE')
   },
   authUser(context, payload) {
     context.commit('SET_AUTH_USER', payload)

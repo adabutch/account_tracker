@@ -10,7 +10,7 @@ const state = () => defaultDeptState();
 
 const mutations = {
   updateField,
-  RESET_STATE(state) {
+  RESET_DEPTS_STATE(state) {
     Object.assign(state, defaultDeptState())
   },
   SET_DEPARTMENTS(state, payload) {
@@ -19,8 +19,8 @@ const mutations = {
 }
 
 const actions = {
-  resetState({ commit }) {
-    commit('RESET_STATE')
+  resetDeptsState({ commit }) {
+    commit('RESET_DEPTS_STATE')
   },
   setDepartments(context, payload) {
     context.commit("SET_DEPARTMENTS", payload)

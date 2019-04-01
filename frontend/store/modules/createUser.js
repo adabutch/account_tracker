@@ -72,7 +72,7 @@ const state = () => defaultCUState();
 
 const mutations = {
   updateField,
-  RESET_STATE(state) {
+  RESET_CR_USR_STATE(state) {
     Object.assign(state, defaultCUState())
   },
   ADD_TO_TOTAL_STEPS(state, payload) {
@@ -81,8 +81,8 @@ const mutations = {
 }
 
 const actions = {
-  resetState({ commit }) {
-    commit('RESET_STATE')
+  resetCrUsrState({ commit }) {
+    commit('RESET_CR_USR_STATE')
   },
   addToTotalSteps(context, payload) {
     context.commit("ADD_TO_TOTAL_STEPS", payload)

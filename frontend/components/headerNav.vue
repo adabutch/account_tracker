@@ -88,9 +88,9 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.dispatch('resetState');
+      this.$store.dispatch('resetBaseState');
       this.$store.dispatch('createUser/resetState');
-      this.$store.dispatch('depts/resetState');
+      this.$store.dispatch('depts/resetDeptsState');
       this.$store.commit('SET_AUTH', null);
       this.$store.commit("SET_AUTH_USER", null);
       this.$store.commit("SET_IS_AUTHENTICATED", false);
