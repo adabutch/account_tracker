@@ -93,7 +93,7 @@ export default {
     },
     ...mapFields([
       'startDateFormat',
-      'authUser',
+      'auth.authUser',
 
       'createUser.totalSteps',
 

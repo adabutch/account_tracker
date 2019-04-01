@@ -1,6 +1,6 @@
 export default function ({ store, redirect, isServer, res, req, query }) {
   let adminLevel  = store.state.groupLevels.admin,
-  userLevel       = store.state.authUser.groups,
+  userLevel       = store.state.auth.authUser.groups,
   isAdminLevel    = userLevel.includes(adminLevel);
 
   if (!isAdminLevel) {

@@ -381,7 +381,7 @@ export default {
   },
   computed: {
     ...mapFields([
-      'authUser',
+      'auth.authUser',
       'services.services',
       'requestStatuses'
     ]),

@@ -6,17 +6,21 @@ export const defaultSubNavState = () => ({
   acctReq: {
     regular: [
       {
-        name: 'New Account Request',
+        name: 'New',
         href: '/create/'
       }
     ],
     admin: [
       {
-        name: 'New Account Request',
+        name: 'New',
         href: '/create/'
       },
       {
-        name: 'Denied Users',
+        name: 'Created',
+        href: '/account-requests/created'
+      },
+      {
+        name: 'Denied',
         href: '/account-requests/denied'
       },
     ],

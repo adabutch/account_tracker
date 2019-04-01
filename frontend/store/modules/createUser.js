@@ -78,6 +78,29 @@ const mutations = {
   ADD_TO_TOTAL_STEPS(state, payload) {
     state.totalSteps = payload;
   },
+  RESET_GROUP(state) {
+    state.group = {id: "", name: ""}
+  },
+  RESET_JOB(state) {
+    state.job = {id: "", name: ""}
+  },
+  RESET_SUPERVISOR(state) {
+    state.supervisor = ""
+  },
+  RESET_SUPERVISOR_PHONE(state) {
+    state.supervisorPhone = ""
+  },
+  RESET_REQUESTED_SERVICES(state) {
+    state.requestedServices = ""
+  },
+  RESET_DEPT_EX_QUESTIONS(state) {
+    state.extraDeptQuestions = {},
+    state.extraDeptQuestionAnswers = {}
+  },
+  RESET_GROUP_EX_QUESTIONS(state) {
+    state.extraGroupQuestions = {},
+    state.extraGroupQuestionAnswers = {}
+  },
 }
 
 const actions = {
@@ -86,6 +109,27 @@ const actions = {
   },
   addToTotalSteps(context, payload) {
     context.commit("ADD_TO_TOTAL_STEPS", payload)
+  },
+  resetGroup({ commit }) {
+    commit('RESET_GROUP')
+  },
+  resetJob({ commit }) {
+    commit('RESET_JOB')
+  },
+  resetSupervisor({ commit }) {
+    commit('RESET_SUPERVISOR')
+  },
+  resetSupervisorPhone({ commit }) {
+    commit('RESET_SUPERVISOR_PHONE')
+  },
+  resetRequestedServices({ commit }) {
+    commit('RESET_REQUESTED_SERVICES')
+  },
+  resetDeptExQuestions({ commit }) {
+    commit('RESET_DEPT_EX_QUESTIONS')
+  },
+  resetGroupExQuestions({ commit }) {
+    commit('RESET_GROUP_EX_QUESTIONS')
   },
 }
 

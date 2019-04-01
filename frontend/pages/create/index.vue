@@ -188,7 +188,7 @@ export default {
   },
   computed: {
     ...mapFields([
-      'authUser',
+      'auth.authUser',
       'groupLevels',
       'createUser.name.first',
       'createUser.name.middle',

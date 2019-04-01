@@ -4,10 +4,10 @@
 
     <div class="page-wrapper">
       <div class="table-wrapper">
-        <h1>Denied Account Requests</h1>
+        <h1>Created Account Requests</h1>
 
         <div class="title-row">
-          <h4>User Account Requests <strong>deined ({{deniedCount}})</strong> after review.</h4>
+          <h4>User Account Requests <strong>created</strong>.</h4>
 
           <div class="field-group">
             <input v-model="searchUsers"

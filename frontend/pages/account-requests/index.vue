@@ -184,10 +184,6 @@
             </tbody>
           </table>
         </fn1-tab>
-
-        <fn1-tab name="Created">
-          <h1>Requests Created</h1>
-        </fn1-tab>
       </fn1-tabs>
     </div>
 
@@ -496,7 +492,7 @@ export default {
       'accountRequests.pending',
       'accountRequests.approved',
       'accountRequests.denied',
-      'authUser'
+      'auth.authUser'
     ]),
 
     batchApprovalCount() {

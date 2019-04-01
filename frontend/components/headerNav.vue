@@ -60,12 +60,12 @@ export default {
   created() {},
   computed: {
     ...mapFields([
-      'auth',
-      'authUser',
       'groupLevels',
-      'authLevel',
-      'isAuthenticated',
       'endpoints',
+      'auth.auth',
+      'auth.authUser',
+      'auth.authLevel',
+      'auth.isAuthenticated',
       'subNav.acctReq',
     ]),
     subNavItems() {

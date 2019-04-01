@@ -24,9 +24,9 @@ Vue.mixin({
   },
   computed: {
     ...mapFields([
-      'authUser',
       'groupLevels',
-      'authLevel',
+      'auth.authUser',
+      'auth.authLevel',
     ]),
     checkAuthLevel() {
       let adminLevel  = this.groupLevels.admin,
@@ -36,9 +36,9 @@ Vue.mixin({
       isRegularLevel  = userLevels.includes(regularLevel);
 
       if(isAdminLevel) {
-        this.$store.dispatch('authLevel', this.levels.admin)
+        this.$store.dispatch('auth/authLevel', this.levels.admin)
       } else if(isRegularLevel) {
-        this.$store.dispatch('authLevel', this.levels.regular)
+        this.$store.dispatch('auth/authLevel', this.levels.regular)
       }
 
       return this.authUser.groups

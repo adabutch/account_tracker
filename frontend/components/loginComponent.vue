@@ -63,7 +63,7 @@ export default {
     }
   },
   computed: {
-    ...mapFields(['isAuthenticated'])
+    ...mapFields(['auth.isAuthenticated'])
   },
   methods: {
     login() {
@@ -74,15 +74,15 @@ export default {
       axios.post(`${process.env.api}${process.env.obtainJWT}`, payload)
       .then((response) => {
         // console.log(`login ::: `, response);
-        this.$store.commit('SET_AUTH', response.data.token)
+        this.$store.commit('auth/SET_AUTH', response.data.token)
         Cookie.set('auth', response.data.token)
 
         this.$axios
         .get(`${process.env.api}${process.env.user}`)
         .then((response) => {
           console.log(`login user ::: `, response.data)
-          this.$store.dispatch('authUser', response.data)
-          this.$store.dispatch('authUserAuthenticated', true)
+          this.$store.dispatch('auth/authUser', response.data)
+          this.$store.dispatch('auth/authUserAuthenticated', true)
           this.$router.push('/')
         })
       })

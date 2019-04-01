@@ -5,6 +5,7 @@ import {
   getField,
   updateField }     from 'vuex-map-fields'
 
+import auth         from './modules/auth'
 import createUser   from './modules/createUser'
 import facilities   from './modules/facilities'
 import depts        from './modules/depts'
@@ -18,15 +19,6 @@ const cookieparser = process.server ? require('cookieparser') : undefined;
 export const strict = false;
 
 export const defaultState = () => ({
-  isAuthenticated:  false,
-  auth:             null,
-  authUser: {
-    email:          "",
-    first_name:     "",
-    groups:         [],
-    last_name:      "",
-    username:       ""
-  },
   accountRequests:  {
     new:          [],
     pending:      [],
@@ -36,10 +28,6 @@ export const defaultState = () => ({
   groupLevels: {
     admin:          1,
     regular:        2,
-  },
-  authLevel:        {
-    admin:          false,
-    regular:        false,
   },
   startDateFormat:  "MMMM Do, YYYY",
   requestStatuses:  ['new','pending','approved','active','inactive','denied']
@@ -52,9 +40,6 @@ export const mutations = {
   RESET_BASE_STATE(state) {
     Object.assign(state, defaultState())
   },
-  SET_AUTH(state, auth) {
-    state.auth = auth
-  },
   ACCOUNT_REQUESTS_NEW(state, payload) {
     state.accountRequests.new = payload
   },
@@ -64,36 +49,11 @@ export const mutations = {
   ACCOUNT_REQUESTS_DENIED(state, payload) {
     state.accountRequests.denied = payload
   },
-  SET_AUTH_USER(state, payload) {
-    state.authUser = payload
-  },
-  SET_IS_AUTHENTICATED(state, payload) {
-    state.isAuthenticated = payload
-  },
-  SET_AUTH_LEVEL(state, payload) {
-    state.authLevel = payload
-  },
-  updateToken(state, newToken) {
-    state.auth = newToken
-  },
-  removeToken(state) {
-    state.auth = null;
-  }
 }
 
 export const actions = {
   resetBaseState({ commit }) {
     commit('RESET_BASE_STATE')
-  },
-  authUser(context, payload) {
-    context.commit('SET_AUTH_USER', payload)
-    console.log(payload);
-  },
-  authUserAuthenticated(context, payload) {
-    context.commit('SET_IS_AUTHENTICATED', payload)
-  },
-  authLevel(context, payload) {
-    context.commit('SET_AUTH_LEVEL', payload)
   },
   accountRequestsNew(context, payload) {
     context.commit('ACCOUNT_REQUESTS_NEW', payload)
@@ -110,13 +70,13 @@ export const actions = {
       const parsed = cookieparser.parse(req.headers.cookie)
       try {
         auth = parsed.auth;
-        commit('SET_AUTH', auth)
-        commit('SET_IS_AUTHENTICATED', true)
+        commit('auth/SET_AUTH', auth)
+        commit('auth/SET_IS_AUTHENTICATED', true)
 
         let user = await
         this.$axios.get(`${process.env.api}${process.env.user}`)
 
-        commit('SET_AUTH_USER', user.data);
+        commit('auth/SET_AUTH_USER', user.data);
         console.log(user.data);
 
         console.log(`👤 & 🍪 = ✅`);
@@ -125,9 +85,9 @@ export const actions = {
         console.log(err);
         console.log(`👤 & 🍪 = ⛔`);
 
-        commit('SET_AUTH')
-        commit('SET_AUTH_USER')
-        commit('SET_IS_AUTHENTICATED', false)
+        commit('auth/SET_AUTH')
+        commit('auth/SET_AUTH_USER')
+        commit('auth/SET_IS_AUTHENTICATED', false)
       }
     }
   }
@@ -140,6 +100,7 @@ export const getters = {
 export default {
   namespaced:   true,
   modules: {
+    auth:       auth,
     createUser: createUser,
     facilities: facilities,
     depts:      depts,
