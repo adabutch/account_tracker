@@ -45,8 +45,6 @@ import {
 
 import exampleDropdown from '~/components/exampleDropdown'
 
-
-
 export default {
   mounted(context) {
     this.routeParam = this.$route.name;
@@ -64,23 +62,20 @@ export default {
     ...mapFields([
       'auth',
       'authUser',
+      'groupLevels',
+      'authLevel',
       'isAuthenticated',
-      'endpoints'
+      'endpoints',
+      'subNav.acctReq',
     ]),
     subNavItems() {
       if(this.routeParam.includes('account-requests') ||
          this.routeParam.includes('create')) {
-        let accountReqLinks = [
-          {
-            name: 'New Account Request',
-            href: '/create/'
-          },
-          {
-            name: 'Denied Users',
-            href: '/account-requests/denied'
-          }
-        ]
-        return accountReqLinks;
+        if(this.authLevel.admin) {
+          return this.acctReq.admin;
+        } else if(this.authLevel.regular) {
+          return this.acctReq.regular;
+        }
       } else {
         return [{}]
       }
@@ -88,12 +83,8 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.dispatch('resetBaseState');
-      this.$store.dispatch('createUser/resetState');
-      this.$store.dispatch('depts/resetDeptsState');
-      this.$store.commit('SET_AUTH', null);
-      this.$store.commit("SET_AUTH_USER", null);
-      this.$store.commit("SET_IS_AUTHENTICATED", false);
+      this.resetGlobalStore();
+      this.clearAuth();
       this.clearStorage();
     },
   },

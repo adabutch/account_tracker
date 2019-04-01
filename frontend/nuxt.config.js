@@ -61,7 +61,10 @@ module.exports = {
     { src: '~/plugins/filters' },
     { src: '~/plugins/localStorage', ssr: false },
     { src: '~/plugins/mixins' },
+    { src: '~/plugins/authLevel' },
     { src: '~/plugins/resetForm' },
+    { src: '~/plugins/resetGlobalStore' },
+    { src: '~/plugins/clearAuth' },
     { src: '~/plugins/clearStorage' },
     { src: '~/plugins/croppie.js', ssr: false }
   ],

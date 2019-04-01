@@ -9,6 +9,7 @@ import createUser   from './modules/createUser'
 import facilities   from './modules/facilities'
 import depts        from './modules/depts'
 import services     from './modules/services'
+import subNav       from './modules/subNavigation'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -35,6 +36,10 @@ export const defaultState = () => ({
   groupLevels: {
     admin:          1,
     regular:        2,
+  },
+  authLevel:        {
+    admin:          false,
+    regular:        false,
   },
   startDateFormat:  "MMMM Do, YYYY",
   requestStatuses:  ['new','pending','approved','active','inactive','denied']
@@ -65,6 +70,9 @@ export const mutations = {
   SET_IS_AUTHENTICATED(state, payload) {
     state.isAuthenticated = payload
   },
+  SET_AUTH_LEVEL(state, payload) {
+    state.authLevel = payload
+  },
   updateToken(state, newToken) {
     state.auth = newToken
   },
@@ -83,6 +91,9 @@ export const actions = {
   },
   authUserAuthenticated(context, payload) {
     context.commit('SET_IS_AUTHENTICATED', payload)
+  },
+  authLevel(context, payload) {
+    context.commit('SET_AUTH_LEVEL', payload)
   },
   accountRequestsNew(context, payload) {
     context.commit('ACCOUNT_REQUESTS_NEW', payload)
@@ -133,6 +144,7 @@ export default {
     facilities: facilities,
     depts:      depts,
     services:   services,
+    subNav:     subNav,
   },
   mutations,
   actions,
