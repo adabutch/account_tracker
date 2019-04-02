@@ -1,192 +1,187 @@
 <template>
   <div>
-    <headerNav />
+    <fn1-tabs>
+      <fn1-tab :name="`New (` + [[ newCount ]] + `)`"
+               :selected="true">
+        <div class="title-row">
+          <h4><strong>New</strong> user <strong>Account Requests</strong>.</h4>
 
-    <div class="page-wrapper">
-      <fn1-tabs>
-        <fn1-tab :name="`New (` + [[ newCount ]] + `)`"
-                 :selected="true">
-          <div class="title-row">
-            <h4><strong>New</strong> user <strong>Account Requests</strong>.</h4>
-
-            <template v-if="batchApprovalCount > 1">
-              <fn1-modal title="New Request Batch Confirmation"
-                         launchButtonText="Batch Approve">
-                <p slot="body">Approve all <strong>({{ batchApprovalCount }})</strong> requests?</p>
-                <fn1-button slot="footerBtnConfirm">I Understand</fn1-button>
-              </fn1-modal>
-            </template>
-
-            <div class="field-group">
-              <input v-model="searchUsers"
-                     id="search"
-                     type="search"
-                     name="search"
-                     placeholder="Search by Name or Dept.">
-            </div>
-          </div>
-
-          <template v-if="!newAccounts.length">
-            <h1>Sorry, no results.</h1>
+          <template v-if="batchApprovalCount > 1">
+            <fn1-modal title="New Request Batch Confirmation"
+                       launchButtonText="Batch Approve">
+              <p slot="body">Approve all <strong>({{ batchApprovalCount }})</strong> requests?</p>
+              <fn1-button slot="footerBtnConfirm">I Understand</fn1-button>
+            </fn1-modal>
           </template>
 
-          <table v-if="newAccounts.length">
-            <caption class="sr-only">All User Requests</caption>
-            <thead>
-              <tr>
-                <!-- <th scope="col">
-                  <input v-model="batchNewRequestApproval"
-                         id="select-all-requests"
-                         value="select-all-requests"
-                         type="checkbox"
-                         name="select-all-requests">
-                </th> -->
-                <th scope="col">Status</th>
-                <th scope="col">Name</th>
-                <th scope="col">Dept.</th>
-                <th scope="col">Created</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr v-for="(item, index) in newAccounts" :key="index">
-                <!-- <th scope="row">
-                  <input v-model="selected"
-                         :key="index"
-                         id="select-all-requests"
-                         :value="item.id"
-                         type="checkbox"
-                         name="select-all-requests">
-                </th> -->
-                <th class="status">
-                  <fn1-badge :class="item.request_status">
-                    {{ item.request_status }}
-                  </fn1-badge>
-                </th>
-                <th class="icon">
-                  <div class="profile-image" v-if="item.cropped_image">
-                    <img :src="item.cropped_image">
-                  </div>
-                  <div class="avatar" v-if="!item.cropped_image">
-                    {{ userInitial(item.first_name) }}{{ userInitial(item.last_name) }}
-                  </div>
-                  <div class="name">
-                    <div>
-                      {{ item.first_name }} <template v-if="item.nickname">({{ item.nickname }})</template> {{ item.middle_name }} {{ item.last_name }}<template v-if="item.suffix">, {{ item.suffix }}</template>
-                    </div>
-                    <div>{{ item.job }}</div>
-                  </div>
-                </th>
-                <th>
-                  <div>{{ item.department }}</div>
-                  <div>{{ item.group }}</div>
-                </th>
-                <th>
-                  <div>{{ MMDYYYYDateFormat(item.requested) }}</div>
-                  <div>{{ timeAgo(item.requested) }}</div>
-                </th>
-                <th>
-                  <fn1-button @click.native="showDetails(item)">view</fn1-button>
-                </th>
-              </tr>
-            </tbody>
-          </table>
-        </fn1-tab>
-
-        <fn1-tab :name="`Pending (` + [[ pendingCount ]] + `)`">
-          <div class="title-row">
-            <h4><strong>Pending</strong> user <strong>Account Requests</strong>.</h4>
-
-            <template v-if="batchApprovalCount > 1">
-              <fn1-modal title="Pending Request Batch Confirmation"
-                         launchButtonText="Batch Approve">
-                <p slot="body">Approve all <strong>({{ batchApprovalCount }})</strong> requests?</p>
-                <fn1-button slot="footerBtnConfirm">I Understand</fn1-button>
-              </fn1-modal>
-            </template>
-
-            <div class="field-group">
-              <input v-model="searchUsers"
-                     id="search"
-                     type="search"
-                     name="search"
-                     placeholder="Search by Name or Dept.">
-            </div>
+          <div class="field-group">
+            <input v-model="searchUsers"
+                   id="search"
+                   type="search"
+                   name="search"
+                   placeholder="Search by Name or Dept.">
           </div>
+        </div>
 
-          <template v-if="!pendingAccounts.length">
-            <h1>Sorry, no results.</h1>
+        <template v-if="!newAccounts.length">
+          <h1>Sorry, no results.</h1>
+        </template>
+
+        <table v-if="newAccounts.length">
+          <caption class="sr-only">All User Requests</caption>
+          <thead>
+            <tr>
+              <!-- <th scope="col">
+                <input v-model="batchNewRequestApproval"
+                       id="select-all-requests"
+                       value="select-all-requests"
+                       type="checkbox"
+                       name="select-all-requests">
+              </th> -->
+              <th scope="col">Status</th>
+              <th scope="col">Name</th>
+              <th scope="col">Dept.</th>
+              <th scope="col">Created</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="(item, index) in newAccounts" :key="index">
+              <!-- <th scope="row">
+                <input v-model="selected"
+                       :key="index"
+                       id="select-all-requests"
+                       :value="item.id"
+                       type="checkbox"
+                       name="select-all-requests">
+              </th> -->
+              <th class="status">
+                <fn1-badge :class="item.request_status">
+                  {{ item.request_status }}
+                </fn1-badge>
+              </th>
+              <th class="icon">
+                <div class="profile-image" v-if="item.cropped_image">
+                  <img :src="item.cropped_image">
+                </div>
+                <div class="avatar" v-if="!item.cropped_image">
+                  {{ userInitial(item.first_name) }}{{ userInitial(item.last_name) }}
+                </div>
+                <div class="name">
+                  <div>
+                    {{ item.first_name }} <template v-if="item.nickname">({{ item.nickname }})</template> {{ item.middle_name }} {{ item.last_name }}<template v-if="item.suffix">, {{ item.suffix }}</template>
+                  </div>
+                  <div>{{ item.job }}</div>
+                </div>
+              </th>
+              <th>
+                <div>{{ item.department }}</div>
+                <div>{{ item.group }}</div>
+              </th>
+              <th>
+                <div>{{ MMDYYYYDateFormat(item.requested) }}</div>
+                <div>{{ timeAgo(item.requested) }}</div>
+              </th>
+              <th>
+                <fn1-button @click.native="showDetails(item)">view</fn1-button>
+              </th>
+            </tr>
+          </tbody>
+        </table>
+      </fn1-tab>
+
+      <fn1-tab :name="`Pending (` + [[ pendingCount ]] + `)`">
+        <div class="title-row">
+          <h4><strong>Pending</strong> user <strong>Account Requests</strong>.</h4>
+
+          <template v-if="batchApprovalCount > 1">
+            <fn1-modal title="Pending Request Batch Confirmation"
+                       launchButtonText="Batch Approve">
+              <p slot="body">Approve all <strong>({{ batchApprovalCount }})</strong> requests?</p>
+              <fn1-button slot="footerBtnConfirm">I Understand</fn1-button>
+            </fn1-modal>
           </template>
 
-          <table v-if="pendingAccounts.length">
-            <caption class="sr-only">All User Requests</caption>
-            <thead>
-              <tr>
-                <!-- <th scope="col">
-                  <input v-model="batchPendingRequestApproval"
-                         id="select-all-requests"
-                         value="select-all-requests"
-                         type="checkbox"
-                         name="select-all-requests">
-                </th> -->
-                <th scope="col">Status</th>
-                <th scope="col">Name</th>
-                <th scope="col">Dept.</th>
-                <th scope="col">Created</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
+          <div class="field-group">
+            <input v-model="searchUsers"
+                   id="search"
+                   type="search"
+                   name="search"
+                   placeholder="Search by Name or Dept.">
+          </div>
+        </div>
 
-            <tbody>
-              <tr v-for="(item, index) in pendingAccounts" :key="index">
-                <!-- <th scope="row">
-                  <input v-model="selected"
-                         :key="index"
-                         id="select-all-requests"
-                         :value="item.id"
-                         type="checkbox"
-                         name="select-all-requests">
-                </th> -->
-                <th class="status">
-                  <fn1-badge :class="item.request_status">
-                    {{ item.request_status }}
-                  </fn1-badge>
-                </th>
-                <th class="icon">
-                  <div class="profile-image" v-if="item.cropped_image">
-                    <img :src="item.cropped_image">
-                  </div>
-                  <div class="avatar" v-if="!item.cropped_image">
-                    {{ userInitial(item.first_name) }}{{ userInitial(item.last_name) }}
-                  </div>
-                  <div class="name">
-                    <div>
-                      {{ item.first_name }} {{ item.middle_name }} {{ item.last_name }}<template v-if="item.suffix">, {{ item.suffix }}</template>
-                    </div>
-                    <div>{{ item.job }}</div>
-                  </div>
-                </th>
-                <th>
-                  <div>{{ item.department }}</div>
-                  <div>{{ item.group }}</div>
-                </th>
-                <th>
-                  <div>{{ MMDYYYYDateFormat(item.updated) }}</div>
-                  <div>{{ timeAgo(item.updated) }}</div>
-                </th>
-                <th>
-                  <nuxt-link class="button" :to="'/account-requests/'+item.id">
-                    view
-                  </nuxt-link>
-                </th>
-              </tr>
-            </tbody>
-          </table>
-        </fn1-tab>
-      </fn1-tabs>
-    </div>
+        <template v-if="!pendingAccounts.length">
+          <h1>Sorry, no results.</h1>
+        </template>
 
+        <table v-if="pendingAccounts.length">
+          <caption class="sr-only">All User Requests</caption>
+          <thead>
+            <tr>
+              <!-- <th scope="col">
+                <input v-model="batchPendingRequestApproval"
+                       id="select-all-requests"
+                       value="select-all-requests"
+                       type="checkbox"
+                       name="select-all-requests">
+              </th> -->
+              <th scope="col">Status</th>
+              <th scope="col">Name</th>
+              <th scope="col">Dept.</th>
+              <th scope="col">Created</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="(item, index) in pendingAccounts" :key="index">
+              <!-- <th scope="row">
+                <input v-model="selected"
+                       :key="index"
+                       id="select-all-requests"
+                       :value="item.id"
+                       type="checkbox"
+                       name="select-all-requests">
+              </th> -->
+              <th class="status">
+                <fn1-badge :class="item.request_status">
+                  {{ item.request_status }}
+                </fn1-badge>
+              </th>
+              <th class="icon">
+                <div class="profile-image" v-if="item.cropped_image">
+                  <img :src="item.cropped_image">
+                </div>
+                <div class="avatar" v-if="!item.cropped_image">
+                  {{ userInitial(item.first_name) }}{{ userInitial(item.last_name) }}
+                </div>
+                <div class="name">
+                  <div>
+                    {{ item.first_name }} {{ item.middle_name }} {{ item.last_name }}<template v-if="item.suffix">, {{ item.suffix }}</template>
+                  </div>
+                  <div>{{ item.job }}</div>
+                </div>
+              </th>
+              <th>
+                <div>{{ item.department }}</div>
+                <div>{{ item.group }}</div>
+              </th>
+              <th>
+                <div>{{ MMDYYYYDateFormat(item.updated) }}</div>
+                <div>{{ timeAgo(item.updated) }}</div>
+              </th>
+              <th>
+                <nuxt-link class="button" :to="'/account-requests/'+item.id">
+                  view
+                </nuxt-link>
+              </th>
+            </tr>
+          </tbody>
+        </table>
+      </fn1-tab>
+    </fn1-tabs>
   </div>
 </template>
 

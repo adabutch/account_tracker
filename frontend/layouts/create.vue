@@ -34,6 +34,7 @@ export default {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
+    padding: 20px 0 0 0;
   }
 
   /deep/ form {

@@ -703,10 +703,40 @@ export default {
       /deep/ .tabs {
         ul {
           li {
+            position: relative;
             color: $text-color;
             font-size: 18px;
             line-height: 18px;
             border-bottom: 1px solid transparent;
+
+            &:before {
+              position: absolute;
+              content: '';
+              top: -1px;
+              left: -1px;
+              right: -1px;
+              height: 4px;
+              border-top-left-radius: 2px;
+              border-top-right-radius: 2px;
+            }
+
+            &:first-child {
+              &.active,
+              &:hover {
+                &:before {
+                  background-color: $color-ucla-gold-dark;
+                }
+              }
+            }
+
+            &:last-child {
+              &.active,
+              &:hover {
+                &:before {
+                  background-color: $color-blue;
+                }
+              }
+            }
           }
         }
       }
