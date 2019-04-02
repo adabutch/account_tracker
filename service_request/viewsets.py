@@ -4,11 +4,12 @@ from .models import ServiceRequest
 from .serializers import ServiceRequestSerializer
 
 class ServiceRequestFilter(filters.FilterSet):
-    account_request = filters.CharFilter(field_name="account_request")
+    account_request = filters.NumberFilter(field_name="account_request")
+    service         = filters.NumberFilter(field_name="service")
 
     class Meta:
         model  = ServiceRequest
-        fields = ['account_request']
+        fields = ['account_request','service']
 
 
 class ServiceRequestViewSet(viewsets.ModelViewSet):

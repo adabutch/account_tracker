@@ -27,7 +27,9 @@ export const defaultState = () => ({
   },
   groupLevels: {
     admin:          1,
-    regular:        2,
+    helpdesk:       2,
+    regular:        3,
+    manager:        4,
   },
   startDateFormat:  "MMMM Do, YYYY",
   requestStatuses:  ['new','pending','approved','active','inactive','denied']

@@ -28,6 +28,7 @@ module.exports = {
     profile:        'profile/',
     service:        'service/',
     serviceReq:     'service-request/',
+    serviceManager: 'service-manager/',
     accountRequest: 'account-request/',
 
 
