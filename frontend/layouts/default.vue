@@ -1,33 +1,33 @@
 <template>
-  <div class="main-wrapper">
-    <nuxt />
+  <div class="default-wrapper">
+    <headerNav />
+
+    <div class="page-wrapper">
+      <nuxt />
+    </div>
   </div>
 </template>
 
 <script>
-export default {
+import headerNav    from '~/components/headerNav'
 
+export default {
+  components: { headerNav },
+  data() {
+    return {}
+  }
 }
 </script>
 
-<style>
-html {
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
-}
+<style lang="scss" scoped>
+@import '@/assets/style.scss';
 
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-  margin: 0;
-}
-
-.main-wrapper {
-  position: relative;
-  top: 120px;
+.default-wrapper {
+  /deep/ .page-wrapper {
+    position: relative;
+    top: 115px;
+    padding: 20px;
+    background-color: white;
+  }
 }
 </style>

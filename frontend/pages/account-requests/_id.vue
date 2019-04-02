@@ -1,18 +1,6 @@
 <template>
   <div>
-    <headerNav />
-
-    <div class="page-wrapper">
-
-      <!-- <fn1-breadcrumbs active="Settings"
-        :navItems="[
-          {name: 'Dashboard', component: 'Dashboard', href: '/example/'},
-          {name: 'Posts',     component: 'Posts',     href: '/example/'},
-          {name: 'Users',     component: 'Users',     href: '/example/'},
-          {name: 'Settings',  component: 'Settings',  href: '/example/'}]"
-        /> -->
-
-      <fn1-tabs>
+    <fn1-tabs>
         <fn1-tab name="Account" :selected="true">
           <div class="left" v-if="acctReq.cropped_image">
             <div class="profile-image">
@@ -315,8 +303,7 @@
             </tbody>
           </table>
         </fn1-tab>
-      </fn1-tabs>
-    </div>
+    </fn1-tabs>
   </div>
 </template>
 

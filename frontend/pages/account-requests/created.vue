@@ -1,72 +1,65 @@
 <template>
-  <div>
-    <headerNav />
+  <div class="table-wrapper">
+    <h1>Created Account Requests</h1>
 
-    <div class="page-wrapper">
-      <div class="table-wrapper">
-        <h1>Created Account Requests</h1>
+    <div class="title-row">
+      <h4>User Account Requests <strong>created</strong>.</h4>
 
-        <div class="title-row">
-          <h4>User Account Requests <strong>created</strong>.</h4>
-
-          <div class="field-group">
-            <input v-model="searchUsers"
-                   id="search"
-                   type="search"
-                   name="search"
-                   placeholder="Search by Name or Dept.">
-          </div>
-        </div>
-
-        <template v-if="!deniedAccounts.length">
-          <h1>Sorry, no results.</h1>
-        </template>
-
-        <table v-if="deniedAccounts.length">
-          <caption class="sr-only">All User Requests</caption>
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Type</th>
-              <th scope="col">Reason</th>
-              <th scope="col">Date</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr v-for="(item, index) in deniedAccounts" :key="index">
-              <th>
-                <div class="profile-image" v-if="item.cropped_image">
-                    <img :src="item.cropped_image">
-                  </div>
-                  <div class="avatar" v-if="!item.cropped_image">
-                    {{ userInitial(item.first_name) }}{{ userInitial(item.last_name) }}
-                  </div>
-                <div class="name">
-                  <div>
-                    {{ item.first_name }} {{ item.middle_name }} {{ item.last_name }}<template v-if="item.suffix">, {{ item.suffix }}</template>
-                  </div>
-                  <div>{{ item.job }}</div>
-                </div>
-              </th>
-              <th>
-                <fn1-badge :class="{'denied': (item.request_status === 'denied')}">
-                  {{ item.request_status }}
-                </fn1-badge>
-              </th>
-              <th>
-                <p>{{ item.comment }}</p>
-              </th>
-              <th>
-                <div>{{ requestedDateFormat(item.updated) }}</div>
-                <div>{{ requestedTimeAgo(item.updated) }}</div>
-              </th>
-            </tr>
-          </tbody>
-        </table>
+      <div class="field-group">
+        <input v-model="searchUsers"
+               id="search"
+               type="search"
+               name="search"
+               placeholder="Search by Name or Dept.">
       </div>
-
     </div>
+
+    <template v-if="!deniedAccounts.length">
+      <h1>Sorry, no results.</h1>
+    </template>
+
+    <table v-if="deniedAccounts.length">
+      <caption class="sr-only">All User Requests</caption>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Type</th>
+          <th scope="col">Reason</th>
+          <th scope="col">Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr v-for="(item, index) in deniedAccounts" :key="index">
+          <th>
+            <div class="profile-image" v-if="item.cropped_image">
+                <img :src="item.cropped_image">
+              </div>
+              <div class="avatar" v-if="!item.cropped_image">
+                {{ userInitial(item.first_name) }}{{ userInitial(item.last_name) }}
+              </div>
+            <div class="name">
+              <div>
+                {{ item.first_name }} {{ item.middle_name }} {{ item.last_name }}<template v-if="item.suffix">, {{ item.suffix }}</template>
+              </div>
+              <div>{{ item.job }}</div>
+            </div>
+          </th>
+          <th>
+            <fn1-badge :class="{'denied': (item.request_status === 'denied')}">
+              {{ item.request_status }}
+            </fn1-badge>
+          </th>
+          <th>
+            <p>{{ item.comment }}</p>
+          </th>
+          <th>
+            <div>{{ requestedDateFormat(item.updated) }}</div>
+            <div>{{ requestedTimeAgo(item.updated) }}</div>
+          </th>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -176,16 +169,9 @@ export default {
   display: flex;
   flex-wrap: wrap;
   padding: 0;
-  // background-color: red;
-
-  aside {
-    padding: 20px;
-    // background-color: green;
-  }
 
   .table-wrapper {
     flex: 1;
-    padding: 20px;
 
     h1 {
       color: $text-color;
