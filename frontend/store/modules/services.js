@@ -8,6 +8,7 @@ export const servicesState = () => ({
   mgrFullProfiles:  [],
   mgrServiceReqs:   [],
   requests:         [],
+  activeServiceIDs: [],
 })
 
 const state = () => servicesState();
@@ -38,6 +39,9 @@ const mutations = {
   },
   SET_REQUESTS(state, payload) {
     state.requests = payload
+  },
+  SET_ACTIVE_SERVICE_IDS(state, payload) {
+    state.activeServiceIDs = payload
   }
 }
 
@@ -59,6 +63,9 @@ const actions = {
   },
   setRequests(context, payload) {
     context.commit("SET_REQUESTS", payload)
+  },
+  setActiveServiceIDs(context, payload) {
+    context.commit("SET_ACTIVE_SERVICE_IDS", payload)
   },
 }
 

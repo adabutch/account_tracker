@@ -1,6 +1,11 @@
 <template>
   <aside>
     <h1>Services Aside</h1>
+    <ul>
+      <li v-for="p, i in activeCheck" :key="i">
+        {{p.id}} - {{p.name}}
+      </li>
+    </ul>
   </aside>
 </template>
 
@@ -15,12 +20,26 @@ import { mapFields }  from 'vuex-map-fields';
 export default {
   props: [],
   components: {},
+  mounted() {
+    this.activeCheck;
+  },
   data() {
     return {
     }
   },
   computed: {
-    ...mapFields([]),
+    ...mapFields([
+      'auth.authUser',
+      'services.mgrProfileIDs',
+      'services.mgrFullProfiles',
+      'services.activeServiceIDs'
+    ]),
+    activeCheck() {
+      let ids = this.mgrFullProfiles.filter((item) => {
+        return this.activeServiceIDs.indexOf(item.id) >= 0;
+      });
+      return ids;
+    },
   },
 }
 </script>
@@ -31,6 +50,7 @@ export default {
     background-color: red;
     color: $text-color;
     width: 300px;
+    padding: 0 40px 0 0;
 
     h1 {
       color: $text-color;

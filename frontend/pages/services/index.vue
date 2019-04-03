@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="inner-wrapper">
     <servicesAside />
 
     <div class="table-wrapper">
@@ -22,9 +22,9 @@
         <caption class="sr-only">All User Requests</caption>
         <thead>
           <tr>
-            <th scope="col">Acct. Req.</th>
             <th scope="col">Service</th>
-            <th scope="col">Change Type</th>
+            <th scope="col">Acct. Req.</th>
+            <!-- <th scope="col">Change Type</th> -->
             <th scope="col">Req. Status</th>
             <th scope="col">Created</th>
             <th scope="col">Requested</th>
@@ -35,14 +35,39 @@
 
         <tbody>
           <tr v-for="s, i in mgrServiceReqs" :key="i">
-            <th>{{s.account_request}} / {{s.id}}</th>
             <th>{{s.service}}</th>
-            <th>{{s.type_of_change}}</th>
+            <th>{{s.account_request}} <!-- / {{s.id}} --></th>
+            <!-- <th>{{s.type_of_change}}</th> -->
             <th>{{s.request_status}}</th>
-            <th>{{s.created}}</th>
-            <th>{{s.requested}}</th>
-            <th>{{s.updated}}</th>
-            <th>actions</th>
+            <th>
+              <template v-if="s.created == null">
+                <div></div>
+                <div>&mdash;</div>
+              </template>
+
+              <template v-if="s.created != null">
+                <div>{{MMDYYYYDateFormat(s.created)}}</div>
+                <div>{{timeAgo(s.created)}}</div>
+              </template>
+            </th>
+            <th>
+              <div>{{MMDYYYYDateFormat(s.requested)}}</div>
+              <div>{{timeAgo(s.requested)}}</div>
+            </th>
+            <th>
+              <div>{{MMDYYYYDateFormat(s.updated)}}</div>
+              <div>{{timeAgo(s.updated)}}</div>
+            </th>
+            <th>
+              <exampleDropdown
+                text="status"
+                navAlign="right">
+                <li v-for="rs, i in requestStatuses"
+                    :class="rs">
+                    <span>{{rs}}</span>
+                </li>
+              </exampleDropdown>
+            </th>
           </tr>
         </tbody>
       </table>
@@ -59,12 +84,14 @@ const { mapFields } = createHelpers({
   mutationType: `updateField`,
 });
 
-import servicesAside from '~/components/services/servicesAside'
+import exampleDropdown  from '~/components/exampleDropdown'
+import servicesAside    from '~/components/services/servicesAside'
 
 export default {
   layout:           'services',
   middleware:       'authenticated',
   components: {
+    exampleDropdown,
     servicesAside,
   },
   mounted() {
@@ -134,6 +161,18 @@ export default {
         return this.mgrProfileIDs.indexOf(item.service) >= 0;
       });
       return this.$store.dispatch('services/setMgrServiceReqs', results);
+      this.filterActiveServiceIDs;
+    },
+    filterActiveServiceIDs() {
+      let actives = [];
+
+      this.mgrServiceReqs.forEach((item) => {
+        actives.push(item.service);
+      })
+
+      let uniq = [...new Set(actives)];
+
+      return this.$store.dispatch('services/setActiveServiceIDs', uniq);
     }
   }
 }
@@ -142,10 +181,84 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
 
-  div {
-    &:nth-child(1) {
-      display: flex;
-      background-color: green;
+  .inner-wrapper{
+    display: flex;
+  }
+
+  .navigation-dropdown {
+    /deep/ ul {
+      width: auto !important;
+
+      li {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin: 0;
+        padding: 5px 10px;
+        color: $text-color;
+        font-weight: $weight-semi-bold;
+        text-align: left;
+        border: none;
+        border-bottom: 1px solid lighten($text-color, 60%);
+
+        span {
+          margin: 0 0 0 25px;
+        }
+
+        &:hover {
+          border-radius: 0;
+          border-top: none;
+          border-right: none;
+          border-left: none;
+        }
+
+        &:before {
+          position: absolute;
+          content: '';
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+        }
+
+        &.new {
+          &:before {
+            background-color: $color-ucla-gold-dark;
+          }
+        }
+
+        &.pending {
+          &:before {
+            background-color: $color-blue;
+          }
+        }
+
+        &.approved {
+          &:before {
+            background-color: $color-green-light;
+          }
+        }
+
+        &.active {
+          border-radius: 0;
+
+          &:before {
+            background-color: $color-green;
+          }
+        }
+
+        &.denied {
+          &:before {
+            background-color: $color-vermilion-darker;
+          }
+        }
+
+        &.inactive {
+          &:before {
+            background-color: $text-color;
+          }
+        }
+      }
     }
   }
 
@@ -226,11 +339,10 @@ export default {
 
         tr {
           th {
-            &:nth-of-type(1) {
-              width: 1px;
-              min-width: 350px;
-              white-space: nowrap;
-            }
+            // &:nth-of-type(1) {
+            //   width: 1px;
+            //   white-space: nowrap;
+            // }
           }
         }
       }
@@ -238,63 +350,15 @@ export default {
       tbody {
         tr {
           th {
-            &:nth-of-type(1) {
-              display: flex;
-              flex-wrap: wrap;
-              // background-color: pink;
-
-              div {
-                &.avatar {
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  background-color: lighten($color-blue, 45%);
-                  margin: 0 20px 0 0;
-                  width: 50px;
-                  height: 50px;
-                  border-radius: 50%;
-                }
-
-                &.profile-image {
-                  margin: 0 20px 0 0;
-                  width: 50px;
-                  height: 50px;
-                }
-
-                &.name {
-                  // background-color: red;
-                  display: flex;
-                  flex-direction: column;
-                  align-self: center;
-
-                  div {
-                    width: 100%;
-
-                    &:nth-child(2) {
-                      font-size: 14px;
-                      color: lighten($text-color, 25%);
-                    }
-                  }
-                }
-              }
-            }
-
             p {
               font-size: 14px;
               color: lighten($text-color, 25%);
             }
 
-            &:nth-child(3) {
-              max-width: 500px;
-            }
-
-            &:nth-child(3),
-            &:nth-child(4) {
-              div {
-                &:nth-child(2) {
-                  font-size: 14px;
-                  color: lighten($text-color, 25%);
-                }
+            div {
+              &:nth-child(2) {
+                font-size: 14px;
+                color: lighten($text-color, 25%);
               }
             }
 
