@@ -2,7 +2,7 @@ import {
   getField,
   updateField }     from 'vuex-map-fields';
 
-export const state = () => ({
+export const servicesState = () => ({
   services:         [],
   mgrProfileIDs:    [],
   mgrFullProfiles:  [],
@@ -10,12 +10,17 @@ export const state = () => ({
   requests:         [],
 })
 
+const state = () => servicesState();
+
 const getters = {
   getField
 }
 
 const mutations = {
   updateField,
+  RESET_SERVICES_STATE(state) {
+    Object.assign(state, servicesState())
+  },
   SET_SERVCIES(state, payload) {
     state.services = payload
   },
@@ -37,6 +42,9 @@ const mutations = {
 }
 
 const actions = {
+  resetServicesState({ commit }) {
+    commit('RESET_SERVICES_STATE')
+  },
   setServices(context, payload) {
     context.commit("SET_SERVCIES", payload)
   },
