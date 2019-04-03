@@ -1,11 +1,39 @@
 <template>
   <aside>
-    <h1>Services Aside</h1>
-    <ul>
-      <li v-for="p, i in activeCheck" :key="i">
-        {{p.id}} - {{p.name}}
-      </li>
-    </ul>
+    <h1>Filter Service Requests</h1>
+    <div class="form-group">
+      <fieldset>
+        <legend>Filter by Service:</legend>
+        <div class="checkbox-wrapper">
+          <div v-for="p, i in activeFullServices" :key="i">
+            <input
+              :id="p.id"
+              type="checkbox"
+              name="servicesFilter"
+              v-model="serviceFilterIDs"
+              :value="p.id">
+            <label :for="p.id"><strong>{{p.id}}:</strong> {{p.name}}</label>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="form-group">
+      <fieldset>
+        <legend>Filter by Acct. Req:</legend>
+        <div class="checkbox-wrapper">
+          <div v-for="a, i in activeAcctReqIDs" :key="i">
+            <input
+              :id="a"
+              type="checkbox"
+              name="acctReqFilter"
+              v-model="acctReqFilterIDs"
+              :value="a">
+            <label :for="a"><strong>{{a}}:</strong> name</label>
+          </div>
+        </div>
+      </fieldset>
+    </div>
   </aside>
 </template>
 
@@ -18,28 +46,37 @@ import {
 import { mapFields }  from 'vuex-map-fields';
 
 export default {
-  props: [],
+  props: ['filterServiceIDs','filterAcctReqIDs'],
   components: {},
-  mounted() {
-    this.activeCheck;
-  },
+  mounted() {},
   data() {
     return {
+      serviceFilterIDs: [],
+      acctReqFilterIDs: [],
     }
   },
+  watch: {
+    serviceFilterIDs(val) {
+      this.$emit('filterServiceChange', this.serviceFilterIDs);
+    },
+    acctReqFilterIDs(val) {
+      this.$emit('filterAcctReqChange', this.acctReqFilterIDs);
+    }
+  },
+  methods: {},
   computed: {
     ...mapFields([
-      'auth.authUser',
-      'services.mgrProfileIDs',
       'services.mgrFullProfiles',
-      'services.activeServiceIDs'
+      'services.activeFullServices',
+      'services.activeServiceIDs',
+      'services.activeAcctReqIDs',
+      'services.filterByService'
     ]),
-    activeCheck() {
-      let ids = this.mgrFullProfiles.filter((item) => {
-        return this.activeServiceIDs.indexOf(item.id) >= 0;
-      });
-      return ids;
-    },
+    // activeServicesCheck() {
+    //   return this.mgrFullProfiles.filter((item) => {
+    //     return this.activeServiceIDs.indexOf(item.id) >= 0;
+    //   });
+    // }
   },
 }
 </script>
@@ -47,7 +84,7 @@ export default {
 <style lang="scss">
   @import '@/assets/style.scss';
   aside {
-    background-color: red;
+    position: fixed;
     color: $text-color;
     width: 300px;
     padding: 0 40px 0 0;
@@ -61,9 +98,40 @@ export default {
       border-bottom: 1px solid lighten($text-color, 50%);
     }
 
-    .field-group {
-      width: 100%;
-      display: flex !important;
+    .form-group {
+      margin: 0 0 40px 0;
+      max-height: 300px;
+      overflow-y: scroll;
+
+      fieldset {
+        padding: 0;
+
+        legend {
+          font-weight: $weight-semi-bold;
+          border-bottom: 1px solid lighten($text-color, 50%);
+          width: 100%;
+          padding: 0 0 5px 0;
+          margin: 0 0 10px 0;
+        }
+
+        div {
+          padding: 0;
+          align-items: center;
+          margin: 0 0 8px 0;
+        }
+      }
+
+      label {
+        font-weight: $weight-normal;
+        font-size: 16px;
+        line-height: 18px;
+        color: $text-color;
+        margin: 0 0 0 8px !important;
+      }
+
+      .checkbox-wrapper {
+        display: block;
+      }
     }
   }
 </style>

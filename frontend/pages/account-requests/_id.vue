@@ -193,6 +193,8 @@
             </div>
           </div>
 
+          <!-- {{userServices[8]}} -->
+
           <table>
             <caption class="sr-only">All User Requests</caption>
             <thead>
@@ -209,7 +211,7 @@
             </thead>
 
             <tbody>
-              <tr v-for="s, i in userServices" :key="i">
+              <tr v-for="s, i in usersServices" :key="i">
                 <th class="status">
                   <fn1-badge v-if="s.request_status == null"
                              class="new">
@@ -221,7 +223,7 @@
                     {{ s.request_status }}
                   </fn1-badge>
                 </th>
-                <th><!-- {{s.id}} -->{{s.name}}<!--  {{s.service}} --></th>
+                <th>{{s.service}} - {{s.name}}<!--  {{s.service}} --></th>
                 <th>{{s.primary_poc}}</th>
                 <th>{{s.secondary_poc}}</th>
                 <th>
@@ -339,7 +341,7 @@ export default {
     this.$axios
     .get(`${process.env.api}${process.env.accountRequest}?id=${this.paramID}`)
     .then(response => {
-      console.log(`/ID/ AR Req. :: `, response)
+      console.log(`/ID/ AR Req. :: `, response.data.results[0])
       this.acctReq = response.data.results[0];
     })
     .catch(e => {
@@ -362,7 +364,6 @@ export default {
       acctReq:        "",
       serviceDetails: [],
       servicesStatus: [],
-      userServices:   [],
       acctReqActions: [],
     }
   },
@@ -384,7 +385,23 @@ export default {
       if(arStatus == isNew) {
         return true
       }
-    }
+    },
+    usersServices() {
+      let masterServices = [];
+      if(this.serviceDetails && this.servicesStatus) {
+        this.serviceDetails.forEach((item, i) => {
+          this.servicesStatus.forEach((s, i) => {
+            if(item.id === s.service) {
+              delete item.id
+              delete item.created
+              delete item.updated
+              masterServices.push({...item,...s})
+            }
+          })
+        });
+      }
+      return masterServices;
+    },
   },
   methods: {
     serviceStatusChange(acctReqID, servReqID, oldStatus, newStatus) {
@@ -443,7 +460,7 @@ export default {
       })
       .catch((error) => {
         console.log(error);
-      })
+      });
     },
     getUserServices() {
       this.$axios
@@ -458,23 +475,11 @@ export default {
     },
     namedServices() {
       let attachedServices = JSON.parse(this.acctReq.requested_services);
-
       var results = this.services.filter((s) => {
         return attachedServices.includes(s.id);
       });
-
       this.serviceDetails = results;
-
-      this.usersServices();
-    },
-    usersServices() {
-      let masterServices = [];
-
-      this.serviceDetails.forEach((item, i) => {
-        masterServices.push({...item, ...this.servicesStatus[i]})
-      });
-
-      this.userServices = masterServices;
+      this.usersServices;
     },
   },
 }

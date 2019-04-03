@@ -3,12 +3,19 @@ import {
   updateField }     from 'vuex-map-fields';
 
 export const servicesState = () => ({
+  // url: /account-requests/
+  acctReqServices:  [],
+
+  // url: /services/
   services:         [],
   mgrProfileIDs:    [],
   mgrFullProfiles:  [],
   mgrServiceReqs:   [],
   requests:         [],
   activeServiceIDs: [],
+  activeAcctReqIDs: [],
+  activeFullServices: [],
+  filterByService:  [],
 })
 
 const state = () => servicesState();
@@ -25,10 +32,10 @@ const mutations = {
   SET_SERVCIES(state, payload) {
     state.services = payload
   },
-  SET_MGR_PROFILE_IDS(state, payload) {
-    state.mgrProfileIDs = payload
+  SET_ACCT_REQ_SERVCIES(state, payload) {
+    state.acctReqServices = payload
   },
-  SET_ID_PROFILES(state, payload) {
+  SET_MGR_PROFILE_IDS(state, payload) {
     state.mgrProfileIDs = payload
   },
   SET_MGR_FULL_PROFILES(state, payload) {
@@ -42,6 +49,15 @@ const mutations = {
   },
   SET_ACTIVE_SERVICE_IDS(state, payload) {
     state.activeServiceIDs = payload
+  },
+  SET_ACTIVE_ACCT_REQ_IDS(state, payload) {
+    state.activeAcctReqIDs = payload
+  },
+  SET_ACTIVE_FULL_SERVICES(state, payload) {
+    state.activeFullServices = payload
+  },
+  SET_FILTER_BY_SERVICE(state, payload) {
+    state.filterByService = payload
   }
 }
 
@@ -51,6 +67,9 @@ const actions = {
   },
   setServices(context, payload) {
     context.commit("SET_SERVCIES", payload)
+  },
+  setAcctReqServices(context, payload) {
+    context.commit("SET_ACCT_REQ_SERVCIES", payload)
   },
   setMgrProfileIDs(context, payload) {
     context.commit("SET_MGR_PROFILE_IDS", payload)
@@ -67,6 +86,15 @@ const actions = {
   setActiveServiceIDs(context, payload) {
     context.commit("SET_ACTIVE_SERVICE_IDS", payload)
   },
+  setActiveAcctReqIDs(context, payload) {
+    context.commit("SET_ACTIVE_ACCT_REQ_IDS", payload)
+  },
+  setFullActiveServices(context, payload) {
+    context.commit("SET_ACTIVE_FULL_SERVICES", payload)
+  },
+  setfilterByService(context, payload) {
+    context.commit("SET_FILTER_BY_SERVICE", payload)
+  }
 }
 
 export default {
