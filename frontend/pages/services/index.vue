@@ -1,102 +1,56 @@
 <template>
-  <div class="table-wrapper">
-    <fn1-tabs>
-      <fn1-tab :name="`New`" :selected="true">
+  <div>
+    <servicesAside />
 
-        <div class="title-row">
-          <h4>New <strong>Services Requests</strong> awaiting action.</h4>
+    <div class="table-wrapper">
+      <div class="title-row">
+        <h4>New <strong>Services Requests</strong> awaiting action.</h4>
 
-          <div class="filters">
-            <fn1-badge
-              v-for="s, i in requestStatuses"
-              :key="i"
-              :class="s">
-              {{s}}
-            </fn1-badge>
-          </div>
+        <div class="filters">
+          <fn1-badge
+            v-for="s, i in requestStatuses"
+            :key="i"
+            :class="s">
+            {{s}}
+          </fn1-badge>
         </div>
+      </div>
 
-        <table v-if="true">
-          <caption class="sr-only">All User Requests</caption>
-          <thead>
-            <tr>
-              <th scope="col">Acct. Req.</th>
-              <th scope="col">Service</th>
-              <th scope="col">Change Type</th>
-              <th scope="col">Req. Status</th>
-              <th scope="col">Created</th>
-              <th scope="col">Requested</th>
-              <th scope="col">Updated</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
+      <h2 v-if="!mgrServiceReqs">Loading</h2>
 
-          <tbody>
-            <tr v-for="s, i in mgrServiceReqs" :key="i">
-              <th>{{s.account_request}}/{{s.id}}</th>
-              <th>{{s.service}}</th>
-              <th>{{s.type_of_change}}</th>
-              <th>{{s.request_status}}</th>
-              <th>{{s.created}}</th>
-              <th>{{s.requested}}</th>
-              <th>{{s.updated}}</th>
-              <th>actions</th>
-            </tr>
-          </tbody>
-        </table>
-      </fn1-tab>
+      <table v-if="mgrServiceReqs">
+        <caption class="sr-only">All User Requests</caption>
+        <thead>
+          <tr>
+            <th scope="col">Acct. Req.</th>
+            <th scope="col">Service</th>
+            <th scope="col">Change Type</th>
+            <th scope="col">Req. Status</th>
+            <th scope="col">Created</th>
+            <th scope="col">Requested</th>
+            <th scope="col">Updated</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
 
-      <fn1-tab :name="`Pending`">
-
-        <div class="title-row">
-          <h4>New <strong>Services Requests</strong> awaiting action.</h4>
-
-          <div class="filters">
-            <fn1-badge
-              v-for="s, i in requestStatuses"
-              :key="i"
-              :class="s">
-              {{s}}
-            </fn1-badge>
-          </div>
-        </div>
-
-        <table v-if="true">
-          <caption class="sr-only">All User Requests</caption>
-          <thead>
-            <tr>
-              <th scope="col">Acct. Req.</th>
-              <th scope="col">Service</th>
-              <th scope="col">Change Type</th>
-              <th scope="col">Req. Status</th>
-              <th scope="col">Created</th>
-              <th scope="col">Requested</th>
-              <th scope="col">Updated</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr v-for="s, i in mgrServiceReqs" :key="i">
-              <th>{{s.account_request}}/{{s.id}}</th>
-              <th>{{s.service}}</th>
-              <th>{{s.type_of_change}}</th>
-              <th>{{s.request_status}}</th>
-              <th>{{s.created}}</th>
-              <th>{{s.requested}}</th>
-              <th>{{s.updated}}</th>
-              <th>actions</th>
-            </tr>
-          </tbody>
-        </table>
-      </fn1-tab>
-
-    </fn1-tabs>
+        <tbody>
+          <tr v-for="s, i in mgrServiceReqs" :key="i">
+            <th>{{s.account_request}} / {{s.id}}</th>
+            <th>{{s.service}}</th>
+            <th>{{s.type_of_change}}</th>
+            <th>{{s.request_status}}</th>
+            <th>{{s.created}}</th>
+            <th>{{s.requested}}</th>
+            <th>{{s.updated}}</th>
+            <th>actions</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
 <script>
-
 import {
   createHelpers }       from 'vuex-map-fields';
 
@@ -105,39 +59,38 @@ const { mapFields } = createHelpers({
   mutationType: `updateField`,
 });
 
+import servicesAside from '~/components/services/servicesAside'
+
 export default {
+  layout:           'services',
   middleware:       'authenticated',
   components: {
+    servicesAside,
   },
   mounted() {
-    this.getServices;
-    this.getServiceRequests;
     this.mgrID = this.authUser.id;
-    this.getMgrProfiles;
-    this.mgrServices;
-    this.filterMgrServiceReqs;
   },
   data() {
     return {
-      services:     [],
-      serviceReqs:  [],
-      mgrServiceReqs: [],
       mgrID:        null,
-      mgrProfiles:  [],
-      mgrServiceProfiles: [],
     }
   },
   methods: {},
   computed: {
     ...mapFields([
       'auth.authUser',
-      'requestStatuses'
+      'requestStatuses',
+      'services.services',
+      'services.mgrProfileIDs',
+      'services.mgrFullProfiles',
+      'services.mgrServiceReqs',
+      'services.requests'
     ]),
     getServices() {
       this.$axios
       .get(`${process.env.api}${process.env.service}?limit=5000`)
       .then((res) => {
-        this.services = res.data.results;
+        this.$store.dispatch('services/setServices', res.data.results);
       })
       .catch((e) => {
         console.log(e);
@@ -147,10 +100,14 @@ export default {
       this.$axios
       .get(`${process.env.api}${process.env.serviceManager}?manager=${this.mgrID}&limit=5000`)
       .then((res) => {
-        let data = res.data.results;
+        let data    = res.data.results,
+        ids         = [];
+
         data.forEach((service) => {
-          this.mgrProfiles.push(service.service);
-        })
+          ids.push(service.service);
+        });
+
+        this.$store.dispatch('services/setMgrProfileIDs', ids);
       })
       .catch((e) => {
         console.log(e);
@@ -160,7 +117,7 @@ export default {
       this.$axios
       .get(`${process.env.api}${process.env.serviceReq}?limit=5000`)
       .then((res) => {
-        this.serviceReqs = res.data.results;
+        this.$store.dispatch('services/setRequests', res.data.results);
       })
       .catch((e) => {
         console.log(e);
@@ -168,15 +125,15 @@ export default {
     },
     mgrServices() {
       let results = this.services.filter((item) => {
-        return this.mgrProfiles.indexOf(item.id) >= 0;
+        return this.mgrProfileIDs.indexOf(item.id) >= 0;
       });
-      return this.mgrServiceProfiles = results;
+      return this.$store.dispatch('services/setMgrFullProfiles', results);
     },
     filterMgrServiceReqs() {
-      let results = this.serviceReqs.filter((item) => {
-        return this.mgrProfiles.indexOf(item.service) >= 0;
+      let results = this.requests.filter((item) => {
+        return this.mgrProfileIDs.indexOf(item.service) >= 0;
       });
-      return this.mgrServiceReqs = results;
+      return this.$store.dispatch('services/setMgrServiceReqs', results);
     }
   }
 }
@@ -185,118 +142,15 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
 
+  div {
+    &:nth-child(1) {
+      display: flex;
+      background-color: green;
+    }
+  }
+
   .table-wrapper {
     flex: 1;
-
-    .tabs-group {
-      flex: 1;
-
-      /deep/ .tabs {
-        ul {
-          li {
-            position: relative;
-            color: $text-color;
-            font-size: 18px;
-            line-height: 18px;
-            border-bottom: 1px solid transparent;
-
-            &:before {
-              position: absolute;
-              content: '';
-              top: -1px;
-              left: -1px;
-              right: -1px;
-              height: 4px;
-              border-top-left-radius: 2px;
-              border-top-right-radius: 2px;
-            }
-
-            &:first-child {
-              &.active,
-              &:hover {
-                &:before {
-                  background-color: $color-ucla-gold-dark;
-                }
-              }
-            }
-
-            &:last-child {
-              &.active,
-              &:hover {
-                &:before {
-                  background-color: $color-blue;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      /deep/ .tab-content {
-        padding: 0;
-
-        .tab-pane {
-          .title-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 30px 0 20px 0;
-            min-height: 25px;
-            width: 100%;
-            // background-color: red;
-
-            h4 {
-              width: fit-content;
-              color: $text-color;
-              font-size: 18px;
-              line-height: 18px;
-            }
-
-            .filters {
-              margin-left: auto;
-              display: flex;
-
-              .badge {
-                margin: 0 10px 0 0;
-
-                &:last-of-type {
-                  margin: 0;
-                }
-              }
-            }
-
-            button {
-              margin: 0;
-              padding: 0 20px;
-              background-color: $color-green;
-              white-space: nowrap;
-            }
-
-            .field-group {
-              display: flex;
-              width: 350px;
-              min-width: 350px;
-              max-width: 350px;
-              margin: 0 0 0 20px;
-
-              &:hover {
-                input {
-                  border-color: lighten($text-color, 30%);
-                }
-              }
-
-              input {
-                border-radius: $radius-default;
-
-                &:focus {
-                  border-color: lighten($text-color, 30%);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
 
     h1 {
       color: $text-color;
@@ -311,13 +165,26 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 30px 0 20px 0;
+      margin: 0 0 20px 0;
       min-height: 25px;
 
       h4 {
         color: $text-color;
         font-size: 18px;
         line-height: 18px;
+      }
+
+      .filters {
+        margin-left: auto;
+        display: flex;
+
+        .badge {
+          margin: 0 10px 0 0;
+
+          &:last-of-type {
+            margin: 0;
+          }
+        }
       }
 
       .field-group {
