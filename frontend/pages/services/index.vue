@@ -30,7 +30,7 @@
         <thead>
           <tr>
             <th scope="col">Status</th>
-            <th scope="col" @click="serviceSort()">Service</th>
+            <th scope="col">Service</th>
             <th scope="col">Acct. Req.</th>
             <!-- <th scope="col">Change Type</th> -->
 
@@ -307,9 +307,6 @@ export default {
       });
 
       this.$store.dispatch('services/setFullActiveServices', fullActives);
-    },
-    serviceSort() {
-      console.log(this.testNew.sort((a, b) => a.name - b.name));
     }
   },
   computed: {

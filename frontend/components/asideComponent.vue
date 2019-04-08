@@ -193,19 +193,11 @@ export default {
       'createUser.extraQuestionAnswers',
     ])
   },
-  methods: {
-    isObjEmpty(obj) {
-      for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-          return false;
-      }
-      return true;
-    }
-  }
+  methods: {}
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import '@/assets/style.scss';
   aside {
     color: $text-color;

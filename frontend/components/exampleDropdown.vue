@@ -79,15 +79,19 @@ export default {
       let navigationDropdown = this.$refs.navigationDropdown
       let dropdownDetails = this.$refs.dropdownDetails
 
-      if (!navigationDropdown.contains(e.target))
-        dropdownDetails.removeAttribute("open")
+      if(navigationDropdown) {
+        if (!navigationDropdown.contains(e.target))
+          dropdownDetails.removeAttribute("open")
+      }
     },
     closeOnClick(e) {
       let navigationDropdown = this.$refs.navigationDropdown
       let dropdownDetails = this.$refs.dropdownDetails
 
-      if (navigationDropdown.contains(e.target))
-        dropdownDetails.removeAttribute("open")
+      if(navigationDropdown) {
+        if (navigationDropdown.contains(e.target))
+          dropdownDetails.removeAttribute("open")
+      }
     }
   },
   mounted() {

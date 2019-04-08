@@ -105,9 +105,25 @@ export default {
     }
 
     .form-group {
+      position: relative;
       margin: 0 0 40px 0;
-      max-height: 300px;
-      overflow-y: scroll;
+      height: 350px;
+      overflow-y: hidden;
+      padding: 0;
+
+      &:after {
+        position: absolute;
+        content: '';
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 30px;
+        width: 100%;
+        background: linear-gradient(
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 1) 100%
+        );
+      }
 
       fieldset {
         padding: 0;
@@ -144,7 +160,11 @@ export default {
       }
 
       .checkbox-wrapper {
+        position: absolute;
         display: block;
+        width: 100%;
+        height: calc(100% - 60px);
+        overflow-y: scroll;
       }
     }
   }
