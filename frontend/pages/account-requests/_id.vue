@@ -400,6 +400,7 @@ export default {
           })
         });
       }
+      masterServices.sort((a,b) => new Date(b.updated) - new Date(a.updated))
       return masterServices;
     },
   },

@@ -20,20 +20,15 @@
         </div>
       </div>
 
-      <!-- {{mgrFullProfiles}}<br><br>- - - -<br><br>
-      {{testNew}} -->
-
       <h2 v-if="!displayResults">Loading</h2>
 
-     <table v-if="displayResults">
+      <table v-if="displayResults" class="fixed_headers">
         <caption class="sr-only">All User Requests</caption>
         <thead>
           <tr>
             <th scope="col">Status</th>
-            <th scope="col">Service</th>
             <th scope="col">Acct. Req.</th>
-            <!-- <th scope="col">Change Type</th> -->
-
+            <th scope="col">Service</th>
             <th scope="col">Created</th>
             <th scope="col">Requested</th>
             <th scope="col">Updated</th>
@@ -42,15 +37,18 @@
         </thead>
 
         <tbody>
-          <tr v-for="s, i in displayResults" :key="i">
-            <th>
+          <tr v-for="s, i in displayResults"
+              :key="i"
+              :class="{'active': acctReqRow === i}"
+              @click="toggleAcctReqRow(s,i)">
+            <td>
               <fn1-badge :class="s.request_status">
                 {{s.request_status}}
               </fn1-badge>
-            </th>
-            <th>{{s.name}} -- {{s.service}}</th>
-            <th>{{s.account_request}}</th>
-            <th>
+            </td>
+            <td>{{s.account_request}}</td>
+            <td>{{s.service}}: {{s.name}}</td>
+            <td>
               <template v-if="s.created == null">
                 <div></div>
                 <div>&mdash;</div>
@@ -60,16 +58,16 @@
                 <div>{{MMDYYYYDateFormat(s.created)}}</div>
                 <div>{{timeAgo(s.created)}}</div>
               </template>
-            </th>
-            <th>
+            </td>
+            <td>
               <div>{{MMDYYYYDateFormat(s.requested)}}</div>
               <div>{{timeAgo(s.requested)}}</div>
-            </th>
-            <th>
+            </td>
+            <td>
               <div>{{MMDYYYYDateFormat(s.updated)}}</div>
               <div>{{timeAgo(s.updated)}}</div>
-            </th>
-            <th>
+            </td>
+            <td>
               <exampleDropdown
                 text="status"
                 navAlign="right">
@@ -79,12 +77,131 @@
                     <span>{{rs}}</span>
                 </li>
               </exampleDropdown>
-            </th>
+            </td>
+            <td class="acct-req-row" v-if="acctReqRow === i">
+              <!-- {{s}} -->
+              <!-- {{acctReqRowAcct}} -->
+              <div class="wrapper">
+                <div class="title">
+                  <div class="profile-image" v-if="acctReqRowAcct.cropped_image">
+                    <img :src="acctReqRowAcct.cropped_image" :alt="acctReqRowAcct.first_name + ' ' + acctReqRowAcct.last_name">
+                  </div>
+                  <div class="avatar" v-if="!acctReqRowAcct.cropped_image">
+                    {{ userInitial(acctReqRowAcct.first_name) }}{{ userInitial(acctReqRowAcct.last_name) }}
+                  </div>
+
+                  <h5>
+                    <template v-if="acctReqRowAcct.first_name">
+                      {{acctReqRowAcct.first_name}}
+                    </template>
+
+                    <template v-if="acctReqRowAcct.nickname">
+                      ({{acctReqRowAcct.nickname}})
+                    </template>
+
+                    <template v-if="acctReqRowAcct.middle_name">
+                      {{acctReqRowAcct.middle_name}}
+                    </template>
+
+                    <template v-if="acctReqRowAcct.last_name">
+                      {{acctReqRowAcct.last_name}}
+                    </template>
+
+                    <template v-if="acctReqRowAcct.suffix">
+                      {{acctReqRowAcct.suffix}}
+                    </template>
+
+                    <fn1-badge :class="acctReqRowAcct.request_status">
+                      {{acctReqRowAcct.request_status}}
+                    </fn1-badge>
+                  </h5>
+                </div>
+
+
+                <div class="account-fields">
+                  <div class="first">
+                    <div v-if="acctReqRowAcct.facility">
+                      <h5>Facility</h5>
+                      <p>{{acctReqRowAcct.facility}}</p>
+                    </div>
+
+                    <div v-if="acctReqRowAcct.department">
+                      <h5>Department</h5>
+                      <p>{{acctReqRowAcct.department}}</p>
+                    </div>
+
+                    <div v-if="acctReqRowAcct.group">
+                      <h5>Group</h5>
+                      <p>{{acctReqRowAcct.group}}</p>
+                    </div>
+
+                    <div v-if="acctReqRowAcct.job">
+                      <h5>Job</h5>
+                      <p>{{acctReqRowAcct.job}}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div v-if="acctReqRowAcct.supervisor">
+                      <h5>Supervisor</h5>
+                      <p>{{acctReqRowAcct.supervisor}}</p>
+                    </div>
+
+                    <div v-if="acctReqRowAcct.supervisor_phone">
+                      <h5>Supervisor Phone</h5>
+                      <p>{{acctReqRowAcct.supervisor_phone}}</p>
+                    </div>
+
+                    <div v-if="acctReqRowAcct.employee_phone">
+                      <h5>Employee Phone</h5>
+                      <p>{{acctReqRowAcct.employee_phone}}</p>
+                    </div>
+
+                    <div v-if="acctReqRowAcct.clock_entry_only">
+                      <h5>Clock Entry Only</h5>
+                      <p>{{acctReqRowAcct.clock_entry_only}}</p>
+                    </div>
+
+                    <div v-if="acctReqRowAcct.employee_status">
+                      <h5>Employee Status</h5>
+                      <p>{{acctReqRowAcct.employee_status}}</p>
+                    </div>
+                  </div>
+
+                  <!-- <div class="three">
+                    <template v-if="acctReqRowAcct.start_date">
+                      <h5>Start Date: {{timeAgo(acctReqRowAcct.start_date)}}</h5>
+                      <p>{{MMDYYYYDateFormat(acctReqRowAcct.start_date)}}</p>
+                    </template>
+
+                    <template v-if="acctReqRowAcct.end_date">
+                      <h5>End Date: {{timeAgo(acctReqRowAcct.end_date)}}</h5>
+                      <p>{{MMDYYYYDateFormat(acctReqRowAcct.end_date)}}</p>
+                    </template>
+
+
+                    <template v-if="acctReqRowAcct.requested">
+                      <h5>Requested Date: {{timeAgo(acctReqRowAcct.requested)}}</h5>
+                      <p>{{MMDYYYYDateFormat(acctReqRowAcct.requested)}}</p>
+                    </template>
+
+                    <template v-if="acctReqRowAcct.updated">
+                      <h5>Updated Date: {{timeAgo(acctReqRowAcct.updated)}}</h5>
+                      <p>{{MMDYYYYDateFormat(acctReqRowAcct.updated)}}</p>
+                    </template>
+
+                    <template v-if="acctReqRowAcct.created">
+                       <h5>Updated Date: {{timeAgo(acctReqRowAcct.created)}}</h5>
+                      <p>{{MMDYYYYDateFormat(acctReqRowAcct.created)}}</p>
+                                 disabled />
+                    </template>
+                  </div> -->
+                </div>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
-
-
     </div>
   </div>
 </template>
@@ -148,6 +265,8 @@ export default {
       mgrID:            null,
       serviceFilterIDs: [],
       acctReqFilterIDs: [],
+      acctReqRow:       null,
+      acctReqRowAcct:   null
     }
   },
   methods: {
@@ -307,6 +426,20 @@ export default {
       });
 
       this.$store.dispatch('services/setFullActiveServices', fullActives);
+    },
+    toggleAcctReqRow(service, i) {
+      this.acctReqRowAcct = null;
+      let serviceIdx      = service.account_request,
+      sameRow             = (this.acctReqRow === i);
+      sameRow ? this.acctReqRow = null : this.acctReqRow = i;
+
+      let copy = [...this.acctReqsByServiceReq];
+      let copyResults = copy.filter((acctReq) => {
+        if(acctReq.id === serviceIdx)
+          return acctReq
+      })
+
+      this.acctReqRowAcct = copyResults[0];
     }
   },
   computed: {
@@ -320,6 +453,7 @@ export default {
       'services.mgrServiceReqs',
       'services.activeServiceIDs',
       'services.activeAcctReqIDs',
+      'services.acctReqsByServiceReq'
     ]),
     testNew() {
       let masterServices = [];
@@ -454,6 +588,7 @@ export default {
   }
 
   .table-wrapper {
+    position: relative;
     width: calc(100% - 300px);
     margin-left: auto;
 
@@ -467,6 +602,8 @@ export default {
     }
 
     .title-row {
+      position: fixed;
+      width: calc(100% - 340px);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -516,47 +653,167 @@ export default {
     }
 
     table {
+      margin: 60px 0 0 0;
       color: $text-color;
 
       thead tr th,
-      tbody tr th {
+      tbody tr td {
+        min-width: 150px;
+        width: 150px;
+
+        &:nth-of-type(3) {
+          min-width: 450px;
+          width: 450px;
+        }
+
         &:last-of-type {
-          // background-color: green;
           text-align: right;
         }
       }
 
       thead {
         background-color: transparent;
-
-        tr {
-          th {
-            // &:nth-of-type(1) {
-            //   width: 1px;
-            //   white-space: nowrap;
-            // }
-          }
-        }
+        border-bottom: 1px solid #ddd;
+        width: 100%;
+        display: block;
+        position: relative;
       }
 
       tbody {
+        display: block;
+        height: 650px;
+        overflow-y: scroll;
+
         tr {
-          th {
+          display: flex;
+          flex-wrap: wrap;
+          width: 100%;
+
+          &.active {
+            background-color: lighten($color-grey, 7%);
+          }
+
+          td {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+
+            &.acct-req-row {
+              display: block;
+              width: 100%;
+              padding: 20px 8px;
+              border-top: none;
+
+              .wrapper {
+                // background-color: green;
+                width: 100%;
+
+                .title {
+                  display: flex;
+                  flex-wrap: wrap;
+                  margin: 0 0 20px 0;
+
+                  h5 {
+                    width: auto;
+                    text-align: left;
+                    color: $text-color;
+                    font-size: 18px;
+                    line-height: 18px;
+                    font-weight: $weight-semi-bold;
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+
+                    span {
+                      margin: 0 0 0 10px;
+                    }
+                  }
+
+                  .avatar {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin: 0 10px 0 0;
+                    background-color: lighten($color-blue, 45%);
+                    width: 75px;
+                    height: 75px;
+                    border-radius: 50%;
+                  }
+
+                  .profile-image {
+                    margin: 0 10px 0 0;
+                    width: 75px;
+                    height: 75px;
+
+                    img {
+                      left: 50%;
+                      transform: translate(-50%, -50%);
+                    }
+                  }
+                }
+
+                .account-fields {
+                  background-color: lighten($color-grey, 15%);
+                  border-radius: $radius-default;
+                  border: 1px solid #ddd;
+                  padding: 10px;
+                  text-align: left;
+                  display: flex;
+                  flex-wrap: wrap;
+                  width: 100%;
+
+                  h5 {
+                    color: $text-color;
+                    font-size: 18px;
+                    margin: 0 0 2px 0;
+                    font-weight: 600;
+                  }
+
+
+
+                  .field-group {
+                    width: 100%;
+                  }
+
+                  div {
+                    display: flex;
+                    flex-wrap: wrap;
+                    flex-basis: 100%;
+
+                    &.first {
+                      margin: 0 0 10px 0;
+                    }
+
+                    > div {
+                      flex-basis: 25%;
+                    }
+                  }
+                }
+              }
+            }
+
             p {
               font-size: 14px;
               color: lighten($text-color, 25%);
             }
 
             div {
+              display: block;
+              width: 100%;
+
               &:nth-child(2) {
                 font-size: 14px;
                 color: lighten($text-color, 25%);
               }
             }
 
-            button {
-              background-color: darken($color-silver, 10%);
-              padding: 0 10px;
+            .navigation-dropdown {
+              margin-left: auto;
+
+              button {
+                background-color: darken($color-silver, 10%);
+                padding: 0 10px;
+              }
             }
           }
         }

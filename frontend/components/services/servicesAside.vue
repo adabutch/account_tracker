@@ -4,7 +4,7 @@
     <div class="form-group">
       <fieldset>
         <legend>Filter by Service:</legend>
-        <small>ID / Name</small>
+        <small>ID: Name</small>
         <div class="checkbox-wrapper">
           <div v-for="p, i in sortActiveFullServices" :key="i">
             <input
@@ -22,7 +22,7 @@
     <div class="form-group">
       <fieldset>
         <legend>Filter by Acct. Req:</legend>
-        <small>ID / Name</small>
+        <small>ID: Name</small>
         <div class="checkbox-wrapper">
           <div v-for="a, i in sortAcctReqsByServiceReq" :key="i">
             <input
@@ -107,7 +107,7 @@ export default {
     .form-group {
       position: relative;
       margin: 0 0 40px 0;
-      height: 350px;
+      height: 250px;
       overflow-y: hidden;
       padding: 0;
 

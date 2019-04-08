@@ -159,7 +159,7 @@ table {
   thead {
     th {
       background-color: lighten($color-grey, 10%);
-      padding: 16px 0;
+      padding: 16px 8px;
       text-align: left;
 
       &:first-of-type,
@@ -182,10 +182,11 @@ table {
       &:hover {
         background-color: lighten($color-grey, 10%);
       }
-    }
 
-    th, td {
-      text-align: left;
+      th, td {
+        font-weight: 600;
+        text-align: left;
+      }
     }
   }
 }
