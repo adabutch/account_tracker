@@ -4,18 +4,19 @@ import {
 
 export const servicesState = () => ({
   // url: /account-requests/
-  acctReqServices:  [],
+  acctReqServices:      [],
 
   // url: /services/
-  services:         [],
-  mgrProfileIDs:    [],
-  mgrFullProfiles:  [],
-  mgrServiceReqs:   [],
-  requests:         [],
-  activeServiceIDs: [],
-  activeAcctReqIDs: [],
-  activeFullServices: [],
-  filterByService:  [],
+  services:             [],
+  mgrProfileIDs:        [],
+  mgrFullProfiles:      [],
+  mgrServiceReqs:       [],
+  requests:             [],
+  activeServiceIDs:     [],
+  activeAcctReqIDs:     [],
+  activeFullServices:   [],
+  filterByService:      [],
+  acctReqsByServiceReq: [],
 })
 
 const state = () => servicesState();
@@ -58,6 +59,9 @@ const mutations = {
   },
   SET_FILTER_BY_SERVICE(state, payload) {
     state.filterByService = payload
+  },
+  SET_ACCT_REQ_X_SERVICE_REQ(state, payload) {
+    state.acctReqsByServiceReq = payload
   }
 }
 
@@ -94,6 +98,9 @@ const actions = {
   },
   setfilterByService(context, payload) {
     context.commit("SET_FILTER_BY_SERVICE", payload)
+  },
+  setAcctReqsByServiceReq(context, payload) {
+    context.commit("SET_ACCT_REQ_X_SERVICE_REQ", payload)
   }
 }
 

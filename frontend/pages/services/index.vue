@@ -29,10 +29,11 @@
         <caption class="sr-only">All User Requests</caption>
         <thead>
           <tr>
-            <th scope="col">Service</th>
+            <th scope="col">Status</th>
+            <th scope="col" @click="serviceSort()">Service</th>
             <th scope="col">Acct. Req.</th>
             <!-- <th scope="col">Change Type</th> -->
-            <th scope="col">Req. Status</th>
+
             <th scope="col">Created</th>
             <th scope="col">Requested</th>
             <th scope="col">Updated</th>
@@ -42,14 +43,13 @@
 
         <tbody>
           <tr v-for="s, i in displayResults" :key="i">
-            <th>{{s.name}} -- {{s.service}}</th>
-            <th>{{s.account_request}} <!-- / {{s.id}} --></th>
-            <!-- <th>{{s.type_of_change}}</th> -->
             <th>
               <fn1-badge :class="s.request_status">
                 {{s.request_status}}
               </fn1-badge>
             </th>
+            <th>{{s.name}} -- {{s.service}}</th>
+            <th>{{s.account_request}}</th>
             <th>
               <template v-if="s.created == null">
                 <div></div>
@@ -132,6 +132,7 @@ export default {
       this.getServiceRequests()
       .then((resolve) => {
         this.$store.dispatch('services/setRequests', resolve);
+        this.mgrARbySR();
         this.filterMgrServiceReqs();
         this.fullActiveServices();
         console.log(`getServiceRequests() resolve :: `, resolve);
@@ -196,6 +197,28 @@ export default {
           reject(console.log(e));
         });
       });
+    },
+    mgrARbySR() {
+      let results           = [],
+      acctReqsXService      = this.activeAcctReqIDs,
+      uAcctReqsXService     = [...new Set(acctReqsXService)];
+
+      let requests = uAcctReqsXService.map((item) => {
+        return new Promise((resolve, reject) => {
+          this.$axios
+          .get(`${process.env.api}${process.env.accountRequest}?id=${item}`)
+          .then((res) => {
+            resolve(results.push(res.data.results[0]));
+          })
+          .catch((e) => {
+            reject(console.log(`mgrARbySR() :: `, e));
+          });
+        });
+      });
+
+      Promise.all(requests).then(() =>
+       this.$store.dispatch('services/setAcctReqsByServiceReq', results)
+      );
     },
     mgrServices() {
       // store as 'mgrFullProfiles'
@@ -284,6 +307,9 @@ export default {
       });
 
       this.$store.dispatch('services/setFullActiveServices', fullActives);
+    },
+    serviceSort() {
+      console.log(this.testNew.sort((a, b) => a.name - b.name));
     }
   },
   computed: {
@@ -295,7 +321,8 @@ export default {
       'services.mgrProfileIDs',
       'services.mgrFullProfiles',
       'services.mgrServiceReqs',
-      'services.activeServiceIDs'
+      'services.activeServiceIDs',
+      'services.activeAcctReqIDs',
     ]),
     testNew() {
       let masterServices = [];

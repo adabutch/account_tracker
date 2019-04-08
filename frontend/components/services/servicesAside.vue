@@ -4,8 +4,9 @@
     <div class="form-group">
       <fieldset>
         <legend>Filter by Service:</legend>
+        <small>ID / Name</small>
         <div class="checkbox-wrapper">
-          <div v-for="p, i in activeFullServices" :key="i">
+          <div v-for="p, i in sortActiveFullServices" :key="i">
             <input
               :id="p.id"
               type="checkbox"
@@ -21,15 +22,16 @@
     <div class="form-group">
       <fieldset>
         <legend>Filter by Acct. Req:</legend>
+        <small>ID / Name</small>
         <div class="checkbox-wrapper">
-          <div v-for="a, i in activeAcctReqIDs" :key="i">
+          <div v-for="a, i in sortAcctReqsByServiceReq" :key="i">
             <input
-              :id="a"
+              :id="a.id"
               type="checkbox"
               name="acctReqFilter"
               v-model="acctReqFilterIDs"
-              :value="a">
-            <label :for="a"><strong>{{a}}:</strong> name</label>
+              :value="a.id">
+            <label :for="a.id"><strong>{{a.id}}:</strong> {{a.full_name}}</label>
           </div>
         </div>
       </fieldset>
@@ -70,19 +72,23 @@ export default {
       'services.activeFullServices',
       'services.activeServiceIDs',
       'services.activeAcctReqIDs',
-      'services.filterByService'
+      'services.filterByService',
+      'services.acctReqsByServiceReq'
     ]),
-    // activeServicesCheck() {
-    //   return this.mgrFullProfiles.filter((item) => {
-    //     return this.activeServiceIDs.indexOf(item.id) >= 0;
-    //   });
-    // }
+    sortActiveFullServices() {
+      let copy = [...this.activeFullServices]
+      return copy.sort((a, b) => a.id - b.id);
+    },
+    sortAcctReqsByServiceReq() {
+      let copy = [...this.acctReqsByServiceReq];
+      return copy.sort((a, b) => a.id - b.id);
+    }
   },
 }
 </script>
 
 <style lang="scss">
-  @import '@/assets/style.scss';
+@import '@/assets/style.scss';
   aside {
     position: fixed;
     color: $text-color;
@@ -118,6 +124,14 @@ export default {
           padding: 0;
           align-items: center;
           margin: 0 0 8px 0;
+        }
+
+        small {
+          display: block;
+          font-size: 14px;
+          color: lighten($text-color, 25%);
+          font-weight: 600;
+          margin: 0 0 10px 0;
         }
       }
 
