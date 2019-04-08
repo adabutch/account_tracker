@@ -22,7 +22,7 @@
 
       <h2 v-if="!displayResults">Loading</h2>
 
-      <table v-if="displayResults" class="fixed_headers">
+      <table v-if="displayResults">
         <caption class="sr-only">All User Requests</caption>
         <thead>
           <tr>
@@ -37,52 +37,56 @@
         </thead>
 
         <tbody>
-          <tr v-for="s, i in displayResults"
+          <!-- <tr v-for="s, i in displayResults"
               :key="i"
               :class="{'active': acctReqRow === i}"
-              @click="toggleAcctReqRow(s,i)">
-            <td>
-              <fn1-badge :class="s.request_status">
-                {{s.request_status}}
-              </fn1-badge>
-            </td>
-            <td>{{s.account_request}}</td>
-            <td>{{s.service}}: {{s.name}}</td>
-            <td>
-              <template v-if="s.created == null">
-                <div></div>
-                <div>&mdash;</div>
-              </template>
+              @click="toggleAcctReqRow(s,i)"> -->
+          <template v-for="s, i in displayResults" >
+            <tr :class="{'active': acctReqRow === i}"
+                :key="i"
+                @click.stop="toggleAcctReqRow(s,i,$event)">
+              <td>
+                <fn1-badge :class="s.request_status">
+                  {{s.request_status}}
+                </fn1-badge>
+              </td>
+              <td>{{s.account_request}}</td>
+              <td>{{s.service}}: {{s.name}}</td>
+              <td>
+                <template v-if="s.created == null">
+                  <div></div>
+                  <div>&mdash;</div>
+                </template>
 
-              <template v-if="s.created != null">
-                <div>{{MMDYYYYDateFormat(s.created)}}</div>
-                <div>{{timeAgo(s.created)}}</div>
-              </template>
-            </td>
-            <td>
-              <div>{{MMDYYYYDateFormat(s.requested)}}</div>
-              <div>{{timeAgo(s.requested)}}</div>
-            </td>
-            <td>
-              <div>{{MMDYYYYDateFormat(s.updated)}}</div>
-              <div>{{timeAgo(s.updated)}}</div>
-            </td>
-            <td>
-              <exampleDropdown
-                text="status"
-                navAlign="right">
-                <li v-for="rs, i in requestStatuses"
-                    :class="rs"
-                    @click="serviceStatusChange(s.account_request, s.id, s.request_status, rs)">
-                    <span>{{rs}}</span>
-                </li>
-              </exampleDropdown>
-            </td>
-            <td class="acct-req-row" v-if="acctReqRow === i">
-              <!-- {{s}} -->
-              <!-- {{acctReqRowAcct}} -->
-              <div class="wrapper">
-                <div class="title">
+                <template v-if="s.created != null">
+                  <div>{{MMDYYYYDateFormat(s.created)}}</div>
+                  <div>{{timeAgo(s.created)}}</div>
+                </template>
+              </td>
+              <td>
+                <div>{{MMDYYYYDateFormat(s.requested)}}</div>
+                <div>{{timeAgo(s.requested)}}</div>
+              </td>
+              <td>
+                <div>{{MMDYYYYDateFormat(s.updated)}}</div>
+                <div>{{timeAgo(s.updated)}}</div>
+              </td>
+              <td>
+                <exampleDropdown
+                  text="status"
+                  navAlign="right">
+                  <li v-for="rs, i in requestStatuses"
+                      :class="rs"
+                      @click="serviceStatusChange(s.account_request, s.id, s.request_status, rs)">
+                      <span>{{rs}}</span>
+                  </li>
+                </exampleDropdown>
+              </td>
+            </tr>
+            <tr v-if="acctReqRow === i"
+                :class="{'active': acctReqRow === i}">
+              <td class="acct-req-row">
+                <div class="wrapper">
                   <div class="profile-image" v-if="acctReqRowAcct.cropped_image">
                     <img :src="acctReqRowAcct.cropped_image" :alt="acctReqRowAcct.first_name + ' ' + acctReqRowAcct.last_name">
                   </div>
@@ -90,116 +94,118 @@
                     {{ userInitial(acctReqRowAcct.first_name) }}{{ userInitial(acctReqRowAcct.last_name) }}
                   </div>
 
-                  <h5>
-                    <template v-if="acctReqRowAcct.first_name">
-                      {{acctReqRowAcct.first_name}}
-                    </template>
 
-                    <template v-if="acctReqRowAcct.nickname">
-                      ({{acctReqRowAcct.nickname}})
-                    </template>
+                  <div class="account-fields">
+                    <h4>
+                      <template v-if="acctReqRowAcct.first_name">
+                        {{acctReqRowAcct.first_name}}
+                      </template>
 
-                    <template v-if="acctReqRowAcct.middle_name">
-                      {{acctReqRowAcct.middle_name}}
-                    </template>
+                      <template v-if="acctReqRowAcct.nickname">
+                        ({{acctReqRowAcct.nickname}})
+                      </template>
 
-                    <template v-if="acctReqRowAcct.last_name">
-                      {{acctReqRowAcct.last_name}}
-                    </template>
+                      <template v-if="acctReqRowAcct.middle_name">
+                        {{acctReqRowAcct.middle_name}}
+                      </template>
 
-                    <template v-if="acctReqRowAcct.suffix">
-                      {{acctReqRowAcct.suffix}}
-                    </template>
+                      <template v-if="acctReqRowAcct.last_name">
+                        {{acctReqRowAcct.last_name}}
+                      </template>
 
-                    <fn1-badge :class="acctReqRowAcct.request_status">
-                      {{acctReqRowAcct.request_status}}
-                    </fn1-badge>
-                  </h5>
-                </div>
+                      <template v-if="acctReqRowAcct.suffix">
+                        {{acctReqRowAcct.suffix}}
+                      </template>
 
+                      <fn1-badge :class="acctReqRowAcct.request_status">
+                        {{acctReqRowAcct.request_status}}
+                      </fn1-badge>
+                    </h4>
 
-                <div class="account-fields">
-                  <div class="first">
-                    <div v-if="acctReqRowAcct.facility">
-                      <h5>Facility</h5>
-                      <p>{{acctReqRowAcct.facility}}</p>
+                    <div class="first">
+                      <div v-if="acctReqRowAcct.facility">
+                        <h5>Facility</h5>
+                        <p>{{acctReqRowAcct.facility}}</p>
+                      </div>
+
+                      <div v-if="acctReqRowAcct.department">
+                        <h5>Department</h5>
+                        <p>{{acctReqRowAcct.department}}</p>
+                      </div>
+
+                      <div v-if="acctReqRowAcct.group">
+                        <h5>Group</h5>
+                        <p>{{acctReqRowAcct.group}}</p>
+                      </div>
+
+                      <div v-if="acctReqRowAcct.job">
+                        <h5>Job</h5>
+                        <p>{{acctReqRowAcct.job}}</p>
+                      </div>
                     </div>
 
-                    <div v-if="acctReqRowAcct.department">
-                      <h5>Department</h5>
-                      <p>{{acctReqRowAcct.department}}</p>
+                    <div>
+                      <div v-if="acctReqRowAcct.supervisor">
+                        <h5>Supervisor</h5>
+                        <p>{{acctReqRowAcct.supervisor}}</p>
+                      </div>
+
+                      <div v-if="acctReqRowAcct.supervisor_phone">
+                        <h5>Supervisor Phone</h5>
+                        <p>{{acctReqRowAcct.supervisor_phone}}</p>
+                      </div>
+
+                      <div v-if="acctReqRowAcct.employee_phone">
+                        <h5>Employee Phone</h5>
+                        <p>{{acctReqRowAcct.employee_phone}}</p>
+                      </div>
+
+                      <div v-if="acctReqRowAcct.clock_entry_only">
+                        <h5>Clock Entry Only</h5>
+                        <p>{{acctReqRowAcct.clock_entry_only}}</p>
+                      </div>
+
+                      <div v-if="acctReqRowAcct.employee_status">
+                        <h5>Employee Status</h5>
+                        <p>{{acctReqRowAcct.employee_status}}</p>
+                      </div>
                     </div>
 
-                    <div v-if="acctReqRowAcct.group">
-                      <h5>Group</h5>
-                      <p>{{acctReqRowAcct.group}}</p>
-                    </div>
+                    <!-- <div class="three">
+                      <template v-if="acctReqRowAcct.start_date">
+                        <h5>Start Date: {{timeAgo(acctReqRowAcct.start_date)}}</h5>
+                        <p>{{MMDYYYYDateFormat(acctReqRowAcct.start_date)}}</p>
+                      </template>
 
-                    <div v-if="acctReqRowAcct.job">
-                      <h5>Job</h5>
-                      <p>{{acctReqRowAcct.job}}</p>
-                    </div>
+                      <template v-if="acctReqRowAcct.end_date">
+                        <h5>End Date: {{timeAgo(acctReqRowAcct.end_date)}}</h5>
+                        <p>{{MMDYYYYDateFormat(acctReqRowAcct.end_date)}}</p>
+                      </template>
+
+
+                      <template v-if="acctReqRowAcct.requested">
+                        <h5>Requested Date: {{timeAgo(acctReqRowAcct.requested)}}</h5>
+                        <p>{{MMDYYYYDateFormat(acctReqRowAcct.requested)}}</p>
+                      </template>
+
+                      <template v-if="acctReqRowAcct.updated">
+                        <h5>Updated Date: {{timeAgo(acctReqRowAcct.updated)}}</h5>
+                        <p>{{MMDYYYYDateFormat(acctReqRowAcct.updated)}}</p>
+                      </template>
+
+                      <template v-if="acctReqRowAcct.created">
+                         <h5>Updated Date: {{timeAgo(acctReqRowAcct.created)}}</h5>
+                        <p>{{MMDYYYYDateFormat(acctReqRowAcct.created)}}</p>
+                                   disabled />
+                      </template>
+                    </div> -->
                   </div>
-
-                  <div>
-                    <div v-if="acctReqRowAcct.supervisor">
-                      <h5>Supervisor</h5>
-                      <p>{{acctReqRowAcct.supervisor}}</p>
-                    </div>
-
-                    <div v-if="acctReqRowAcct.supervisor_phone">
-                      <h5>Supervisor Phone</h5>
-                      <p>{{acctReqRowAcct.supervisor_phone}}</p>
-                    </div>
-
-                    <div v-if="acctReqRowAcct.employee_phone">
-                      <h5>Employee Phone</h5>
-                      <p>{{acctReqRowAcct.employee_phone}}</p>
-                    </div>
-
-                    <div v-if="acctReqRowAcct.clock_entry_only">
-                      <h5>Clock Entry Only</h5>
-                      <p>{{acctReqRowAcct.clock_entry_only}}</p>
-                    </div>
-
-                    <div v-if="acctReqRowAcct.employee_status">
-                      <h5>Employee Status</h5>
-                      <p>{{acctReqRowAcct.employee_status}}</p>
-                    </div>
-                  </div>
-
-                  <!-- <div class="three">
-                    <template v-if="acctReqRowAcct.start_date">
-                      <h5>Start Date: {{timeAgo(acctReqRowAcct.start_date)}}</h5>
-                      <p>{{MMDYYYYDateFormat(acctReqRowAcct.start_date)}}</p>
-                    </template>
-
-                    <template v-if="acctReqRowAcct.end_date">
-                      <h5>End Date: {{timeAgo(acctReqRowAcct.end_date)}}</h5>
-                      <p>{{MMDYYYYDateFormat(acctReqRowAcct.end_date)}}</p>
-                    </template>
-
-
-                    <template v-if="acctReqRowAcct.requested">
-                      <h5>Requested Date: {{timeAgo(acctReqRowAcct.requested)}}</h5>
-                      <p>{{MMDYYYYDateFormat(acctReqRowAcct.requested)}}</p>
-                    </template>
-
-                    <template v-if="acctReqRowAcct.updated">
-                      <h5>Updated Date: {{timeAgo(acctReqRowAcct.updated)}}</h5>
-                      <p>{{MMDYYYYDateFormat(acctReqRowAcct.updated)}}</p>
-                    </template>
-
-                    <template v-if="acctReqRowAcct.created">
-                       <h5>Updated Date: {{timeAgo(acctReqRowAcct.created)}}</h5>
-                      <p>{{MMDYYYYDateFormat(acctReqRowAcct.created)}}</p>
-                                 disabled />
-                    </template>
-                  </div> -->
                 </div>
-              </div>
-            </td>
-          </tr>
+              </td>
+            </tr>
+
+          </template>
+
         </tbody>
       </table>
     </div>
@@ -240,21 +246,26 @@ export default {
         });
         this.$store.dispatch('services/setMgrProfileIDs', ids);
 
+        this.mgrServices()
+        .then((resolve) => {
+          console.log('YOOOOOOOO', resolve);
+          this.$store.dispatch('services/setMgrFullProfiles', resolve)
+
+
+          this.getServiceRequests()
+          .then((resolve) => {
+            this.$store.dispatch('services/setRequests', resolve);
+
+            this.filterMgrServiceReqs();
+            this.fullActiveServices();
+            this.mgrARbySR();
+            console.log(`getServiceRequests() resolve :: `, resolve);
+          }, (reject) => {
+            console.log(`getServiceRequests() reject :: `, reject);
+          });
+        })
       }, (reject) => {
         console.log(`getMgrProfiles() reject :: `, reject);
-      });
-
-      this.mgrServices();
-
-      this.getServiceRequests()
-      .then((resolve) => {
-        this.$store.dispatch('services/setRequests', resolve);
-        this.mgrARbySR();
-        this.filterMgrServiceReqs();
-        this.fullActiveServices();
-        console.log(`getServiceRequests() resolve :: `, resolve);
-      }, (reject) => {
-        console.log(`getServiceRequests() reject :: `, reject);
       });
     }, (reject) => {
       console.log(`getServices() reject error :: `, e);
@@ -266,7 +277,8 @@ export default {
       serviceFilterIDs: [],
       acctReqFilterIDs: [],
       acctReqRow:       null,
-      acctReqRowAcct:   null
+      acctReqRowAcct:   null,
+      show:             false,
     }
   },
   methods: {
@@ -342,10 +354,13 @@ export default {
     mgrServices() {
       // store as 'mgrFullProfiles'
       // getServices() && getMgrProfiles()
-      let results = this.services.filter((item) => {
-        return this.mgrProfileIDs.indexOf(item.id) >= 0;
+      return new Promise((resolve) => {
+        resolve(this.services.filter((item) => {
+            return this.mgrProfileIDs.indexOf(item.id) >= 0;
+          })
+
+        )
       });
-      this.$store.dispatch('services/setMgrFullProfiles', results);
     },
     filterMgrServiceReqs() {
       // store as 'mgrServiceReqs'
@@ -393,21 +408,42 @@ export default {
         .then(response => {
           console.log(`ACTION SR serviceStatusChange :: `, response);
 
-          this.getMgrProfiles()
+          this.getServices()
           .then((resolve) => {
-            this.mgrServices();
-            console.log(`getMgrProfiles() resolve :: `, resolve);
-          }, (reject) => {
-            console.log(`getMgrProfiles() reject :: `, reject);
-          });
+            this.$store.dispatch('services/setServices', resolve);
 
-          this.getServiceRequests()
-          .then((resolve) => {
-            this.$store.dispatch('services/setRequests', resolve);
-            this.filterMgrServiceReqs();
-            console.log(`getServiceRequests() resolve :: `, resolve);
+            this.getMgrProfiles()
+            .then((resolve) => {
+              let data    = resolve,
+              ids         = [];
+              data.forEach((service) => {
+                ids.push(service.service);
+              });
+              this.$store.dispatch('services/setMgrProfileIDs', ids);
+
+              this.mgrServices()
+              .then((resolve) => {
+                console.log('YOOOOOOOO', resolve);
+                this.$store.dispatch('services/setMgrFullProfiles', resolve)
+
+
+                this.getServiceRequests()
+                .then((resolve) => {
+                  this.$store.dispatch('services/setRequests', resolve);
+
+                  this.filterMgrServiceReqs();
+                  this.fullActiveServices();
+                  this.mgrARbySR();
+                  console.log(`getServiceRequests() resolve :: `, resolve);
+                }, (reject) => {
+                  console.log(`getServiceRequests() reject :: `, reject);
+                });
+              })
+            }, (reject) => {
+              console.log(`getMgrProfiles() reject :: `, reject);
+            });
           }, (reject) => {
-            console.log(`getServiceRequests() reject :: `, reject);
+            console.log(`getServices() reject error :: `, e);
           });
 
         })
@@ -427,19 +463,22 @@ export default {
 
       this.$store.dispatch('services/setFullActiveServices', fullActives);
     },
-    toggleAcctReqRow(service, i) {
-      this.acctReqRowAcct = null;
-      let serviceIdx      = service.account_request,
-      sameRow             = (this.acctReqRow === i);
-      sameRow ? this.acctReqRow = null : this.acctReqRow = i;
+    toggleAcctReqRow(service, i, e) {
+      let clicked = e.srcElement.nodeName;
+      if(clicked === 'TD') {
+        this.acctReqRowAcct = null;
+        let serviceIdx      = service.account_request,
+        sameRow             = (this.acctReqRow === i);
+        sameRow ? this.acctReqRow = null : this.acctReqRow = i;
 
-      let copy = [...this.acctReqsByServiceReq];
-      let copyResults = copy.filter((acctReq) => {
-        if(acctReq.id === serviceIdx)
-          return acctReq
-      })
+        let copy = [...this.acctReqsByServiceReq];
+        let copyResults = copy.filter((acctReq) => {
+          if(acctReq.id === serviceIdx)
+            return acctReq
+        })
 
-      this.acctReqRowAcct = copyResults[0];
+        this.acctReqRowAcct = copyResults[0];
+      }
     }
   },
   computed: {
@@ -588,6 +627,7 @@ export default {
   }
 
   .table-wrapper {
+    display: table;
     position: relative;
     width: calc(100% - 300px);
     margin-left: auto;
@@ -681,13 +721,14 @@ export default {
 
       tbody {
         display: block;
-        height: 650px;
+        height: calc(100vh - 300px);
         overflow-y: scroll;
 
         tr {
           display: flex;
           flex-wrap: wrap;
           width: 100%;
+          cursor: pointer;
 
           &.active {
             background-color: lighten($color-grey, 7%);
@@ -701,54 +742,32 @@ export default {
             &.acct-req-row {
               display: block;
               width: 100%;
-              padding: 20px 8px;
+              padding: 8px;
               border-top: none;
 
               .wrapper {
-                // background-color: green;
+                display: flex;
                 width: 100%;
 
-                .title {
+                .avatar {
                   display: flex;
-                  flex-wrap: wrap;
-                  margin: 0 0 20px 0;
+                  justify-content: center;
+                  align-items: center;
+                  margin: 0 60px 0 0;
+                  background-color: lighten($color-blue, 45%);
+                  width: 100px;
+                  height: 100px;
+                  border-radius: 50%;
+                }
 
-                  h5 {
-                    width: auto;
-                    text-align: left;
-                    color: $text-color;
-                    font-size: 18px;
-                    line-height: 18px;
-                    font-weight: $weight-semi-bold;
-                    display: flex;
-                    flex-wrap: wrap;
-                    align-items: center;
+                .profile-image {
+                  margin: 0 60px 0 0;
+                  width: 100px;
+                  height: 100px;
 
-                    span {
-                      margin: 0 0 0 10px;
-                    }
-                  }
-
-                  .avatar {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin: 0 10px 0 0;
-                    background-color: lighten($color-blue, 45%);
-                    width: 75px;
-                    height: 75px;
-                    border-radius: 50%;
-                  }
-
-                  .profile-image {
-                    margin: 0 10px 0 0;
-                    width: 75px;
-                    height: 75px;
-
-                    img {
-                      left: 50%;
-                      transform: translate(-50%, -50%);
-                    }
+                  img {
+                    left: 50%;
+                    transform: translate(-50%, -50%);
                   }
                 }
 
@@ -758,9 +777,19 @@ export default {
                   border: 1px solid #ddd;
                   padding: 10px;
                   text-align: left;
-                  display: flex;
-                  flex-wrap: wrap;
                   width: 100%;
+
+                  h4 {
+                    margin: 0 0 15px 0;
+                    padding: 0 0 10px 0;
+                    display: flex;
+                    align-items: center;
+                    border-bottom: 1px solid #ddd;
+
+                    span {
+                      margin: 0 0 0 10px;
+                    }
+                  }
 
                   h5 {
                     color: $text-color;
@@ -768,8 +797,6 @@ export default {
                     margin: 0 0 2px 0;
                     font-weight: 600;
                   }
-
-
 
                   .field-group {
                     width: 100%;
