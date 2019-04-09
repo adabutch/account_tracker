@@ -252,7 +252,7 @@
                     :disabled="acctReqIsNew">
                     <li v-for="rs, i in requestStatuses"
                         :class="rs"
-                        @click="serviceStatusChange(s.account_request, s.id, s.request_status, rs)">
+                        @click="serviceStatusChange(s, rs)">
                         <span>{{rs}}</span>
                     </li>
                   </exampleDropdown>
@@ -405,22 +405,22 @@ export default {
     },
   },
   methods: {
-    serviceStatusChange(acctReqID, servReqID, oldStatus, newStatus) {
+    serviceStatusChange(acctReq, status) {
       let payload = {
-        "request_status": newStatus,
+        "request_status": status,
       }
 
       this.$axios
-      .patch(`${process.env.api}${process.env.serviceReq}${servReqID}/`,payload)
+      .patch(`${process.env.api}${process.env.serviceReq}${acctReq.id}/`,payload)
       .then((res) => {
         console.log(`serviceStatusChange() :: `, res.data.results);
 
         this.$axios
         .post(`${process.env.api}${process.env.action}`,{
           "user":    this.authUser.id,
-          "account": acctReqID,
-          "action":  `Service Request: ${newStatus}.`,
-          "comment": `Service Request for ${servReqID} changed from '${oldStatus}' to '${newStatus}'.`
+          "account": acctReq.account_request,
+          "action":  `Service Request (${acctReq.id}): ${acctReq.name}`,
+          "comment": `Changed from '${acctReq.request_status}' to '${status}'.`
         })
         .then(response => {
           console.log(`ACTION SR serviceStatusChange :: `, response);

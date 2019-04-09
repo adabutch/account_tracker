@@ -77,7 +77,7 @@
                   navAlign="right">
                   <li v-for="rs, i in requestStatuses"
                       :class="rs"
-                      @click="serviceStatusChange(s.account_request, s.id, s.request_status, rs)">
+                      @click="serviceStatusChange(s, rs)">
                       <span>{{rs}}</span>
                   </li>
                 </exampleDropdown>
@@ -388,22 +388,22 @@ export default {
       this.$store.dispatch('services/setActiveServiceIDs', uniqActiveServices);
       this.$store.dispatch('services/setActiveAcctReqIDs', uniqActiveAcctReqs);
     },
-    serviceStatusChange(acctReqID, servReqID, oldStatus, newStatus) {
+    serviceStatusChange(acctReq, status) {
       let payload = {
-        "request_status": newStatus,
+        "request_status": status,
       }
 
       this.$axios
-      .patch(`${process.env.api}${process.env.serviceReq}${servReqID}/`,payload)
+      .patch(`${process.env.api}${process.env.serviceReq}${acctReq.id}/`,payload)
       .then((res) => {
         console.log(`serviceStatusChange() :: `, res.data.results);
 
         this.$axios
         .post(`${process.env.api}${process.env.action}`,{
           "user":    this.authUser.id,
-          "account": acctReqID,
-          "action":  `Service Request: ${newStatus}.`,
-          "comment": `Service Request for ${servReqID} changed from '${oldStatus}' to '${newStatus}'.`
+          "account": acctReq.account_request,
+          "action":  `Service Request (${acctReq.id}): ${acctReq.name}`,
+          "comment": `Changed from '${acctReq.request_status}' to '${status}'.`
         })
         .then(response => {
           console.log(`ACTION SR serviceStatusChange :: `, response);
@@ -631,6 +631,18 @@ export default {
     position: relative;
     width: calc(100% - 300px);
     margin-left: auto;
+    position: relative;
+
+    &:after {
+          position: absolute;
+    content: '';
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 30px;
+    width: 100%;
+    background: linear-gradient(rgba(255, 255, 255, 0) 0%, white 100%);
+    }
 
     h1 {
       color: $text-color;
