@@ -232,44 +232,7 @@ export default {
   },
   mounted() {
     this.mgrID = this.authUser.id;
-
-    this.getServices()
-    .then((resolve) => {
-      this.$store.dispatch('services/setServices', resolve);
-
-      this.getMgrProfiles()
-      .then((resolve) => {
-        let data    = resolve,
-        ids         = [];
-        data.forEach((service) => {
-          ids.push(service.service);
-        });
-        this.$store.dispatch('services/setMgrProfileIDs', ids);
-
-        this.mgrServices()
-        .then((resolve) => {
-          console.log('YOOOOOOOO', resolve);
-          this.$store.dispatch('services/setMgrFullProfiles', resolve)
-
-
-          this.getServiceRequests()
-          .then((resolve) => {
-            this.$store.dispatch('services/setRequests', resolve);
-
-            this.filterMgrServiceReqs();
-            this.fullActiveServices();
-            this.mgrARbySR();
-            console.log(`getServiceRequests() resolve :: `, resolve);
-          }, (reject) => {
-            console.log(`getServiceRequests() reject :: `, reject);
-          });
-        })
-      }, (reject) => {
-        console.log(`getMgrProfiles() reject :: `, reject);
-      });
-    }, (reject) => {
-      console.log(`getServices() reject error :: `, e);
-    });
+    this.loadData();
   },
   data() {
     return {
@@ -278,17 +241,56 @@ export default {
       acctReqFilterIDs: [],
       acctReqRow:       null,
       acctReqRowAcct:   null,
-      show:             false,
+      show:             false
     }
   },
   methods: {
     watchServiceFilters(payload) {
-      console.log(`watchServiceFilters :: PAYLOAD ::: ${payload}`)
+      console.log(`%c watchServiceFilters ${payload} `, this.consoleLog.info);
       this.serviceFilterIDs = payload;
     },
     watchAcctReqFilters(payload) {
-      console.log(`watchAcctReqFilters :: PAYLOAD ::: ${payload}`)
+      console.log(`%c watchAcctReqFilters ${payload} `, this.consoleLog.info);
       this.acctReqFilterIDs = payload;
+    },
+    loadData() {
+      this.getServices()
+      .then((resolve) => {
+        this.$store.dispatch('services/setServices', resolve);
+        console.log(`%c 1. getServices 👌 `, this.consoleLog.success);
+
+        this.getMgrProfiles()
+        .then((resolve) => {
+          let data    = resolve,
+          ids         = [];
+          data.forEach((service) => {
+            ids.push(service.service);
+          });
+          this.$store.dispatch('services/setMgrProfileIDs', ids);
+          console.log(`%c 2. getMgrProfiles 👌 `, this.consoleLog.success);
+
+          this.mgrServices()
+          .then((resolve) => {
+            this.$store.dispatch('services/setMgrFullProfiles', resolve);
+            console.log(`%c 3. mgrServices 👌 `, this.consoleLog.success);
+
+            this.getServiceRequests()
+            .then((resolve) => {
+              this.$store.dispatch('services/setRequests', resolve);
+              console.log(`%c 4. getServiceRequests 👌 `, this.consoleLog.success);
+              this.filterMgrServiceReqs();
+              this.fullActiveServices();
+              this.mgrARbySR();
+            }, (reject) => {
+              console.log(`%c 4. getServiceRequests 🛑 `, this.consoleLog.error);
+            });
+          })
+        }, (reject) => {
+          console.log(`%c getMgrProfiles 🛑 `, this.consoleLog.error);
+        });
+      }, (reject) => {
+        console.log(`%c getServices 🛑 `, this.errLogStyle);
+      });
     },
     getServices() {
       // store as 'services'
@@ -299,7 +301,7 @@ export default {
           resolve(res.data.results);
         })
         .catch((e) => {
-          reject(console.log(`getServices() promise error :: `, e));
+          reject(e);
         });
       });
     },
@@ -312,7 +314,7 @@ export default {
           resolve(res.data.results);
         })
         .catch((e) => {
-          reject(console.log(e));
+          reject(e);
         });
       });
     },
@@ -325,7 +327,7 @@ export default {
           resolve(res.data.results);
         })
         .catch((e) => {
-          reject(console.log(e));
+          reject(e);
         });
       });
     },
@@ -342,13 +344,14 @@ export default {
             resolve(results.push(res.data.results[0]));
           })
           .catch((e) => {
-            reject(console.log(`mgrARbySR() :: `, e));
+            reject(e);
           });
         });
       });
 
       Promise.all(requests).then(() =>
        this.$store.dispatch('services/setAcctReqsByServiceReq', results)
+       // console.log(`%c mgrARbySR 👌 `, this.consoleLog.success);
       );
     },
     mgrServices() {
@@ -358,7 +361,6 @@ export default {
         resolve(this.services.filter((item) => {
             return this.mgrProfileIDs.indexOf(item.id) >= 0;
           })
-
         )
       });
     },
@@ -372,8 +374,6 @@ export default {
       this.filterActives();
     },
     filterActives() {
-      // alert('ran filterActives()');
-
       let activeServices = [],
       activeAcctReqs     = [];
 
@@ -407,45 +407,7 @@ export default {
         })
         .then(response => {
           console.log(`ACTION SR serviceStatusChange :: `, response);
-
-          this.getServices()
-          .then((resolve) => {
-            this.$store.dispatch('services/setServices', resolve);
-
-            this.getMgrProfiles()
-            .then((resolve) => {
-              let data    = resolve,
-              ids         = [];
-              data.forEach((service) => {
-                ids.push(service.service);
-              });
-              this.$store.dispatch('services/setMgrProfileIDs', ids);
-
-              this.mgrServices()
-              .then((resolve) => {
-                console.log('YOOOOOOOO', resolve);
-                this.$store.dispatch('services/setMgrFullProfiles', resolve)
-
-
-                this.getServiceRequests()
-                .then((resolve) => {
-                  this.$store.dispatch('services/setRequests', resolve);
-
-                  this.filterMgrServiceReqs();
-                  this.fullActiveServices();
-                  this.mgrARbySR();
-                  console.log(`getServiceRequests() resolve :: `, resolve);
-                }, (reject) => {
-                  console.log(`getServiceRequests() reject :: `, reject);
-                });
-              })
-            }, (reject) => {
-              console.log(`getMgrProfiles() reject :: `, reject);
-            });
-          }, (reject) => {
-            console.log(`getServices() reject error :: `, e);
-          });
-
+          this.loadData();
         })
         .catch(e => {
           console.log(`ACTION SR serviceStatusChange error :: `, e)
@@ -484,6 +446,7 @@ export default {
   computed: {
     ...mapFields([
       'auth.authUser',
+      'consoleLog',
       'requestStatuses',
       'services.requests',
       'services.services',
@@ -759,23 +722,24 @@ export default {
 
               .wrapper {
                 display: flex;
+                flex-wrap: wrap;
                 width: 100%;
 
                 .avatar {
                   display: flex;
                   justify-content: center;
                   align-items: center;
-                  margin: 0 60px 0 0;
+                  margin: 0;
                   background-color: lighten($color-blue, 45%);
-                  width: 100px;
-                  height: 100px;
+                  width: 75px;
+                  height: 75px;
                   border-radius: 50%;
                 }
 
                 .profile-image {
-                  margin: 0 60px 0 0;
-                  width: 100px;
-                  height: 100px;
+                  margin: 0;
+                  width: 75px;
+                  height: 75px;
 
                   img {
                     left: 50%;
@@ -789,7 +753,8 @@ export default {
                   border: 1px solid #ddd;
                   padding: 10px;
                   text-align: left;
-                  width: 100%;
+                  width: calc(100% - 105px);
+                  margin-left: auto;
 
                   h4 {
                     margin: 0 0 15px 0;
