@@ -10,10 +10,10 @@
 .Trashes*
 .Spotlight-V100*
 .fseventsd*
-db.sqlite3
-mysql.cnf
-account_tracker/ldap_config.py
-scripts/services.csv
+backend/db.sqlite3
+backend/mysql.cnf
+backend/account_tracker/ldap_config.py
+backend/scripts/services.csv
 frontend/certs
 ansible/roles
 
