@@ -193,6 +193,10 @@ table {
 
 .badge {
 
+  &.default {
+    background-color: $color-silver;
+  }
+
   &.new {
     background-color: $color-ucla-gold-dark;
   }

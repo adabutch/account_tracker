@@ -597,14 +597,14 @@ export default {
     position: relative;
 
     &:after {
-          position: absolute;
-    content: '';
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 30px;
-    width: 100%;
-    background: linear-gradient(rgba(255, 255, 255, 0) 0%, white 100%);
+      position: absolute;
+      content: '';
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 30px;
+      width: 100%;
+      background: linear-gradient(rgba(255, 255, 255, 0) 0%, white 100%);
     }
 
     h1 {
