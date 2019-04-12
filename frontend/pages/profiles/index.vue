@@ -112,7 +112,7 @@
                   <li v-for="s, i in deptServices" :key="i">
                     <div class="edit-wrapper">
                       <div class="actions">
-                        <exampleModal ref="deptModal"
+                        <exampleModal ref="removeDeptServiceModal"
                                       title="Remove - Dept Service"
                                       launchButtonText="&#10005;">
 
@@ -120,13 +120,13 @@
 
                           <fn1-button slot="footer"
                                       title="Confirm - Remove Service"
-                                      @click.native="removeService('dept', s, i, $event)">
+                                      @click.native="removeDeptService(s, i)">
                             Confirm
                           </fn1-button>
 
                           <fn1-button slot="footer"
                                       title="Cancel - Remove Service"
-                                      @click.native="cancelRemoveService('dept', i, $event)">
+                                      @click.native="closeModal('removeDeptServiceModal', i)">
                             Cancel
                           </fn1-button>
                         </exampleModal>
@@ -182,7 +182,7 @@
                   <li v-for="s, i in groupServices" :key="i">
                     <div class="edit-wrapper">
                       <div class="actions">
-                        <exampleModal ref="groupModal"
+                        <exampleModal ref="removeGroupServiceModal"
                                       title="Remove - Group Service"
                                       launchButtonText="&#10005;">
 
@@ -190,13 +190,13 @@
 
                           <fn1-button slot="footer"
                                       title="Confirm - Remove Service"
-                                      @click.native="removeService('group', s, i, $event)">
+                                      @click.native="removeGroupService(s, i)">
                             Confirm
                           </fn1-button>
 
                           <fn1-button slot="footer"
                                       title="Cancel - Remove Service"
-                                      @click.native="cancelRemoveService('group', i, $event)">
+                                      @click.native="closeModal('removeGroupServiceModal', i)">
                             Cancel
                           </fn1-button>
                         </exampleModal>
@@ -855,35 +855,7 @@ export default {
     selectedGroup: function(val, oldVal) {
       if(val !== oldVal) {
         this.groupQuestions = [];
-
-        this.getGroupProfile()
-        .then((resolve) => {
-          this.groupProfile = resolve;
-
-          if(resolve.questions !== null) {
-            let parsedGroupQs = JSON.parse(resolve.questions);
-            this.groupQuestions = parsedGroupQs;
-          }
-
-          this.getGroupServiceIDs()
-          .then((resolve) => {
-            console.log(`%c getGroupServiceIDs 👌 `, this.consoleLog.success);
-
-            this.getAvailGroupServices()
-            .then((resolve) => {
-              this.availGroupServices = resolve;
-              console.log(`%c availGroupServices 👌 `, this.consoleLog.success);
-            });
-          });
-
-          console.log(`%c getGroupProfile 👌 `, this.consoleLog.success);
-        }, (reject) => {
-          this.groupProfile = [],
-          this.groupServiceIDs = [],
-          this.availGroupServices = [];
-
-          console.log(`%c getGroupProfile 🛑 `, this.consoleLog.error);
-        });
+        this.loadGroupInfo();
       }
     }
   },
@@ -975,6 +947,36 @@ export default {
         this.availDeptServices = [];
 
         console.log(`%c getDeptProfile 🛑 `, this.consoleLog.error);
+      });
+    },
+    loadGroupInfo() {
+      this.getGroupProfile()
+      .then((resolve) => {
+        this.groupProfile = resolve;
+
+        if(resolve.questions !== null) {
+          let parsedGroupQs = JSON.parse(resolve.questions);
+          this.groupQuestions = parsedGroupQs;
+        }
+
+        this.getGroupServiceIDs()
+        .then((resolve) => {
+          console.log(`%c getGroupServiceIDs 👌 `, this.consoleLog.success);
+
+          this.getAvailGroupServices()
+          .then((resolve) => {
+            this.availGroupServices = resolve;
+            console.log(`%c availGroupServices 👌 `, this.consoleLog.success);
+          });
+        });
+
+        console.log(`%c getGroupProfile 👌 `, this.consoleLog.success);
+      }, (reject) => {
+        this.groupProfile = [],
+        this.groupServiceIDs = [],
+        this.availGroupServices = [];
+
+        console.log(`%c getGroupProfile 🛑 `, this.consoleLog.error);
       });
     },
     getServices() {
@@ -1088,24 +1090,35 @@ export default {
         this.groupServicesAddSearch = null;
       }
     },
-    removeService(type, service, i, e) {
-      if(type === this.deptTypeModal) {
-        this.$refs.deptModal[i].showModal = false;
-      } else if(type === this.groupTypeModal){
-        this.$refs.groupModal[i].showModal = false;
-      }
+    removeDeptService(service, i) {
+      let deptID = this.deptProfile.id,
+      serviceID  = service.id;
 
-      let profileID = this.deptProfile.id;
-
-      // alert(JSON.stringify(service));
-      // alert(JSON.stringify(this.deptProfile));
+      this.$axios
+      .post(`${process.env.api}${process.env.profile}${deptID}/remove_service/${serviceID}/`)
+      .then(response => {
+        this.loadDeptInfo();
+        this.$refs.removeDeptServiceModal[i].showModal = false;
+        console.log(`%c removeDeptService 👌 `, this.consoleLog.success);
+      })
+      .catch(e => {
+        console.log(`%c removeDeptService 🛑 `, this.consoleLog.success);
+      });
     },
-    cancelRemoveService(type, i, e) {
-      if(type === this.deptTypeModal) {
-        this.$refs.deptModal[i].showModal = false;
-      } else if(type === this.groupTypeModal){
-        this.$refs.groupModal[i].showModal = false;
-      }
+    removeGroupService(service, i) {
+      let groupID = this.groupProfile.id,
+      serviceID   = service.id;
+
+      this.$axios
+      .post(`${process.env.api}${process.env.profile}${groupID}/remove_service/${serviceID}/`)
+      .then(response => {
+        this.loadGroupInfo();
+        this.$refs.removeGroupServiceModal[i].showModal = false;
+        console.log(`%c removeGroupService 👌 `, this.consoleLog.success);
+      })
+      .catch(e => {
+        console.log(`%c removeGroupService 🛑 `, this.consoleLog.success);
+      });
     },
     addDeptQuestion() {
       let deptID       = this.deptProfile.id,
@@ -1246,35 +1259,7 @@ export default {
       .then(response => {
         this.$refs.addGroupQuestionModal.showModal = false;
 
-        this.getGroupProfile()
-        .then((resolve) => {
-          this.groupProfile = resolve;
-
-          if(resolve.questions !== null) {
-            let parsedGroupQs = JSON.parse(resolve.questions);
-            this.groupQuestions = parsedGroupQs;
-          }
-
-          this.getGroupServiceIDs()
-          .then((resolve) => {
-            console.log(`%c getGroupServiceIDs 👌 `, this.consoleLog.success);
-
-            this.getAvailGroupServices()
-            .then((resolve) => {
-              this.availGroupServices = resolve;
-              console.log(`%c availGroupServices 👌 `, this.consoleLog.success);
-            });
-          });
-
-          console.log(`%c getGroupProfile 👌 `, this.consoleLog.success);
-        }, (reject) => {
-          this.groupProfile = [],
-          this.groupServiceIDs = [],
-          this.availGroupServices = [];
-
-          console.log(`%c getGroupProfile 🛑 `, this.consoleLog.error);
-        });
-
+        this.loadGroupInfo();
 
         console.log(`%c addGroupQuestion 👌 `, this.consoleLog.success)
       })
@@ -1295,34 +1280,7 @@ export default {
       .then(response => {
         this.$refs.removeGroupQuestionModal[i].showModal = false;
 
-        this.getGroupProfile()
-        .then((resolve) => {
-          this.groupProfile = resolve;
-
-          if(resolve.questions !== null) {
-            let parsedGroupQs = JSON.parse(resolve.questions);
-            this.groupQuestions = parsedGroupQs;
-          }
-
-          this.getGroupServiceIDs()
-          .then((resolve) => {
-            console.log(`%c getGroupServiceIDs 👌 `, this.consoleLog.success);
-
-            this.getAvailGroupServices()
-            .then((resolve) => {
-              this.availGroupServices = resolve;
-              console.log(`%c availGroupServices 👌 `, this.consoleLog.success);
-            });
-          });
-
-          console.log(`%c getGroupProfile 👌 `, this.consoleLog.success);
-        }, (reject) => {
-          this.groupProfile = [],
-          this.groupServiceIDs = [],
-          this.availGroupServices = [];
-
-          console.log(`%c getGroupProfile 🛑 `, this.consoleLog.error);
-        });
+        this.loadGroupInfo();
 
         console.log(`%c rmGroupQuestion 👌 `, this.consoleLog.success)
       })
@@ -1331,6 +1289,10 @@ export default {
       })
     },
     closeModal(modalRef, i) {
+      if(modalRef === 'removeDeptServiceModal')
+        this.$refs.removeDeptServiceModal[i].showModal = false;
+      if(modalRef === 'removeGroupServiceModal')
+        this.$refs.removeGroupServiceModal[i].showModal = false;
       if(modalRef === 'addDeptQuestionModal')
         this.$refs.addDeptQuestionModal.showModal = false;
       else if (modalRef === 'addGroupQuestionModal')
