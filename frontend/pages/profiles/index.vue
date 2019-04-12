@@ -3,7 +3,6 @@
     <div class="title-row">
       <h3>
         Service Profile Manager
-        <span>Updated: 5 seconds ago</span>
       </h3>
       <p>Configure a <strong>Service Profile</strong> for a specific <strong>Group</strong> &amp;/or <strong>Dept.</strong></p>
     </div>
@@ -45,8 +44,7 @@
 
       <div class="questions-wrapper">
         <fn1-tabs>
-          <fn1-tab :name="`Services`"
-                   :selected="true">
+          <fn1-tab :name="`Services`" :selected="true">
             <h4 v-if="deptServices && selectedDept">
               <span>3</span> Configure Profile Services
             </h4>
@@ -73,10 +71,15 @@
                     <ul class="search-results">
                       <li v-for="s, i in availDeptServicesList"
                           :key="i">
+                        <div class="edit-wrapper">
+                          <div class="actions">
+                            <fn1-button
+                              @click.native="addService('dept', s, i)">
+                              + add
+                            </fn1-button>
+                          </div>
+                        </div>
                         <strong>{{s.id}}:</strong>&nbsp;{{s.name}}
-                        <fn1-button @click.native="addService('dept', s, i)">
-                          + add
-                        </fn1-button>
                       </li>
                     </ul>
                   </template>
@@ -88,29 +91,33 @@
                     {{deptServices.length}}
                   </fn1-badge>
                 </h5>
+                <p><small>Last Updated: {{timeAgo(deptProfile.updated)}}</small></p>
                 <p><small>ID: Name</small></p>
 
                 <ul>
                   <li v-for="s, i in deptServices" :key="i">
-                    <exampleModal ref="deptModal"
-                                  title="Remove - Dept Service"
-                                  launchButtonText="&#10005;">
+                    <div class="edit-wrapper">
+                      <div class="actions">
+                        <exampleModal ref="deptModal"
+                                      title="Remove - Dept Service"
+                                      launchButtonText="&#10005;">
 
-                      <p slot="body">{{i}} Remove <strong>{{s.name}}</strong> from <strong>{{deptProfile.name}}'s Services Profile</strong>?</p>
+                          <p slot="body">{{i}} Remove <strong>{{s.name}}</strong> from <strong>{{deptProfile.name}}'s Services Profile</strong>?</p>
 
-                      <fn1-button slot="footer"
-                                  title="Confirm - Remove Service"
-                                  @click.native="removeService('dept', s, i, $event)">
-                        Confirm
-                      </fn1-button>
+                          <fn1-button slot="footer"
+                                      title="Confirm - Remove Service"
+                                      @click.native="removeService('dept', s, i, $event)">
+                            Confirm
+                          </fn1-button>
 
-                      <fn1-button slot="footer"
-                                  title="Cancel - Remove Service"
-                                  @click.native="cancelRemoveService('dept', i, $event)">
-                        Cancel
-                      </fn1-button>
-                    </exampleModal>
-
+                          <fn1-button slot="footer"
+                                      title="Cancel - Remove Service"
+                                      @click.native="cancelRemoveService('dept', i, $event)">
+                            Cancel
+                          </fn1-button>
+                        </exampleModal>
+                      </div>
+                    </div>
                     <strong>{{s.id}}:&nbsp;</strong>{{s.name}}
                   </li>
                 </ul>
@@ -135,10 +142,15 @@
                     <ul class="search-results">
                       <li v-for="s, i in availGroupServicesList"
                           :key="i">
+                        <div class="edit-wrapper">
+                          <div class="actions">
+                            <fn1-button
+                              @click.native="addService('group', s, i)">
+                              + add
+                            </fn1-button>
+                          </div>
+                        </div>
                         <strong>{{s.id}}:</strong>&nbsp;{{s.name}}
-                        <fn1-button @click.native="addService('group', s, i)">
-                          Add
-                        </fn1-button>
                       </li>
                     </ul>
                   </template>
@@ -150,29 +162,33 @@
                     {{groupServices.length}}
                   </fn1-badge>
                 </h5>
+                <p><small>Last Updated: {{timeAgo(groupProfile.updated)}}</small></p>
                 <p><small>ID: Name</small></p>
 
                 <ul>
                   <li v-for="s, i in groupServices" :key="i">
-                    <exampleModal ref="groupModal"
-                                  title="Remove - Group Service"
-                                  launchButtonText="&#10005;">
+                    <div class="edit-wrapper">
+                      <div class="actions">
+                        <exampleModal ref="groupModal"
+                                      title="Remove - Group Service"
+                                      launchButtonText="&#10005;">
 
-                      <p slot="body">{{i}} Remove <strong>{{s.name}}</strong> from <strong>{{selectedGroup.name}}'s Services Profile</strong>?</p>
+                          <p slot="body">{{i}} Remove <strong>{{s.name}}</strong> from <strong>{{selectedGroup.name}}'s Services Profile</strong>?</p>
 
-                      <fn1-button slot="footer"
-                                  title="Confirm - Remove Service"
-                                  @click.native="removeService('group', s, i, $event)">
-                        Confirm
-                      </fn1-button>
+                          <fn1-button slot="footer"
+                                      title="Confirm - Remove Service"
+                                      @click.native="removeService('group', s, i, $event)">
+                            Confirm
+                          </fn1-button>
 
-                      <fn1-button slot="footer"
-                                  title="Cancel - Remove Service"
-                                  @click.native="cancelRemoveService('group', i, $event)">
-                        Cancel
-                      </fn1-button>
-                    </exampleModal>
-
+                          <fn1-button slot="footer"
+                                      title="Cancel - Remove Service"
+                                      @click.native="cancelRemoveService('group', i, $event)">
+                            Cancel
+                          </fn1-button>
+                        </exampleModal>
+                      </div>
+                    </div>
                     <strong>{{s.id}}:</strong>&nbsp;{{s.name}}
                   </li>
                 </ul>
@@ -180,7 +196,7 @@
             </div>
           </fn1-tab>
 
-          <fn1-tab :name="`Questions`">
+          <fn1-tab :name="`Questions`" v-if="deptQuestions.length > 0">
             <template v-if="selectedDept">
               <h4>
                 <span>4</span> Additional Questions
@@ -190,15 +206,47 @@
 
               <div class="dept-questions">
                 <div class="title-row">
-                  <h5>Department Questions</h5>
+                  <h5>
+                    Department Questions
+                    <span>Last Updated: {{timeAgo(deptProfile.updated)}}</span>
+                  </h5>
                   <exampleModal ref="addDeptQuestionModal"
-                                title="Add - Department Question"
+                                title="Add New - Department Question"
                                 launchButtonText="add new">
 
-                    <p slot="body">So, you want to add a new question, huh?!</p>
+                    <template slot="body">
+                      <form>
+                        <div class="field-group">
+                          <label for="question-type">1. Question Type</label>
+                          <select :name="question"
+                                  :id="question"
+                                  type="select"
+                                  v-model="newDeptQType">
+                            <option v-for="q, i in questionTypes"
+                                    :value="q">
+                              {{ q }}
+                            </option>
+                          </select>
+                        </div>
+
+                        <fn1-input v-model="newDeptQText"
+                                   label="2. Question Text"
+                                   placeholder="eg. What's your favorite color?"
+                                   name="newDeptQText"
+                                   id="newDeptQText" />
+
+                        <fn1-input v-if="newDeptQType === 'Select'"
+                                   v-model="newDeptQValues"
+                                   label="3. Answer Values (seperate via ',')"
+                                   placeholder="eg. red, blue, green, yellow"
+                                   name="newDeptQValues"
+                                   id="newDeptQValues" />
+                      </form>
+                    </template>
 
                     <fn1-button slot="footer"
-                                title="Confirm">
+                                title="Confirm"
+                                @click.native="addDeptQuestion()">
                       Confirm
                     </fn1-button>
 
@@ -212,41 +260,43 @@
                 <div class="inside-wrapper" v-if="deptQuestions">
                   <template v-for="question, i in deptQuestions">
                     <template v-if="question.type == 'select'">
-                      <div class="edit-wrapper">
-                        <div class="actions">
-                          <exampleModal ref="editDeptQuestionModal"
-                                title="Edit - Department Question"
-                                launchButtonText="edit">
+                      <div class="question">
+                        <div class="edit-wrapper">
+                          <div class="actions">
+                            <exampleModal ref="editDeptQuestionModal"
+                                  title="Edit - Department Question"
+                                  launchButtonText="edit">
 
-                            <p slot="body">Lets edit it</p>
+                              <p slot="body">Lets edit it</p>
 
-                            <fn1-button slot="footer"
-                                        title="Confirm">
-                              Confirm
-                            </fn1-button>
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
 
-                            <fn1-button slot="footer"
-                                        title="Cancel">
-                              Cancel
-                            </fn1-button>
-                          </exampleModal>
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
 
-                          <exampleModal ref="removeDeptQuestionModal"
-                                title="Remove - Department Question"
-                                launchButtonText="&#10005;">
+                            <exampleModal ref="removeDeptQuestionModal"
+                                  title="Remove - Department Question"
+                                  launchButtonText="&#10005;">
 
-                            <p slot="body">Sure you want to remove?</p>
+                              <p slot="body">Sure you want to remove?</p>
 
-                            <fn1-button slot="footer"
-                                        title="Confirm">
-                              Confirm
-                            </fn1-button>
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
 
-                            <fn1-button slot="footer"
-                                        title="Cancel">
-                              Cancel
-                            </fn1-button>
-                          </exampleModal>
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+                          </div>
                         </div>
 
                         <div class="field-group">
@@ -265,10 +315,43 @@
                     </template>
 
                     <template v-if="question.type == 'text'">
-                      <div class="edit-wrapper">
-                        <div class="actions">
-                          <fn1-button>edit</fn1-button>
-                          <fn1-button>&#10005;</fn1-button>
+                      <div class="question">
+                        <div class="edit-wrapper">
+                          <div class="actions">
+                            <exampleModal ref="editDeptQuestionModal"
+                                  title="Edit - Department Question"
+                                  launchButtonText="edit">
+
+                              <p slot="body">Lets edit it</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+
+                            <exampleModal ref="removeDeptQuestionModal"
+                                  title="Remove - Department Question"
+                                  launchButtonText="&#10005;">
+
+                              <p slot="body">Sure you want to remove?</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+                          </div>
                         </div>
 
                         <fn1-input
@@ -281,10 +364,43 @@
                     </template>
 
                     <template v-if="question.type == 'number'">
-                      <div class="edit-wrapper">
-                        <div class="actions">
-                          <fn1-button>edit</fn1-button>
-                          <fn1-button>&#10005;</fn1-button>
+                      <div class="question">
+                        <div class="edit-wrapper">
+                          <div class="actions">
+                            <exampleModal ref="editDeptQuestionModal"
+                                  title="Edit - Department Question"
+                                  launchButtonText="edit">
+
+                              <p slot="body">Lets edit it</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+
+                            <exampleModal ref="removeDeptQuestionModal"
+                                  title="Remove - Department Question"
+                                  launchButtonText="&#10005;">
+
+                              <p slot="body">Sure you want to remove?</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+                          </div>
                         </div>
 
                         <fn1-input type="number"
@@ -297,10 +413,43 @@
                     </template>
 
                     <template v-if="question.type == 'textarea'">
-                      <div class="edit-wrapper">
-                        <div class="actions">
-                          <fn1-button>edit</fn1-button>
-                          <fn1-button>&#10005;</fn1-button>
+                      <div class="question">
+                        <div class="edit-wrapper">
+                          <div class="actions">
+                            <exampleModal ref="editDeptQuestionModal"
+                                  title="Edit - Department Question"
+                                  launchButtonText="edit">
+
+                              <p slot="body">Lets edit it</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+
+                            <exampleModal ref="removeDeptQuestionModal"
+                                  title="Remove - Department Question"
+                                  launchButtonText="&#10005;">
+
+                              <p slot="body">Sure you want to remove?</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+                          </div>
                         </div>
 
                         <div class="field-group">
@@ -319,20 +468,98 @@
 
               <div class="group-questions">
                 <div class="title-row">
-                  <h5>Group Questions</h5>
-                  <fn1-button>
-                    add new
-                  </fn1-button>
+                  <h5>
+                    Group Questions
+                    <span>Last Updated: {{timeAgo(groupProfile.updated)}}</span>
+                  </h5>
+                  <exampleModal ref="addGroupQuestionModal"
+                                title="Add New - Group Question"
+                                launchButtonText="add new">
+
+                    <template slot="body">
+                      <form>
+                        <div class="field-group">
+                          <label for="question-type">1. Question Type</label>
+                          <select :name="question"
+                                  :id="question"
+                                  type="select"
+                                  v-model="newGroupQType">
+                            <option v-for="q, i in questionTypes"
+                                    :value="q">
+                              {{ q }}
+                            </option>
+                          </select>
+                        </div>
+
+                        <fn1-input v-model="newGroupQText"
+                                   label="2. Question Text"
+                                   placeholder="eg. What's your favorite color?"
+                                   name="newGroupQText"
+                                   id="newGroupQText" />
+
+                        <fn1-input v-if="newGroupQType === 'Select'"
+                                   v-model="newGroupQValues"
+                                   label="3. Answer Values (seperate via ',')"
+                                   placeholder="eg. red, blue, green, yellow"
+                                   name="newGroupQValues"
+                                   id="newGroupQValues" />
+                      </form>
+                    </template>
+
+                    <fn1-button slot="footer"
+                                title="Confirm"
+                                @click.native="addGroupQuestion()">
+                      Confirm
+                    </fn1-button>
+
+                    <fn1-button slot="footer"
+                                title="Cancel">
+                      Cancel
+                    </fn1-button>
+                  </exampleModal>
                 </div>
 
 
                 <div class="inside-wrapper" v-if="groupQuestions">
                   <template v-for="question, i in groupQuestions">
                     <template v-if="question.type == 'select'">
-                      <div class="edit-wrapper">
-                        <div class="actions">
-                          <fn1-button>edit</fn1-button>
-                          <fn1-button>&#10005;</fn1-button>
+                      <div class="question">
+                        <div class="edit-wrapper">
+                          <div class="actions">
+                            <exampleModal ref="editDeptQuestionModal"
+                                  title="Edit - Department Question"
+                                  launchButtonText="edit">
+
+                              <p slot="body">Lets edit it</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+
+                            <exampleModal ref="removeDeptQuestionModal"
+                                  title="Remove - Department Question"
+                                  launchButtonText="&#10005;">
+
+                              <p slot="body">Sure you want to remove?</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+                          </div>
                         </div>
 
                         <div class="field-group">
@@ -351,10 +578,43 @@
                     </template>
 
                     <template v-if="question.type == 'text'">
-                      <div class="edit-wrapper">
-                        <div class="actions">
-                          <fn1-button>edit</fn1-button>
-                          <fn1-button>&#10005;</fn1-button>
+                      <div class="question">
+                        <div class="edit-wrapper">
+                          <div class="actions">
+                            <exampleModal ref="editDeptQuestionModal"
+                                  title="Edit - Department Question"
+                                  launchButtonText="edit">
+
+                              <p slot="body">Lets edit it</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+
+                            <exampleModal ref="removeDeptQuestionModal"
+                                  title="Remove - Department Question"
+                                  launchButtonText="&#10005;">
+
+                              <p slot="body">Sure you want to remove?</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+                          </div>
                         </div>
 
                         <fn1-input
@@ -367,10 +627,43 @@
                     </template>
 
                     <template v-if="question.type == 'number'">
-                      <div class="edit-wrapper">
-                        <div class="actions">
-                          <fn1-button>edit</fn1-button>
-                          <fn1-button>&#10005;</fn1-button>
+                      <div class="question">
+                        <div class="edit-wrapper">
+                          <div class="actions">
+                            <exampleModal ref="editDeptQuestionModal"
+                                  title="Edit - Department Question"
+                                  launchButtonText="edit">
+
+                              <p slot="body">Lets edit it</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+
+                            <exampleModal ref="removeDeptQuestionModal"
+                                  title="Remove - Department Question"
+                                  launchButtonText="&#10005;">
+
+                              <p slot="body">Sure you want to remove?</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+                          </div>
                         </div>
 
                         <fn1-input type="number"
@@ -382,10 +675,43 @@
                     </template>
 
                     <template v-if="question.type == 'textarea'">
-                      <div class="edit-wrapper">
-                        <div class="actions">
-                          <fn1-button>edit</fn1-button>
-                          <fn1-button>&#10005;</fn1-button>
+                      <div class="question">
+                        <div class="edit-wrapper">
+                          <div class="actions">
+                            <exampleModal ref="editDeptQuestionModal"
+                                  title="Edit - Department Question"
+                                  launchButtonText="edit">
+
+                              <p slot="body">Lets edit it</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+
+                            <exampleModal ref="removeDeptQuestionModal"
+                                  title="Remove - Department Question"
+                                  launchButtonText="&#10005;">
+
+                              <p slot="body">Sure you want to remove?</p>
+
+                              <fn1-button slot="footer"
+                                          title="Confirm">
+                                Confirm
+                              </fn1-button>
+
+                              <fn1-button slot="footer"
+                                          title="Cancel">
+                                Cancel
+                              </fn1-button>
+                            </exampleModal>
+                          </div>
                         </div>
 
                         <div class="field-group">
@@ -468,6 +794,15 @@ export default {
       selectedGroup:         null,
       groupProfile:          [],
       selectedGroupServices: [],
+
+      questionTypes:         ['Text','Textarea','Number','Select'],
+      newDeptQType:          null,
+      newDeptQText:          null,
+      newDeptQValues:        [],
+
+      newGroupQType:          null,
+      newGroupQText:          null,
+      newGroupQValues:        [],
     }
   },
   watch: {
@@ -730,13 +1065,76 @@ export default {
         this.$refs.groupModal[i].showModal = false;
       }
     },
+    addDeptQuestion() {
+      let deptID       = this.deptProfile.id,
+      currentQuestions = this.deptQuestions;
+
+      if(this.newDeptQValues.length > 0){
+        var deptValuesArray = this.newDeptQValues
+                           .replace(/,\s*$/, "")
+                           .split(', ');
+      } else {
+        var deptValuesArray = [];
+      }
+
+      let prepPayload = [{
+        "type":  this.newDeptQType.toLowerCase(),
+        "text":  this.newDeptQText,
+        "value": deptValuesArray
+      }],
+
+      deptQuetionsPayload = [...prepPayload,...currentQuestions],
+      payload = JSON.stringify(deptQuetionsPayload);
+
+      this.$axios
+      .patch(`${process.env.api}${process.env.profile}${deptID}/`,{
+        "questions": payload
+      })
+      .then(response => {
+        console.log(`%c addDeptQuestion 👌 `, this.consoleLog.success)
+      })
+      .catch(e => {
+        console.log(`%c addDeptQuestion 🛑 `, this.consoleLog.error)
+      })
+    },
+    addGroupQuestion() {
+      let groupID       = this.groupProfile.id,
+      currentQuestions  = this.groupQuestions;
+
+      if(this.newGroupQValues.length > 0){
+        var groupValuesArray = this.newGroupQValues
+                           .replace(/,\s*$/, "")
+                           .split(', ');
+      } else {
+        var groupValuesArray = [];
+      }
+
+      let prepPayload = [{
+        "type":  this.newGroupQType.toLowerCase(),
+        "text":  this.newGroupQText,
+        "value": groupValuesArray
+      }],
+
+      groupQuetionsPayload = [...prepPayload,...currentQuestions],
+      payload = JSON.stringify(groupQuetionsPayload);
+
+      this.$axios
+      .patch(`${process.env.api}${process.env.profile}${groupID}/`,{
+        "questions": payload
+      })
+      .then(response => {
+        console.log(`%c addGroupQuestion 👌 `, this.consoleLog.success)
+      })
+      .catch(e => {
+        console.log(`%c addGroupQuestion 🛑 `, this.consoleLog.error)
+      })
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
-
   p {
     small {
       display: block;
@@ -894,7 +1292,7 @@ export default {
         // background-color: pink;
         width: 100%;
         border-bottom: none;
-        height: calc(100% - 158px);
+        height: calc(100% - 190px);
         overflow-y: scroll;
 
         li {
@@ -912,14 +1310,26 @@ export default {
             border-radius: 0;
             border: none;
             padding: 0;
-            color: $color-vermilion;
+            color: lighten($text-color, 20%);
+          }
+        }
+      }
 
+      .dept-services,
+      .group-services {
+        ul {
+          li {
             &:hover {
-              color: $color-green;
+              .actions {
+                /deep/ button {
+                  color: $color-vermilion;
+                }
+              }
             }
           }
         }
       }
+
 
       .dept-services,
       .dept-questions {
@@ -930,36 +1340,28 @@ export default {
       .group-questions {
         padding: 0 0 0 40px;
         border-left: 1px solid lighten($text-color, 50%);
+
+        .field-group {
+          margin: 0 0 20px 0;
+        }
       }
 
       .dept-questions,
       .group-questions {
 
         .title-row {
-          display: flex;
-          flex-wrap: wrap;
-          margin: 0 !important;
-          padding: 0 0 10px 0;
-          border-bottom: 1px solid lighten($text-color, 50%);
-
           h5 {
-            display: inline-block;
-            width: auto;
-          }
-
-          /deep/ button {
-            background-color: $color-green;
-            margin-left: auto;
+            span {
+              display: block;
+              font-size: 14px;
+              color: lighten($text-color, 25%);
+              font-weight: 600;
+              margin: 0 0 0 10px;
+            }
           }
         }
 
-        .inside-wrapper {
-          // background-color: red;
-          height: calc(100% - 100px);
-          overflow-y: scroll;
-        }
-
-        .edit-wrapper {
+        .question {
           margin: 0;
           padding: 20px 8px;
           border-bottom: 1px solid lighten($text-color, 50%);
@@ -978,18 +1380,62 @@ export default {
           &:last-of-type {
             border-bottom: none;
           }
+        }
 
-          .field-group {
-            margin: 0;
+        .title-row {
+          display: flex;
+          flex-wrap: wrap;
+          margin: 0 !important;
+          padding: 0 0 10px 0;
+          border-bottom: 1px solid lighten($text-color, 50%);
+
+          div {
+            &:first-of-type {
+              margin-left: auto;
+            }
           }
 
-          .actions {
-            width: 100px;
-            margin: 0 20px 0 0;
-            border-right: 1px solid lighten($text-color, 50%);
+          h5 {
+            display: flex;
+            width: auto;
+          }
 
-            button {
-              background-color: $color-silver;
+          /deep/ button {
+            background-color: $color-green;
+            margin-left: auto;
+          }
+        }
+
+        .inside-wrapper {
+          // background-color: red;
+          height: calc(100% - 100px);
+          overflow-y: scroll;
+        }
+
+        .field-group {
+          // background-color: red;
+          flex: 1;
+          margin: 0 0 0 10px;
+        }
+
+        .edit-wrapper {
+          .actions {
+            div {
+              &:first-of-type {
+                /deep/ button {
+                  &:hover {
+                    color: $text-color;
+                  }
+                }
+              }
+
+              &:last-of-type {
+                /deep/ button {
+                  &:hover {
+                    color: $color-vermilion;
+                  }
+                }
+              }
             }
           }
         }
@@ -1003,12 +1449,24 @@ export default {
         flex: 1;
         // background-color: purple;
 
-        .badge {
-          font-size: 14px;
+        .edit-wrapper {
+          .actions {
+            display: flex;
+            margin: 0 10px 0 0;
+            border-right: 1px solid lighten($text-color, 50%);
+
+            /deep/ button {
+              color: lighten($text-color, 20%);
+              margin: 0 20px 0 0;
+              line-height: 16px;
+              padding: 0;
+              background-color: transparent;
+            }
+          }
         }
 
-        .field-group {
-          margin: 0 0 20px 0;
+        .badge {
+          font-size: 14px;
         }
 
         .search-wrapper {
@@ -1026,9 +1484,10 @@ export default {
               background-color: white;
               filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
               height: auto;
+              max-width: 400px;
               max-height: 350px;
               position: absolute;
-              top: 61px;
+              top: 60px;
               border: 1px solid lighten($text-color, 50%);
               border-bottom-left-radius: $radius-default;
               border-bottom-right-radius: $radius-default;
@@ -1042,7 +1501,7 @@ export default {
               }
 
               button {
-                color: $text-color;
+                color: lighten($text-color, 20%);
                 margin-left: auto;
 
                 &:hover {
@@ -1181,6 +1640,12 @@ export default {
           }
         }
       }
+    }
+  }
+
+  .modal-body {
+    .field-group {
+      margin: 0 0 20px 0 !important;
     }
   }
 </style>

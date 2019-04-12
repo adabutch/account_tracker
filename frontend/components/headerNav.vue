@@ -18,9 +18,9 @@
       }"
 
       :navItems="[
-        {name: 'Accounts',  href: '/account-requests'},
-        {name: 'Services',  href: '/services'},
-        {name: 'Profiles',  href: '/profiles'}
+        {name: 'Account Requests',  href: '/account-requests'},
+        {name: 'Service Requests',  href: '/services'},
+        {name: 'Profile Management',  href: '/profiles'}
       ]"
 
       :subNavItems="subNavItems">
