@@ -1086,8 +1086,36 @@ export default {
       this.$axios
       .post(`${process.env.api}${process.env.profile}${deptID}/add_service/${serviceID}/`)
       .then(response => {
-         this.deptServicesAddSearch = null;
-        this.loadDeptInfo();
+        this.deptServicesAddSearch = null;
+
+        this.getDeptProfile()
+        .then((resolve) => {
+          this.deptProfile = resolve;
+
+          if(resolve.questions !== null) {
+            let parsedDeptQs = JSON.parse(resolve.questions);
+            this.deptQuestions = parsedDeptQs;
+          }
+
+          this.getDeptServiceIDs()
+          .then((resolve) => {
+            console.log(`%c getDeptServiceIDs 👌 `, this.consoleLog.success);
+
+            this.getAvailDeptServices()
+            .then((resolve) => {
+              this.availDeptServices = resolve;
+              console.log(`%c availDeptServices 👌 `, this.consoleLog.success);
+            });
+          });
+
+          console.log(`%c getDeptProfile 👌 `, this.consoleLog.success);
+        }, (reject) => {
+          this.deptProfile = [],
+          this.deptServiceIDs = [],
+          this.availDeptServices = [];
+
+          console.log(`%c getDeptProfile 🛑 `, this.consoleLog.error);
+        });
         console.log(`%c addDeptService 👌 `, this.consoleLog.success);
       })
       .catch(e => {
@@ -1101,8 +1129,37 @@ export default {
       this.$axios
       .post(`${process.env.api}${process.env.profile}${deptID}/remove_service/${serviceID}/`)
       .then(response => {
-        this.loadDeptInfo();
         this.$refs.removeDeptServiceModal[i].showModal = false;
+
+        this.getDeptProfile()
+        .then((resolve) => {
+          this.deptProfile = resolve;
+
+          if(resolve.questions !== null) {
+            let parsedDeptQs = JSON.parse(resolve.questions);
+            this.deptQuestions = parsedDeptQs;
+          }
+
+          this.getDeptServiceIDs()
+          .then((resolve) => {
+            console.log(`%c getDeptServiceIDs 👌 `, this.consoleLog.success);
+
+            this.getAvailDeptServices()
+            .then((resolve) => {
+              this.availDeptServices = resolve;
+              console.log(`%c availDeptServices 👌 `, this.consoleLog.success);
+            });
+          });
+
+          console.log(`%c getDeptProfile 👌 `, this.consoleLog.success);
+        }, (reject) => {
+          this.deptProfile = [],
+          this.deptServiceIDs = [],
+          this.availDeptServices = [];
+
+          console.log(`%c getDeptProfile 🛑 `, this.consoleLog.error);
+        });
+
         console.log(`%c removeDeptService 👌 `, this.consoleLog.success);
       })
       .catch(e => {
