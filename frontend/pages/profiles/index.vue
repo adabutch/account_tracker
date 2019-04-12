@@ -12,7 +12,15 @@
         <div class="first">
           <h4><span>1</span> Select Department</h4>
           <div class="field-group">
-            <label for="department">Department</label>
+            <label for="department" v-if="selectedDept">
+              {{selectedDept.name}}
+            </label>
+            <template v-if="deptProfile.length !== 0">
+              <p>
+                <small>Last Updated: {{timeAgo(deptProfile.updated)}}</small>
+              </p>
+            </template>
+
             <select name="department"
                     id="department"
                     type="select"
@@ -28,7 +36,14 @@
         <div class="second" v-if="deptServices && selectedDept">
           <h4><span>2</span> Select Group</h4>
           <div class="field-group">
-            <label for="group">Group</label>
+            <label for="group" v-if="selectedGroup">
+              {{selectedGroup.name}}
+            </label>
+            <template v-if="groupProfile.length !== 0">
+              <p>
+                <small>Last Updated: {{timeAgo(groupProfile.updated)}}</small>
+              </p>
+            </template>
             <select name="group"
                     id="group"
                     type="select"
@@ -91,7 +106,6 @@
                     {{deptServices.length}}
                   </fn1-badge>
                 </h5>
-                <p><small>Last Updated: {{timeAgo(deptProfile.updated)}}</small></p>
                 <p><small>ID: Name</small></p>
 
                 <ul>
@@ -162,7 +176,6 @@
                     {{groupServices.length}}
                   </fn1-badge>
                 </h5>
-                <p><small>Last Updated: {{timeAgo(groupProfile.updated)}}</small></p>
                 <p><small>ID: Name</small></p>
 
                 <ul>
@@ -206,10 +219,7 @@
 
               <div class="dept-questions">
                 <div class="title-row">
-                  <h5>
-                    Department Questions
-                    <span>Last Updated: {{timeAgo(deptProfile.updated)}}</span>
-                  </h5>
+                  <h5>Department Questions</h5>
                   <exampleModal ref="addDeptQuestionModal"
                                 title="Add New - Department Question"
                                 launchButtonText="add new">
@@ -251,7 +261,8 @@
                     </fn1-button>
 
                     <fn1-button slot="footer"
-                                title="Cancel">
+                                title="Cancel"
+                                @click.native="closeModal('addDeptQuestionModal')">
                       Cancel
                     </fn1-button>
                   </exampleModal>
@@ -284,15 +295,19 @@
                                   title="Remove - Department Question"
                                   launchButtonText="&#10005;">
 
-                              <p slot="body">Sure you want to remove?</p>
+                              <p slot="body">Remove question:</p>
+                              <p slot="body"><strong>{{question.text}}</strong></p>
+
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="rmDeptQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('removeDeptQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
@@ -339,15 +354,18 @@
                                   title="Remove - Department Question"
                                   launchButtonText="&#10005;">
 
-                              <p slot="body">Sure you want to remove?</p>
+                              <p slot="body">Remove question:</p>
+                              <p slot="body"><strong>{{question.text}}</strong></p>
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="rmDeptQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('removeDeptQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
@@ -388,15 +406,18 @@
                                   title="Remove - Department Question"
                                   launchButtonText="&#10005;">
 
-                              <p slot="body">Sure you want to remove?</p>
+                              <p slot="body">Remove question:</p>
+                              <p slot="body"><strong>{{question.text}}</strong></p>
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="rmDeptQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('removeDeptQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
@@ -437,15 +458,18 @@
                                   title="Remove - Department Question"
                                   launchButtonText="&#10005;">
 
-                              <p slot="body">Sure you want to remove?</p>
+                              <p slot="body">Remove question:</p>
+                              <p slot="body"><strong>{{question.text}}</strong></p>
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="rmDeptQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('removeDeptQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
@@ -455,7 +479,6 @@
                         <div class="field-group">
                           <label :for="question.text">{{question.text}}</label>
                           <textarea type="textarea"
-
                                     :id="question.text"
                                     :name="question.text"
                                     :placeholder="question.text"></textarea>
@@ -468,10 +491,7 @@
 
               <div class="group-questions">
                 <div class="title-row">
-                  <h5>
-                    Group Questions
-                    <span>Last Updated: {{timeAgo(groupProfile.updated)}}</span>
-                  </h5>
+                  <h5>Group Questions</h5>
                   <exampleModal ref="addGroupQuestionModal"
                                 title="Add New - Group Question"
                                 launchButtonText="add new">
@@ -513,7 +533,8 @@
                     </fn1-button>
 
                     <fn1-button slot="footer"
-                                title="Cancel">
+                                title="Cancel"
+                                @click.native="closeModal('addGroupQuestionModal')">
                       Cancel
                     </fn1-button>
                   </exampleModal>
@@ -526,36 +547,41 @@
                       <div class="question">
                         <div class="edit-wrapper">
                           <div class="actions">
-                            <exampleModal ref="editDeptQuestionModal"
-                                  title="Edit - Department Question"
+                            <exampleModal ref="editGroupQuestionModal"
+                                  title="Edit - Group Question"
                                   launchButtonText="edit">
 
                               <p slot="body">Lets edit it</p>
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="editGroupQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('editGroupQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
 
-                            <exampleModal ref="removeDeptQuestionModal"
-                                  title="Remove - Department Question"
+                            <exampleModal ref="removeGroupQuestionModal"
+                                  title="Remove - Group Question"
                                   launchButtonText="&#10005;">
 
-                              <p slot="body">Sure you want to remove?</p>
+                              <p slot="body">Remove question:</p>
+                              <p slot="body"><strong>{{question.text}}</strong></p>
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="rmGroupQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('removeGroupQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
@@ -581,36 +607,41 @@
                       <div class="question">
                         <div class="edit-wrapper">
                           <div class="actions">
-                            <exampleModal ref="editDeptQuestionModal"
-                                  title="Edit - Department Question"
+                            <exampleModal ref="editGroupQuestionModal"
+                                  title="Edit - Group Question"
                                   launchButtonText="edit">
 
                               <p slot="body">Lets edit it</p>
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="editGroupQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('editGroupQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
 
-                            <exampleModal ref="removeDeptQuestionModal"
-                                  title="Remove - Department Question"
+                            <exampleModal ref="removeGroupQuestionModal"
+                                  title="Remove - Group Question"
                                   launchButtonText="&#10005;">
 
-                              <p slot="body">Sure you want to remove?</p>
+                              <p slot="body">Remove question:</p>
+                              <p slot="body"><strong>{{question.text}}</strong></p>
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="rmGroupQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('removeGroupQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
@@ -630,36 +661,41 @@
                       <div class="question">
                         <div class="edit-wrapper">
                           <div class="actions">
-                            <exampleModal ref="editDeptQuestionModal"
-                                  title="Edit - Department Question"
+                            <exampleModal ref="editGroupQuestionModal"
+                                  title="Edit - Group Question"
                                   launchButtonText="edit">
 
                               <p slot="body">Lets edit it</p>
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="editGroupQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('editGroupQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
 
-                            <exampleModal ref="removeDeptQuestionModal"
-                                  title="Remove - Department Question"
+                            <exampleModal ref="removeGroupQuestionModal"
+                                  title="Remove - Group Question"
                                   launchButtonText="&#10005;">
 
-                              <p slot="body">Sure you want to remove?</p>
+                              <p slot="body">Remove question:</p>
+                              <p slot="body"><strong>{{question.text}}</strong></p>
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="rmGroupQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('removeGroupQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
@@ -678,36 +714,41 @@
                       <div class="question">
                         <div class="edit-wrapper">
                           <div class="actions">
-                            <exampleModal ref="editDeptQuestionModal"
-                                  title="Edit - Department Question"
+                            <exampleModal ref="editGroupQuestionModal"
+                                  title="Edit - Group Question"
                                   launchButtonText="edit">
 
                               <p slot="body">Lets edit it</p>
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="editGroupQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('editGroupQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
 
-                            <exampleModal ref="removeDeptQuestionModal"
-                                  title="Remove - Department Question"
+                            <exampleModal ref="removeGroupQuestionModal"
+                                  title="Remove - Group Question"
                                   launchButtonText="&#10005;">
 
-                              <p slot="body">Sure you want to remove?</p>
+                              <p slot="body">Remove question:</p>
+                              <p slot="body"><strong>{{question.text}}</strong></p>
 
                               <fn1-button slot="footer"
-                                          title="Confirm">
+                                          title="Confirm"
+                                          @click.native="rmGroupQuestion(i)">
                                 Confirm
                               </fn1-button>
 
                               <fn1-button slot="footer"
-                                          title="Cancel">
+                                          title="Cancel"
+                                          @click.native="closeModal('removeGroupQuestionModal', i)">
                                 Cancel
                               </fn1-button>
                             </exampleModal>
@@ -808,42 +849,7 @@ export default {
   watch: {
     selectedDept: function(val, oldVal) {
       if(val !== oldVal) {
-        this.getGroups();
-
-        this.deptQuestions  = [],
-        this.groupQuestions = [],
-        this.groupProfile   = [],
-        this.selectedGroup  = null;
-
-        this.getDeptProfile()
-        .then((resolve) => {
-          console.log(resolve);
-          this.deptProfile = resolve;
-
-          if(resolve.questions !== null) {
-            let parsedDeptQs = JSON.parse(resolve.questions);
-            this.deptQuestions = parsedDeptQs;
-          }
-
-          this.getDeptServiceIDs()
-          .then((resolve) => {
-            console.log(`%c getDeptServiceIDs 👌 `, this.consoleLog.success);
-
-            this.getAvailDeptServices()
-            .then((resolve) => {
-              this.availDeptServices = resolve;
-              console.log(`%c availDeptServices 👌 `, this.consoleLog.success);
-            });
-          });
-
-          console.log(`%c getDeptProfile 👌 `, this.consoleLog.success);
-        }, (reject) => {
-          this.deptProfile = [],
-          this.deptServiceIDs = [],
-          this.availDeptServices = [];
-
-          console.log(`%c getDeptProfile 🛑 `, this.consoleLog.error);
-        });
+        this.loadDeptInfo();
       }
     },
     selectedGroup: function(val, oldVal) {
@@ -935,6 +941,42 @@ export default {
     },
   },
   methods: {
+    loadDeptInfo() {
+      this.getGroups();
+      this.deptQuestions  = [],
+      this.groupQuestions = [],
+      this.groupProfile   = [],
+      this.selectedGroup  = null;
+
+      this.getDeptProfile()
+      .then((resolve) => {
+        this.deptProfile = resolve;
+
+        if(resolve.questions !== null) {
+          let parsedDeptQs = JSON.parse(resolve.questions);
+          this.deptQuestions = parsedDeptQs;
+        }
+
+        this.getDeptServiceIDs()
+        .then((resolve) => {
+          console.log(`%c getDeptServiceIDs 👌 `, this.consoleLog.success);
+
+          this.getAvailDeptServices()
+          .then((resolve) => {
+            this.availDeptServices = resolve;
+            console.log(`%c availDeptServices 👌 `, this.consoleLog.success);
+          });
+        });
+
+        console.log(`%c getDeptProfile 👌 `, this.consoleLog.success);
+      }, (reject) => {
+        this.deptProfile = [],
+        this.deptServiceIDs = [],
+        this.availDeptServices = [];
+
+        console.log(`%c getDeptProfile 🛑 `, this.consoleLog.error);
+      });
+    },
     getServices() {
       return new Promise((resolve,reject) => {
         this.$axios
@@ -1091,6 +1133,85 @@ export default {
         "questions": payload
       })
       .then(response => {
+        this.$refs.addDeptQuestionModal.showModal = false;
+
+        this.getDeptProfile()
+        .then((resolve) => {
+          this.deptProfile = resolve;
+
+          if(resolve.questions !== null) {
+            let parsedDeptQs = JSON.parse(resolve.questions);
+            this.deptQuestions = parsedDeptQs;
+          }
+
+          this.getDeptServiceIDs()
+          .then((resolve) => {
+            console.log(`%c getDeptServiceIDs 👌 `, this.consoleLog.success);
+
+            this.getAvailDeptServices()
+            .then((resolve) => {
+              this.availDeptServices = resolve;
+              console.log(`%c availDeptServices 👌 `, this.consoleLog.success);
+            });
+          });
+
+          console.log(`%c getDeptProfile 👌 `, this.consoleLog.success);
+        }, (reject) => {
+          this.deptProfile = [],
+          this.deptServiceIDs = [],
+          this.availDeptServices = [];
+
+          console.log(`%c getDeptProfile 🛑 `, this.consoleLog.error);
+        });
+
+        console.log(`%c addDeptQuestion 👌 `, this.consoleLog.success)
+      })
+      .catch(e => {
+        console.log(`%c addDeptQuestion 🛑 `, this.consoleLog.error)
+      })
+    },
+    rmDeptQuestion(i) {
+      this.deptQuestions.splice(i, 1);
+
+      let deptID = this.deptProfile.id,
+      payload    = JSON.stringify(this.deptQuestions);
+
+      this.$axios
+      .patch(`${process.env.api}${process.env.profile}${deptID}/`,{
+        "questions": payload
+      })
+      .then(response => {
+        this.$refs.removeDeptQuestionModal[i].showModal = false;
+
+        this.getDeptProfile()
+        .then((resolve) => {
+          this.deptProfile = resolve;
+
+          if(resolve.questions !== null) {
+            let parsedDeptQs = JSON.parse(resolve.questions);
+            this.deptQuestions = parsedDeptQs;
+          }
+
+          this.getDeptServiceIDs()
+          .then((resolve) => {
+            console.log(`%c getDeptServiceIDs 👌 `, this.consoleLog.success);
+
+            this.getAvailDeptServices()
+            .then((resolve) => {
+              this.availDeptServices = resolve;
+              console.log(`%c availDeptServices 👌 `, this.consoleLog.success);
+            });
+          });
+
+          console.log(`%c getDeptProfile 👌 `, this.consoleLog.success);
+        }, (reject) => {
+          this.deptProfile = [],
+          this.deptServiceIDs = [],
+          this.availDeptServices = [];
+
+          console.log(`%c getDeptProfile 🛑 `, this.consoleLog.error);
+        });
+
         console.log(`%c addDeptQuestion 👌 `, this.consoleLog.success)
       })
       .catch(e => {
@@ -1123,11 +1244,101 @@ export default {
         "questions": payload
       })
       .then(response => {
+        this.$refs.addGroupQuestionModal.showModal = false;
+
+        this.getGroupProfile()
+        .then((resolve) => {
+          this.groupProfile = resolve;
+
+          if(resolve.questions !== null) {
+            let parsedGroupQs = JSON.parse(resolve.questions);
+            this.groupQuestions = parsedGroupQs;
+          }
+
+          this.getGroupServiceIDs()
+          .then((resolve) => {
+            console.log(`%c getGroupServiceIDs 👌 `, this.consoleLog.success);
+
+            this.getAvailGroupServices()
+            .then((resolve) => {
+              this.availGroupServices = resolve;
+              console.log(`%c availGroupServices 👌 `, this.consoleLog.success);
+            });
+          });
+
+          console.log(`%c getGroupProfile 👌 `, this.consoleLog.success);
+        }, (reject) => {
+          this.groupProfile = [],
+          this.groupServiceIDs = [],
+          this.availGroupServices = [];
+
+          console.log(`%c getGroupProfile 🛑 `, this.consoleLog.error);
+        });
+
+
         console.log(`%c addGroupQuestion 👌 `, this.consoleLog.success)
       })
       .catch(e => {
         console.log(`%c addGroupQuestion 🛑 `, this.consoleLog.error)
       })
+    },
+    rmGroupQuestion(i) {
+      this.groupQuestions.splice(i, 1);
+
+      let groupID = this.groupProfile.id,
+      payload     = JSON.stringify(this.groupQuestions);
+
+      this.$axios
+      .patch(`${process.env.api}${process.env.profile}${groupID}/`,{
+        "questions": payload
+      })
+      .then(response => {
+        this.$refs.removeGroupQuestionModal[i].showModal = false;
+
+        this.getGroupProfile()
+        .then((resolve) => {
+          this.groupProfile = resolve;
+
+          if(resolve.questions !== null) {
+            let parsedGroupQs = JSON.parse(resolve.questions);
+            this.groupQuestions = parsedGroupQs;
+          }
+
+          this.getGroupServiceIDs()
+          .then((resolve) => {
+            console.log(`%c getGroupServiceIDs 👌 `, this.consoleLog.success);
+
+            this.getAvailGroupServices()
+            .then((resolve) => {
+              this.availGroupServices = resolve;
+              console.log(`%c availGroupServices 👌 `, this.consoleLog.success);
+            });
+          });
+
+          console.log(`%c getGroupProfile 👌 `, this.consoleLog.success);
+        }, (reject) => {
+          this.groupProfile = [],
+          this.groupServiceIDs = [],
+          this.availGroupServices = [];
+
+          console.log(`%c getGroupProfile 🛑 `, this.consoleLog.error);
+        });
+
+        console.log(`%c rmGroupQuestion 👌 `, this.consoleLog.success)
+      })
+      .catch(e => {
+        console.log(`%c rmGroupQuestion 🛑 `, this.consoleLog.error)
+      })
+    },
+    closeModal(modalRef, i) {
+      if(modalRef === 'addDeptQuestionModal')
+        this.$refs.addDeptQuestionModal.showModal = false;
+      else if (modalRef === 'addGroupQuestionModal')
+        this.$refs.addGroupQuestionModal.showModal = false;
+      else if(modalRef === 'removeDeptQuestionModal')
+        this.$refs.removeDeptQuestionModal[i].showModal = false;
+      else if(modalRef === 'removeGroupQuestionModal')
+        this.$refs.removeGroupQuestionModal[i].showModal = false;
     }
   }
 }
@@ -1408,7 +1619,7 @@ export default {
 
         .inside-wrapper {
           // background-color: red;
-          height: calc(100% - 100px);
+          height: calc(100% - 80px);
           overflow-y: scroll;
         }
 
