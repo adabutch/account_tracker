@@ -33,7 +33,7 @@ class AccountRequestViewSet(viewsets.ModelViewSet):
             # to facilitate creating ServiceRequests
             service = Service.objects.get(id=service_id)
             existing = ServiceRequest.objects.filter(service=service, account_request=ar)
-            print(existing)
+            # print(existing)
             if not existing.count:
                 sr = ServiceRequest()
                 sr.account_request = ar
