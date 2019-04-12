@@ -89,7 +89,7 @@
                         <div class="edit-wrapper">
                           <div class="actions">
                             <fn1-button
-                              @click.native="addService('dept', s, i)">
+                              @click.native="addDeptService(s, i)">
                               + add
                             </fn1-button>
                           </div>
@@ -116,7 +116,7 @@
                                       title="Remove - Dept Service"
                                       launchButtonText="&#10005;">
 
-                          <p slot="body">{{i}} Remove <strong>{{s.name}}</strong> from <strong>{{deptProfile.name}}'s Services Profile</strong>?</p>
+                          <p slot="body">Remove <strong>{{s.name}}</strong> from <strong>{{deptProfile.name}}'s Services Profile</strong>?</p>
 
                           <fn1-button slot="footer"
                                       title="Confirm - Remove Service"
@@ -159,7 +159,7 @@
                         <div class="edit-wrapper">
                           <div class="actions">
                             <fn1-button
-                              @click.native="addService('group', s, i)">
+                              @click.native="addGroupService(s)">
                               + add
                             </fn1-button>
                           </div>
@@ -186,7 +186,7 @@
                                       title="Remove - Group Service"
                                       launchButtonText="&#10005;">
 
-                          <p slot="body">{{i}} Remove <strong>{{s.name}}</strong> from <strong>{{selectedGroup.name}}'s Services Profile</strong>?</p>
+                          <p slot="body">Remove <strong>{{s.name}}</strong> from <strong>{{selectedGroup.name}}'s Services Profile</strong>?</p>
 
                           <fn1-button slot="footer"
                                       title="Confirm - Remove Service"
@@ -1079,16 +1079,20 @@ export default {
         )
       });
     },
-    addService(type, service, i) {
-      alert(JSON.stringify(service));
+    addDeptService(service, i) {
+      let deptID = this.deptProfile.id,
+      serviceID  = service.id;
 
-      if(type === this.deptTypeModal) {
-        alert(JSON.stringify(this.deptProfile));
-        this.deptServicesAddSearch = null;
-      } else if(type === this.groupTypeModal){
-        alert(JSON.stringify(this.groupProfile));
-        this.groupServicesAddSearch = null;
-      }
+      this.$axios
+      .post(`${process.env.api}${process.env.profile}${deptID}/add_service/${serviceID}/`)
+      .then(response => {
+         this.deptServicesAddSearch = null;
+        this.loadDeptInfo();
+        console.log(`%c addDeptService 👌 `, this.consoleLog.success);
+      })
+      .catch(e => {
+        console.log(`%c addDeptService 🛑 `, this.consoleLog.success);
+      });
     },
     removeDeptService(service, i) {
       let deptID = this.deptProfile.id,
@@ -1103,6 +1107,21 @@ export default {
       })
       .catch(e => {
         console.log(`%c removeDeptService 🛑 `, this.consoleLog.success);
+      });
+    },
+    addGroupService(service, i) {
+      let groupID = this.groupProfile.id,
+      serviceID   = service.id;
+
+      this.$axios
+      .post(`${process.env.api}${process.env.profile}${groupID}/add_service/${serviceID}/`)
+      .then(response => {
+        this.groupServicesAddSearch = null;
+        this.loadGroupInfo();
+        console.log(`%c addGroupService 👌 `, this.consoleLog.success);
+      })
+      .catch(e => {
+        console.log(`%c addGroupService 🛑 `, this.consoleLog.success);
       });
     },
     removeGroupService(service, i) {
