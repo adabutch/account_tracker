@@ -68,12 +68,12 @@ export default {
   methods: {},
   computed: {
     ...mapFields([
-      'services.mgrFullProfiles',
-      'services.activeFullServices',
-      'services.activeServiceIDs',
-      'services.activeAcctReqIDs',
-      'services.filterByService',
-      'services.acctReqsByServiceReq'
+      'serviceReqs.mgrFullProfiles',
+      'serviceReqs.activeFullServices',
+      'serviceReqs.activeServiceIDs',
+      'serviceReqs.activeAcctReqIDs',
+      'serviceReqs.filterByService',
+      'serviceReqs.acctReqsByServiceReq'
     ]),
     sortActiveFullServices() {
       let copy = [...this.activeFullServices]

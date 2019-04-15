@@ -9,7 +9,7 @@ import auth         from './modules/auth'
 import createUser   from './modules/createUser'
 import facilities   from './modules/facilities'
 import depts        from './modules/depts'
-import services     from './modules/services'
+import serviceReqs   from './modules/service-requests'
 import subNav       from './modules/subNavigation'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
@@ -118,14 +118,14 @@ export const getters = {
 }
 
 export default {
-  namespaced:   true,
+  namespaced:       true,
   modules: {
-    auth:       auth,
-    createUser: createUser,
-    facilities: facilities,
-    depts:      depts,
-    services:   services,
-    subNav:     subNav,
+    auth:           auth,
+    createUser:     createUser,
+    facilities:     facilities,
+    depts:          depts,
+    serviceReqs:    serviceReqs,
+    subNav:         subNav,
   },
   mutations,
   actions,
