@@ -23,11 +23,15 @@ export default {
 @import '@/assets/style.scss';
 
 .services-wrapper {
+  background: $color-grey-lighter;
+
   /deep/ .page-wrapper {
-    position: relative;
-    top: 115px;
-    padding: 20px;
-    background-color: white;
+    background: $color-grey-lighter;
+    position: fixed;
+    top: 99px;
+    padding: 0;
+    height: 100vh;
+    width: 100%;
   }
 }
 </style>

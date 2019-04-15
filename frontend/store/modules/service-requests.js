@@ -2,11 +2,11 @@ import {
   getField,
   updateField }     from 'vuex-map-fields';
 
-export const servicesState = () => ({
+export const serviceReqsState = () => ({
   // url: /account-requests/
   acctReqServices:      [],
 
-  // url: /services/
+  // url: /service-requests/
   services:             [],
   mgrProfileIDs:        [],
   mgrFullProfiles:      [],
@@ -19,7 +19,7 @@ export const servicesState = () => ({
   acctReqsByServiceReq: [],
 })
 
-const state = () => servicesState();
+const state = () => serviceReqsState();
 
 const getters = {
   getField
@@ -28,7 +28,7 @@ const getters = {
 const mutations = {
   updateField,
   RESET_SERVICES_STATE(state) {
-    Object.assign(state, servicesState())
+    Object.assign(state, serviceReqsState())
   },
   SET_SERVCIES(state, payload) {
     state.services = payload
