@@ -149,7 +149,12 @@
       </div>
 
       <div class="sidebar">
-        <p>Updated: <strong>5 mins ago</strong></p>
+        <p>
+          <strong>Updated:</strong>
+          <small>{{MMDYYYYDateFormat(lastUpdated)}}</small>
+          <small>{{timeAgo(lastUpdated)}}</small>
+        </p>
+
         <div class="status-legend">
           <fn1-badge v-for="s, i in filterStatusLegend"
                      :key="i"
@@ -413,9 +418,18 @@ export default {
     inactiveServicesCount() {
       return this.allServices.filter((s) => s.active == false).length
     },
+    lastUpdated() {
+      if(this.allServices.length) {
+        let copy = [...this.allServices];
+        copy.sort((a,b) =>
+          new Date(b.updated) - new Date(a.updated)
+        );
+        return copy[0].updated
+      }
+    },
     sortServices() {
       let copy = [...this.allServices];
-      return copy.sort(function(a, b) {
+      return copy.sort((a, b) => {
         let nameA = a.name.toUpperCase(),
         nameB     = b.name.toUpperCase();
         return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
@@ -721,6 +735,15 @@ export default {
       width: 200px;
 
       p {
+        margin: 0 0 10px 0;
+
+        small {
+          display: block;
+          font-size: 14px;
+          color: #8f8f8f;
+          font-weight: 600;
+        }
+
         &:first-of-type {
           margin: 0 0 10px 0;
         }
