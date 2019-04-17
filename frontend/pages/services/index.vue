@@ -170,7 +170,7 @@
       </div>
 
       <div class="results" v-if="allServices">
-        <div v-for="s, i in sortServices"
+        <div v-for="s, i in filteredServices"
              class="result"
              :class="{'active': s.active, 'inactive': !s.active}">
 
@@ -362,19 +362,12 @@ export default {
     exampleSelect
   },
   mounted() {
-    this.getServices()
-    .then((resolve) => {
-      this.allServices = resolve;
-      console.log(`%c getServices 👌 `, this.consoleLog.success);
-    }, (reject) => {
-      console.log(reject);
-      console.log(`%c getServices 🛑 `, this.errLogStyle);
-    });
+    this.loadServices();
   },
   data() {
     return {
       allServices:   [],
-      serviceSearch: null,
+      serviceSearch: '',
       serviceDeploymentOptions: [
         {text: 'Desktop', value: 'desktop'},
         {text: 'Mobile',  value: 'mobile'},
@@ -427,14 +420,19 @@ export default {
         return copy[0].updated
       }
     },
-    sortServices() {
-      let copy = [...this.allServices];
-      return copy.sort((a, b) => {
+    filteredServices() {
+      return this.allServices
+      .filter(service => {
+        let serviceName   = service.name.toLowerCase();
+
+        return serviceName.includes(this.serviceSearch.toLowerCase())
+      })
+      .sort((a, b) => {
         let nameA = a.name.toUpperCase(),
         nameB     = b.name.toUpperCase();
         return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
       });
-    }
+    },
   },
   methods: {
     closeModal(modalRef, i) {
@@ -465,17 +463,7 @@ export default {
       .post(`${process.env.api}${process.env.service}`,fD)
       .then((res) => {
         this.$refs.addServiceModal.showModal = false;
-
-        this.getServices()
-        .then((resolve) => {
-          this.allServices = resolve;
-          console.log(`%c getServices 👌 `, this.consoleLog.success);
-        }, (reject) => {
-          console.log(reject);
-          console.log(`%c getServices 🛑 `, this.errLogStyle);
-        });
-
-        console.log(res);
+        this.loadServices();
         console.log(`%c addService 👌 `, this.consoleLog.success);
       })
       .catch((e) => {
@@ -488,17 +476,7 @@ export default {
       .delete(`${process.env.api}${process.env.service}${s.id}/`)
       .then((res) => {
         this.$refs.removeServiceModal[i].showModal = false;
-
-        this.getServices()
-        .then((resolve) => {
-          this.$store.dispatch('services/setServices', resolve);
-          console.log(`%c getServices 👌 `, this.consoleLog.success);
-        }, (reject) => {
-          console.log(reject);
-          console.log(`%c getServices 🛑 `, this.errLogStyle);
-        });
-
-        console.log(res);
+        this.loadServices();
         console.log(`%c removeService 👌 `, this.consoleLog.success);
       })
       .catch((e) => {
@@ -516,6 +494,16 @@ export default {
         .catch((e) => {
           reject(e);
         });
+      });
+    },
+    loadServices(){
+      this.getServices()
+      .then((resolve) => {
+        this.allServices = resolve;
+        console.log(`%c loadServices 👌 `, this.consoleLog.success);
+      }, (reject) => {
+        console.log(reject);
+        console.log(`%c loadServices 🛑 `, this.errLogStyle);
       });
     },
   },
