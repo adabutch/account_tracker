@@ -5,7 +5,6 @@ from change_request.viewsets import ChangeRequestViewSet
 from termination_request.viewsets import TerminationRequestViewSet
 from service_request.viewsets import ServiceRequestViewSet
 from service.viewsets import ServiceViewSet
-from service_manager.viewsets import ServiceManagerViewSet
 from default_profile.viewsets import DefaultProfileViewSet
 from action.viewsets import ActionViewSet
 
@@ -19,4 +18,3 @@ router.register(r'change-request', ChangeRequestViewSet)
 router.register(r'termination-request', TerminationRequestViewSet)
 router.register(r'service-request', ServiceRequestViewSet)
 router.register(r'service', ServiceViewSet)
-router.register(r'service-manager', ServiceManagerViewSet)

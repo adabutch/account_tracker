@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'employee',
     'default_profile',
     'service',
-    'service_manager',
     'service_request',
     'account_request',
     'change_request',
