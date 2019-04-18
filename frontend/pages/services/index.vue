@@ -15,6 +15,130 @@
         <h4>Total Services: <strong>{{allServices.length}}</strong></h4>
 
         <exampleModal ref="addServiceModal"
+                      class="addServiceModal"
+                      title="Add - Service"
+                      launchButtonText="+ add service">
+
+              <template slot="body">
+                <form>
+                  <div class="left">
+                    <exampleSelect v-model="formDeployment"
+                                 label="Deployment"
+                                 name="deployment"
+                                 id="deployment"
+                                 :options="serviceDeploymentOptions" />
+
+                    <div class="form-group inline">
+                      <fieldset>
+                        <legend>Active?</legend>
+                        <div v-for="r, i in tfRadios">
+                          <input type="radio"
+                                 name="active-radio"
+                                 id="active-radio"
+                                 :value="r.value"
+                                 v-model="formActive">
+                          <label for="active-radio">{{r.text}}</label>
+                        </div>
+                      </fieldset>
+                    </div>
+
+                    <div class="form-group inline">
+                      <fieldset>
+                        <legend>Standard Build?</legend>
+                        <div v-for="r, i in tfRadios">
+                          <input type="radio"
+                                 name="standard-build"
+                                 id="standard-build"
+                                 :value="r.value"
+                                 v-model="formBuild">
+                          <label for="standard-build">{{r.text}}</label>
+                        </div>
+                      </fieldset>
+                    </div>
+
+                    <div class="form-group inline">
+                      <fieldset>
+                        <legend>Public?</legend>
+                        <div v-for="r, i in tfRadios">
+                          <input type="radio"
+                                 name="public"
+                                 id="public"
+                                 :value="r.value"
+                                 v-model="formPublic">
+                          <label for="public">{{r.text}}</label>
+                        </div>
+                      </fieldset>
+                    </div>
+
+                    <div class="form-group inline">
+                      <fieldset>
+                        <legend>Internal?</legend>
+                        <div v-for="r, i in tfRadios">
+                          <input type="radio"
+                                 name="internal"
+                                 id="internal"
+                                 :value="r.value"
+                                 v-model="formInternal">
+                          <label for="internal">{{r.text}}</label>
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+
+                  <div class="right">
+                    <fn1-input v-model="formName"
+                               label="Name"
+                               placeholder="Name"
+                               name="name"
+                               id="name" />
+
+                    <fn1-input v-model="formUrl"
+                               label="URL"
+                               placeholder="URL"
+                               name="formUrl"
+                               id="formUrl" />
+
+                    <div class="row">
+                      <fn1-input v-model="formDeveloper"
+                               label="Developer"
+                               placeholder="Developer"
+                               name="developer"
+                               id="developer" />
+
+                      <fn1-input v-model="formVersion"
+                               label="Version"
+                               placeholder="Version"
+                               name="version"
+                               id="version" />
+                    </div>
+
+                    <div class="field-group">
+                      <label for="description">Description</label>
+                      <textarea v-model="formDescription"
+                                type="textarea"
+                                id="description"
+                                placeholder="An optional Service description."></textarea>
+                    </div>
+                  </div>
+                </form>
+              </template>
+
+              <fn1-button slot="footer"
+                          class="confirm"
+                          title="Confirm - Remove Service"
+                          @click.native="addService()">
+                Confirm
+              </fn1-button>
+
+              <fn1-button slot="footer"
+                          class="cancel"
+                          title="Cancel - Remove Service"
+                          @click.native="closeModal('addServiceModal')">
+                Cancel
+              </fn1-button>
+            </exampleModal>
+
+        <!-- <exampleModal ref="addServiceModal"
                       title="Add - Service"
                       launchButtonText="+ add service">
 
@@ -147,7 +271,7 @@
                       @click.native="closeModal('addServiceModal')">
             Cancel
           </fn1-button>
-        </exampleModal>
+        </exampleModal> -->
       </div>
 
       <div class="sidebar">
@@ -587,6 +711,7 @@ export default {
     },
     cancelAddServiceManager() {
       this.addingServiceManager = false;
+      this.serviceManagerSearch = '';
     },
     removeServiceManager(manager, service, i) {
       let serviceID = service.id,
@@ -1086,7 +1211,8 @@ export default {
     }
   }
 
-  .editServiceModal {
+  .editServiceModal,
+  .addServiceModal {
     /deep/ .modal-wrapper {
       .modal-container {
         width: 675px;
