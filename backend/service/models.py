@@ -1,5 +1,6 @@
 from django.db import models
 # from default_profile.models import DefaultProfile
+from django.contrib.auth.models import User
 
 
 class Service(models.Model):
@@ -29,6 +30,8 @@ class Service(models.Model):
     # eventually internal support will be tracked via ServiceManager
     primary_poc = models.CharField(max_length=200, blank=True, null=True)
     secondary_poc = models.CharField(max_length=200, blank=True, null=True)
+
+    managers = models.ManyToManyField(User)
 
     # TODO: this could be its own model / foreignkey
     # who develops / maintains the software?
