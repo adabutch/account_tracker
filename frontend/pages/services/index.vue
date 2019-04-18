@@ -460,7 +460,7 @@
                   </div>
 
                   <div class="right">
-                    <fn1-input v-model="formEditName"
+                    <fn1-input v-model.lazy="formEditName"
                                label="Name"
                                placeholder="Name"
                                name="name"
