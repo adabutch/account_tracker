@@ -70,7 +70,8 @@ export default {
       this.showModal = false
     },
     displayModal() {
-      this.showModal = true
+      this.showModal = true;
+      this.$emit('displayModal', 'sweet')
     },
   },
 }

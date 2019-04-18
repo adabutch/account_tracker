@@ -135,12 +135,14 @@
           </template>
 
           <fn1-button slot="footer"
+                      class="confirm"
                       title="Confirm - Remove Service"
                       @click.native="addService()">
             Confirm
           </fn1-button>
 
           <fn1-button slot="footer"
+                      class="cancel"
                       title="Cancel - Remove Service"
                       @click.native="closeModal('addServiceModal')">
             Cancel
@@ -174,25 +176,65 @@
              class="result"
              :class="{'active': s.active, 'inactive': !s.active}">
 
-          <div>
+          <div class="col">
             <p class="label">{{s.name}}</p>
           </div>
 
-          <div>
+          <div class="col">
             <p class="label">Last Update</p>
             <p v-if="s.updated">{{MMDYYYYDateFormat(s.updated)}}</p>
             <p v-if="s.updated">{{timeAgo(s.updated)}}</p>
           </div>
 
-          <div class="actions">
+          <div class="col">
+            <p class="label">
+              Manager<template v-if="s.managers.length > 1">s</template>
+            </p>
+            <template v-if="s.managers.length === 0">
+              <p>--</p>
+            </template>
+            <template v-for="sm, i in s.managers">
+              <p>{{sm.first_name}} {{sm.last_name}}</p>
+            </template>
+          </div>
+
+          <div class="col actions">
             <exampleModal ref="editServiceModal"
-                          title="Edit - Service"
+                          class="editServiceModal"
+                          :title="`Edit - Service: ${s.name}`"
+                          @displayModal="editModalHandler(s, i)"
                           launchButtonText="edit">
 
-              <template slot="body">
-                <form>
-                  <!-- <div class="row">
-                    <exampleSelect v-model="formDeployment"
+              <template slot="body" ref="editServiceFormBody">
+                <template v-if="addingServiceManager">
+                  <div class="search-wrapper">
+                    <fn1-input v-model="serviceManagerSearch"
+                               label="Search Service Managers"
+                               autocomplete="off"
+                               placeholder="Search Service Managers"
+                               name="service-manager-search"
+                               id="service-manager-search" />
+
+                      <ul class="search-results" v-if="serviceManagerSearch">
+                        <li v-for="m, i in filteredEmployees"
+                            :key="i">
+                          <div class="edit-wrapper">
+                            <div class="actions">
+                              <fn1-button
+                                @click.native="addServiceManager(s, m)">
+                                + add
+                              </fn1-button>
+                            </div>
+                          </div>
+                          <strong>{{m.id}}:</strong>&nbsp;{{m.first_name}}
+                        </li>
+                      </ul>
+                  </div>
+                </template>
+
+                <form v-show="!addingServiceManager">
+                  <div class="left">
+                    <exampleSelect v-model="formEditDeployment"
                                  label="Deployment"
                                  name="deployment"
                                  id="deployment"
@@ -206,7 +248,7 @@
                                  name="active-radio"
                                  id="active-radio"
                                  :value="r.value"
-                                 v-model="formActive">
+                                 v-model="formEditActive">
                           <label for="active-radio">{{r.text}}</label>
                         </div>
                       </fieldset>
@@ -220,7 +262,7 @@
                                  name="standard-build"
                                  id="standard-build"
                                  :value="r.value"
-                                 v-model="formBuild">
+                                 v-model="formEditBuild">
                           <label for="standard-build">{{r.text}}</label>
                         </div>
                       </fieldset>
@@ -234,7 +276,7 @@
                                  name="public"
                                  id="public"
                                  :value="r.value"
-                                 v-model="formPublic">
+                                 v-model="formEditPublic">
                           <label for="public">{{r.text}}</label>
                         </div>
                       </fieldset>
@@ -248,74 +290,114 @@
                                  name="internal"
                                  id="internal"
                                  :value="r.value"
-                                 v-model="formInternal">
+                                 v-model="formEditInternal">
                           <label for="internal">{{r.text}}</label>
                         </div>
                       </fieldset>
                     </div>
-                  </div> -->
 
-                  <fn1-input v-model="s.name"
-                             label="Name"
-                             placeholder="Name"
-                             name="name"
-                             id="name" />
+                    <ul>
+                      <li>
+                        <span class="label">Managers</span>
 
-                  <!-- <fn1-input v-model="formUrl"
-                             label="URL"
-                             placeholder="URL"
-                             name="formUrl"
-                             id="formUrl" />
+                        <fn1-button @click.native="showAddServiceManager(s,i)">
+                          Add
+                        </fn1-button>
+                      </li>
 
-                  <div class="row">
-                    <fn1-input v-model="formDeveloper"
-                             label="Developer"
-                             placeholder="Developer"
-                             name="developer"
-                             id="developer" />
+                      <template v-for="m, i in s.managers">
+                        <li>
+                          {{m.first_name}} {{m.last_name}}
 
-                    <fn1-input v-model="formVersion"
-                             label="Version"
-                             placeholder="Version"
-                             name="version"
-                             id="version" />
+                          <exampleModal ref="removeServiceManagerModal"
+                                        class="removeServiceManagerModal"
+                                        title="Remove - Service Manager"
+                                        launchButtonText="&#10005;">
+
+                            <p slot="body">Remove <strong>{{m.id}}: {{m.first_name}} {{m.last_name}}</strong> as a manager from <strong>{{s.name}}</strong>?</p>
+
+                            <fn1-button slot="footer"
+                                        class="confirm"
+                                        title="Confirm - Remove Service"
+                                        @click.native="removeServiceManager(m, s, i)">
+                              Confirm
+                            </fn1-button>
+
+                            <fn1-button slot="footer"
+                                        class="cancel"
+                                        title="Cancel - Remove Service"
+                                        @click.native="closeModal('removeServiceManagerModal', i)">
+                              Cancel
+                            </fn1-button>
+                          </exampleModal>
+                        </li>
+                      </template>
+                    </ul>
                   </div>
 
-                  <div class="row">
-                    <fn1-input v-model="formPrimaryPOC"
-                             label="Primary POC"
-                             placeholder="Primary Point of Contact"
-                             name="primary-poc"
-                             id="primary-poc" />
+                  <div class="right">
+                    <fn1-input v-model="formEditName"
+                               label="Name"
+                               placeholder="Name"
+                               name="name"
+                               id="name" />
 
-                    <fn1-input v-model="formSecondaryPOC"
-                               label="Secondary POC"
-                               placeholder="Secondary Point of Contact"
-                               name="secondary-poc"
-                               id="secondary-poc" />
+                    <fn1-input v-model="formEditUrl"
+                               label="URL"
+                               placeholder="URL"
+                               name="formUrl"
+                               id="formUrl" />
+
+                    <div class="row">
+                      <fn1-input v-model="formEditDeveloper"
+                               label="Developer"
+                               placeholder="Developer"
+                               name="developer"
+                               id="developer" />
+
+                      <fn1-input v-model="formEditVersion"
+                               label="Version"
+                               placeholder="Version"
+                               name="version"
+                               id="version" />
+                    </div>
+
+                    <div class="field-group">
+                      <label for="description">Description</label>
+                      <textarea v-model="formEditDescription"
+                                type="textarea"
+                                id="description"
+                                placeholder="An optional Service description."></textarea>
+                    </div>
                   </div>
-
-                  <div class="field-group">
-                    <label for="description">Description</label>
-                    <textarea v-model="formDescription"
-                              type="textarea"
-                              id="description"
-                              placeholder="An optional Service description."></textarea>
-                  </div> -->
                 </form>
               </template>
 
-              <fn1-button slot="footer"
-                          title="Confirm - Edit Service"
-                          @click.native="editService(s, i)">
-                Confirm
-              </fn1-button>
+              <template v-if="addingServiceManager">
+                <fn1-button slot="footer"
+                            class="cancel"
+                            title="Cancel - Add Service Manager"
+                            @click.native="cancelAddServiceManager()">
+                  Cancel - Add Service Manager
+                </fn1-button>
+              </template>
 
-              <fn1-button slot="footer"
-                          title="Cancel - Edit Service"
-                          @click.native="closeModal('editServiceModal', i)">
-                Cancel
-              </fn1-button>
+              <template v-if="!addingServiceManager">
+                <fn1-button slot="footer"
+                            class="confirm"
+                            title="Confirm - Edit Service"
+                            @click.native="editService(i)">
+                  Confirm
+                </fn1-button>
+
+                <fn1-button slot="footer"
+                            class="cancel"
+                            title="Cancel - Edit Service"
+                            @click.native="closeModal('editServiceModal', i)">
+                  Cancel
+                </fn1-button>
+              </template>
+              <p slot="footer">Last Updated: <small>{{timeAgo(s.updated)}}</small></p>
             </exampleModal>
 
             <exampleModal ref="removeServiceModal"
@@ -325,12 +407,14 @@
               <p slot="body">Remove <strong>{{s.name}}</strong>?</p>
 
               <fn1-button slot="footer"
+                          class="confirm"
                           title="Confirm - Remove Service"
                           @click.native="removeService(s, i)">
                 Confirm
               </fn1-button>
 
               <fn1-button slot="footer"
+                          class="cancel"
                           title="Cancel - Remove Service"
                           @click.native="closeModal('removeServiceModal', i)">
                 Cancel
@@ -366,8 +450,13 @@ export default {
   },
   data() {
     return {
-      allServices:   [],
-      serviceSearch: '',
+      allServices:      [],
+      serviceManagers:  [],
+      addingServiceManager: false,
+      serviceManagerSearch: '',
+      employees:        [],
+      editServiceBodyHeight: null,
+      serviceSearch:    '',
       serviceDeploymentOptions: [
         {text: 'Desktop', value: 'desktop'},
         {text: 'Mobile',  value: 'mobile'},
@@ -377,7 +466,7 @@ export default {
         { text: 'True',  value: true },
         { text: 'False', value: false }
       ],
-      // Form
+      // Form - New
       formActive:       null,
       formName:         null,
       formPublic:       null,
@@ -387,9 +476,21 @@ export default {
       formBuild:        null,
       formInternal:     null,
       formVersion:      null,
-      formPrimaryPOC:   null,
-      formSecondaryPOC: null,
       formDeveloper:    null,
+
+      // Form - Edit
+      formEditID:           null,
+      formEditName:         null,
+      formEditManagers:     null,
+      formEditDescription:  null,
+      formEditUrl:          null,
+      formEditActive:       null,
+      formEditDeployment:   null,
+      formEditBuild:        null,
+      formEditPublic:       null,
+      formEditInternal:     null,
+      formEditVersion:      null,
+      formEditDeveloper:    null,
     }
   },
   computed: {
@@ -398,6 +499,9 @@ export default {
       'consoleLog',
       'requestStatuses',
     ]),
+    editServiceFormBody() {
+      this.editServiceBodyHeight = this.$refs.editServiceFormBody.clientHeight;
+    },
     filterStatusLegend() {
       return this.requestStatuses
       .filter((q) => q !== 'new')
@@ -433,8 +537,73 @@ export default {
         return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
       });
     },
+    servicesWithManager() {
+      let servicesXManager = [];
+
+      this.allServices.forEach((s, i) => {
+        this.serviceManagers.forEach((m, i) => {
+          if(s.id === m.service) {
+            delete m.id
+            delete m.created
+            masterServices.push({...s,...m})
+          }
+        })
+      });
+      return servicesXManager;
+    },
+    filteredEmployees() {
+      return this.employees
+      .filter(e => {
+        let firstName  = e.first_name.toLowerCase(),
+        lastName       = e.last_name.toLowerCase(),
+        userName       = e.username.toLowerCase();
+
+        return firstName.includes(this.serviceManagerSearch.toLowerCase()) ||
+               lastName.includes(this.serviceManagerSearch.toLowerCase()) ||
+               userName.includes(this.serviceManagerSearch.toLowerCase())
+      })
+    },
   },
   methods: {
+    showAddServiceManager() {
+      this.addingServiceManager = true;
+    },
+    addServiceManager(service,manager) {
+      let serviceID = service.id,
+      managerID     = manager.id;
+
+      this.$axios
+      .post(`${process.env.api}${process.env.service}${serviceID }/add_manager/${managerID}/`)
+      .then((res) => {
+        this.addingServiceManager = false;
+        this.loadServices();
+        console.log(res);
+        console.log(`%c addServiceManager 👌 `, this.consoleLog.success);
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log(`%c addServiceManager 🛑 `, this.errLogStyle);
+      });
+    },
+    cancelAddServiceManager() {
+      this.addingServiceManager = false;
+    },
+    removeServiceManager(manager, service, i) {
+      let serviceID = service.id,
+      managerID     = manager.id;
+
+      this.$axios
+      .post(`${process.env.api}${process.env.service}${serviceID }/remove_manager/${managerID}/`)
+      .then((res) => {
+        this.loadServices();
+        console.log(res);
+        console.log(`%c removeServiceManager 👌 `, this.consoleLog.success);
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log(`%c removeServiceManager 🛑 `, this.errLogStyle);
+      });
+    },
     closeModal(modalRef, i) {
       if(modalRef === 'editServiceModal')
         this.$refs.editServiceModal[i].showModal = false;
@@ -442,9 +611,10 @@ export default {
         this.$refs.removeServiceModal[i].showModal = false;
       if(modalRef === 'addServiceModal')
         this.$refs.addServiceModal.showModal = false;
+      if(modalRef === 'removeServiceManagerModal')
+        this.$refs.removeServiceManagerModal[i].showModal = false;
     },
     addService() {
-
       let fD = new FormData();
       fD.append(`active`,         this.formActive);
       fD.append(`name`,           this.formName);
@@ -452,11 +622,9 @@ export default {
       fD.append(`description`,    this.formDescription);
       fD.append(`url`,            this.formUrl);
       fD.append(`deployment`,     this.formDeployment);
-      fD.append(`build`,          this.formBuild);
+      fD.append(`standard_build`, this.formBuild);
       fD.append(`internal`,       this.formInternal);
       fD.append(`version`,        this.formVersion);
-      fD.append(`primary_poc`,    this.formPrimaryPOC);
-      fD.append(`secondary_poc`,  this.formSecondaryPOC);
       fD.append(`developer`,      this.formDeveloper);
 
       this.$axios
@@ -500,10 +668,66 @@ export default {
       this.getServices()
       .then((resolve) => {
         this.allServices = resolve;
+        this.getEmployees();
         console.log(`%c loadServices 👌 `, this.consoleLog.success);
       }, (reject) => {
         console.log(reject);
         console.log(`%c loadServices 🛑 `, this.errLogStyle);
+      });
+    },
+    editModalHandler(s, i) {
+      let copy = s;
+      this.formEditID           = copy.id,
+      this.formEditName         = copy.name,
+      this.formEditManagers     = copy.managers,
+      this.formEditDescription  = copy.description,
+      this.formEditUrl          = copy.url,
+      this.formEditActive       = copy.active,
+      this.formEditDeployment   = copy.deployment,
+      this.formEditBuild        = copy.standard_build,
+      this.formEditPublic       = copy.public,
+      this.formEditInternal     = copy.internal,
+      this.formEditVersion      = copy.version,
+      this.formEditPrimaryPOC   = copy.primary_poc,
+      this.formEditSecondaryPOC = copy.secondary_poc,
+      this.formEditDeveloper    = copy.developer;
+    },
+    editService(i) {
+      let fD = new FormData();
+
+      fD.append(`active`,         this.formEditActive);
+      fD.append(`name`,           this.formEditName);
+      fD.append(`public`,         this.formEditPublic);
+      fD.append(`description`,    this.formEditDescription);
+      fD.append(`url`,            this.formEditUrl);
+      fD.append(`deployment`,     this.formEditDeployment);
+      fD.append(`standard_build`, this.formEditBuild);
+      fD.append(`internal`,       this.formEditInternal);
+      fD.append(`version`,        this.formEditVersion);
+      fD.append(`developer`,      this.formEditDeveloper);
+
+      this.$axios
+      .patch(`${process.env.api}${process.env.service}${this.formEditID}/`,fD)
+      .then((res) => {
+        this.$refs.editServiceModal[i].showModal = false;
+        this.loadServices();
+        console.log(`%c editService 👌 `, this.consoleLog.success);
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log(`%c editService 🛑 `, this.errLogStyle);
+      });
+    },
+    getEmployees() {
+      this.$axios
+      .get(`${process.env.api}${process.env.employee}`)
+      .then((res) => {
+        this.employees = res.data;
+        console.log(`%c getEmployees 👌 `, this.consoleLog.success);
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log(`%c getEmployees 🛑 `, this.errLogStyle);
       });
     },
   },
@@ -512,44 +736,11 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/assets/style.scss';
-
-  /deep/ .modal-footer{
-    display: flex;
-
-    .button,
-    button {
-      color: white !important;
-      padding: 5px 15px !important;
-      margin: 0 10px 0 0 !important;
-      border-radius: $radius-default !important;
-
-      &:hover {
-        color: white !important;
-      }
-
-      &:first-child {
-        background-color: $color-green !important;
-
-        &:hover {
-          background-color: darken($color-green, 5%) !important;
-        }
-      }
-
-      &:last-child {
-        background-color: $color-orange-darker !important;
-
-        &:hover {
-          background-color: darken($color-orange-darker, 5%) !important;
-        }
-      }
-    }
-  }
-
   fieldset {
     legend {
       color: $text-color;
       font-size: 16px;
-      margin-bottom: 0 !important;
+      margin-bottom: 8px !important;
       font-weight: $weight-semi-bold;
       width: 100%;
     }
@@ -624,67 +815,6 @@ export default {
       border-left: 1px solid darken($color-grey-lighter, 7%);
       width: 750px;
       padding: 20px;
-
-      /deep/ .modal-wrapper {
-        .modal-container {
-          width: 675px;
-
-          .modal-body {
-            max-height: 650px;
-
-            form {
-              .field-group,
-              .form-group {
-                margin-bottom: 10px;
-
-                &:last-of-type {
-                  margin-bottom: 0;
-                }
-              }
-
-              .row {
-                display: flex;
-
-                &:first-of-type {
-
-                  .field-group,
-                  .form-group {
-                    border-right: 1px solid darken($color-grey-lighter, 7%);
-                    width: auto;
-                    margin: 0;
-                    padding: 0 10px;
-
-                    &:first-of-type {
-                      width: 130px;
-                      padding: 0;
-                    }
-
-                    &:last-of-type {
-                      padding: 0 0 0 10px;
-                      border-right: none;
-                    }
-                  }
-                }
-
-                &:nth-of-type(n+2) {
-
-                  .field-group,
-                  .form-group {
-                    &:first-of-type {
-                      padding: 0 10px 0 0;
-                    }
-
-                    &:last-of-type {
-                      padding: 0 0 0 10px;
-                    }
-                  }
-                }
-
-              }
-            }
-          }
-        }
-      }
 
       h4 {
         width: auto;
@@ -808,7 +938,7 @@ export default {
     margin: 0;
     padding: 15px 20px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
     border-bottom: 1px solid darken($color-grey-lighter, 7%);
     border-left: 10px solid;
@@ -829,7 +959,7 @@ export default {
       border-bottom: none;
     }
 
-    div {
+    .col {
       display: flex;
       flex-wrap: wrap;
       flex-direction: column;
@@ -839,9 +969,10 @@ export default {
         width: 250px;
       }
 
-      &:nth-of-type(2){
-        // background-color: red;
-        width: 125px;
+      &:nth-of-type(2),
+      &:nth-of-type(3){
+        // background-color: green;
+        width: 150px;
         margin-left: 20px;
         padding-left: 20px;
         border-left: 1px solid darken($color-grey-lighter, 7%);
@@ -880,6 +1011,237 @@ export default {
       &:not(:first-of-type) {
         font-size: 14px;
         color: lighten($text-color, 25%);
+      }
+    }
+  }
+
+  .search-wrapper {
+    position: relative;
+    height: 350px;
+
+    .field-group {
+      z-index: 10;
+      position: relative;
+      margin: 20px 0;
+    }
+
+    ul {
+      &.search-results {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        z-index: 1;
+        background-color: white;
+        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+        height: auto;
+        max-width: 100%;
+        width: 100%;
+        max-height: 350px;
+        position: absolute;
+        top: 60px;
+        border: 1px solid lighten($text-color, 50%);
+        border-bottom-left-radius: $radius-default;
+        border-bottom-right-radius: $radius-default;
+
+        li {
+          display: flex;
+          padding: 8px;
+
+          &:nth-child(even) {
+            background: rgba($color-cloud, 0.3);
+          }
+
+          &:hover {
+            /deep/ button {
+              color: $color-green;
+            }
+          }
+
+          .edit-wrapper {
+            .actions {
+              display: flex;
+              margin: 0 10px 0 0;
+              border-right: 1px solid lighten($text-color, 50%);
+
+              /deep/ button {
+                color: lighten($text-color, 20%);
+                margin: 0 20px 0 0;
+                line-height: 16px;
+                padding: 0;
+                background-color: transparent;
+              }
+            }
+          }
+        }
+
+        button {
+          color: lighten($text-color, 20%);
+          margin-left: auto;
+
+          &:hover {
+            color: $color-green;
+          }
+        }
+      }
+    }
+  }
+
+  .editServiceModal {
+    /deep/ .modal-wrapper {
+      .modal-container {
+        width: 675px;
+
+        .modal-body {
+          max-height: 650px;
+        }
+      }
+    }
+  }
+
+  .removeServiceManagerModal {
+    /deep/ .modal-wrapper {
+      .modal-container {
+        width: 375px;
+
+        .modal-body {
+          max-height: 150px;
+        }
+      }
+    }
+  }
+
+  /deep/ .modal-wrapper {
+    .modal-container {
+
+      .modal-body {
+
+        form {
+          // background-color: blue;
+          display: flex;
+          align-items: flex-start;
+
+          .field-group,
+          .form-group {
+            margin-bottom: 20px;
+          }
+
+          .left {
+            width: 200px;
+            padding: 0 20px 0 0;
+
+            ul {
+              margin: 0 0 20px 0;
+              padding: 0;
+              list-style: none;
+
+              li {
+                color: $text-color;
+                padding: 4px 8px;
+                display: flex;
+                align-items: center;
+
+                &:first-child {
+                  margin: 0 0 10px 0;
+                  padding: 0;
+
+                  &:hover {
+                    background-color: white;
+                  }
+
+                  button {
+                    padding: 0 8px;
+                    font-size: 14px;
+                    color: white;
+                    background-color: $color-blue;
+                  }
+                }
+
+                &:nth-child(even) {
+                  background: rgba($color-cloud, 0.3);
+                }
+
+                &:hover {
+                  background-color: lighten($color-grey, 10%);
+                  color: $text-color;
+                }
+
+                div {
+                  &:last-of-type {
+                    margin-left: auto;
+                  }
+                }
+
+                span {
+                  &.label {
+                    margin: 0 !important;
+                    font-size: 16px;
+                  }
+                }
+              }
+            }
+
+            .field-group,
+            .form-group {
+              width: auto;
+              padding: 0;
+
+              fieldset {
+                padding: 0;
+
+                div {
+                  &:first-of-type {
+                    margin: 0 10px 0 0;
+                  }
+                }
+              }
+            }
+          }
+
+          .right {
+            flex: 1;
+            padding: 0 0 0 20px;
+            border-left: 1px solid darken($color-grey-lighter, 7%);
+            // background-color: yellow;
+          }
+        }
+      }
+
+      /deep/ .modal-footer{
+        display: flex;
+        align-items: center;
+
+        p {
+          margin-left: auto;
+          color: $text-color;
+        }
+
+        .button,
+        button {
+          color: white !important;
+          padding: 5px 15px !important;
+          margin: 0 10px 0 0 !important;
+          border-radius: $radius-default !important;
+
+          &:hover {
+            color: white !important;
+          }
+
+          &.confirm {
+            background-color: $color-green !important;
+
+            &:hover {
+              background-color: darken($color-green, 5%) !important;
+            }
+          }
+
+          &.cancel {
+            background-color: $color-orange-darker !important;
+
+            &:hover {
+              background-color: darken($color-orange-darker, 5%) !important;
+            }
+          }
+        }
       }
     }
   }

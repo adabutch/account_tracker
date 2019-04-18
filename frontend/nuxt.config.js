@@ -24,6 +24,7 @@ module.exports = {
     obtainJWT:      'auth/obtain_token/',
     refreshJWT:     'auth/refresh_token/',
     user:           'user/',
+    employee:       'employee/',
     action:         'action/',
     profile:        'profile/',
     service:        'service/',
