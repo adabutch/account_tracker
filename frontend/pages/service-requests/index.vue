@@ -224,7 +224,7 @@ import exampleDropdown  from '~/components/exampleDropdown'
 import servicesAside    from '~/components/service-requests/servicesAside'
 
 export default {
-  layout:           'serviceRequests',
+  layout:           'service-requests',
   middleware:       'authenticated',
   components: {
     exampleDropdown,
