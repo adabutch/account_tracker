@@ -594,7 +594,6 @@ export default {
     position: relative;
     width: calc(100% - 300px);
     margin-left: auto;
-    position: relative;
 
     &:after {
       position: absolute;
@@ -670,11 +669,10 @@ export default {
     table {
       margin: 60px 0 0 0;
       color: $text-color;
+      table-layout: fixed;
 
       thead tr th,
       tbody tr td {
-        min-width: 150px;
-        width: 150px;
 
         &:nth-of-type(3) {
           min-width: 450px;
@@ -690,8 +688,8 @@ export default {
         background-color: transparent;
         border-bottom: 1px solid #ddd;
         width: 100%;
-        display: block;
-        position: relative;
+        display: table;
+        table-layout: fixed;
       }
 
       tbody {
@@ -700,9 +698,9 @@ export default {
         overflow-y: scroll;
 
         tr {
-          display: flex;
-          flex-wrap: wrap;
           width: 100%;
+          display: table;
+          table-layout: fixed;
           cursor: pointer;
 
           &.active {
@@ -710,9 +708,6 @@ export default {
           }
 
           td {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
 
             &.acct-req-row {
               display: block;
