@@ -19,17 +19,19 @@
           <div class="form-group" v-if="!hasDeptServices">
             <fieldset>
               <legend>Department Services</legend>
-              <div v-for="(item, index) in deptServiceProfile">
-                <input v-model="selectedDeptServices"
-                       :key="index"
-                       :id="item.id"
-                       :value="{id: item.id, name: item.name}"
-                       type="checkbox"
-                       name="software">
+              <div class="inner-wrapper">
+                <div v-for="(item, index) in deptServiceProfile">
+                  <input v-model="selectedDeptServices"
+                         :key="index"
+                         :id="item.id"
+                         :value="{id: item.id, name: item.name}"
+                         type="checkbox"
+                         name="software">
 
-                <label v-if="item"
-                       :for="item.id"
-                       v-html="item.name"></label>
+                  <label v-if="item"
+                         :for="item.id"
+                         v-html="item.name"></label>
+                </div>
               </div>
             </fieldset>
           </div>
@@ -37,17 +39,19 @@
           <div class="form-group" v-if="!hasGroupServices">
             <fieldset>
               <legend>Group Services</legend>
-              <div v-for="(item, index) in groupServiceProfile">
-                <input v-model="selectedGroupServices"
-                       :key="index"
-                       :id="item.id"
-                       :value="{id: item.id, name: item.name}"
-                       type="checkbox"
-                       name="software">
+              <div class="inner-wrapper">
+                <div v-for="(item, index) in groupServiceProfile">
+                  <input v-model="selectedGroupServices"
+                         :key="index"
+                         :id="item.id"
+                         :value="{id: item.id, name: item.name}"
+                         type="checkbox"
+                         name="software">
 
-                <label v-if="item"
-                       :for="item.id"
-                       v-html="item.name"></label>
+                  <label v-if="item"
+                         :for="item.id"
+                         v-html="item.name"></label>
+                </div>
               </div>
             </fieldset>
           </div>
@@ -188,6 +192,7 @@ export default {
   }
 
   .wrapper {
+
     div {
       &:last-of-type {
         border-right: none;
@@ -197,9 +202,15 @@ export default {
 
   .form-group {
     display: inline-flex;
+    flex: 1;
     border-right: 1px solid lighten($text-color, 50%);
     margin: 0 20px 0 0;
     padding: 0 20px 0 0;
+
+    .inner-wrapper {
+      height: calc(100vh - 340px);
+      overflow-y: scroll;
+    }
 
     &:nth-of-type(2) {
       border-right: none;
@@ -207,10 +218,21 @@ export default {
   }
 
   fieldset {
+    padding: 0;
+
+    div {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      width: 100%;
+      margin: 0 0 10px 0;
+    }
+
     legend {
       font-weight: $weight-semi-bold;
       color: $text-color;
       font-size: 18px;
+      margin: 0 0 10px 0;
     }
 
     input {

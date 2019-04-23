@@ -130,9 +130,9 @@ export default {
       previous:     { name: 'create'},
       next:         { name: 'create-three'},
       config: {
-        enable: [],
-        altInput: true,
-        altFormat: "F j, Y",
+        enable:     [],
+        altInput:   true,
+        altFormat:  "F j, Y",
         dateFormat: "Y-m-d",
         onMonthChange: function(fp,currentYear,currentMonth){
           console.log(currentMonth.currentMonth);
@@ -140,9 +140,9 @@ export default {
         }
       },
       showDivision: false,
-      showJob: false,
-      groups: [],
-      jobs: [],
+      showJob:      false,
+      groups:       [],
+      jobs:         [],
     }
   },
   watch: {

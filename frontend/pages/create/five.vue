@@ -217,14 +217,15 @@ export default {
     &:nth-of-type(2) {
       display: flex;
       flex-wrap: wrap;
-      // background-color: red;
+      background-color: red;
     }
   }
 
   form {
+    background-color: blue;
     display: flex;
     flex-wrap: wrap;
-    align-self: flex-start;
+    // align-self: flex-start;
 
     .dept-questions,
     .group-questions {

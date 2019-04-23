@@ -24,7 +24,8 @@ export default {
 
 .create-wrapper {
   /deep/ .page-wrapper {
-    position: relative;
+    position: fixed;
+    width: 100%;
     top: 115px;
     padding: 20px;
     background-color: white;
@@ -39,6 +40,7 @@ export default {
 
   /deep/ form {
     flex-grow: 1;
+    flex: 1;
 
     h1 {
       display: flex;
@@ -55,8 +57,11 @@ export default {
     }
 
     .wrapper {
+      // background-color: yellow;
       display: flex;
       flex-wrap: wrap;
+      height: calc(100vh - 310px);
+      overflow: hidden;
     }
   }
 }
