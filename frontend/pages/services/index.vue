@@ -295,8 +295,12 @@
         </div>
       </div>
 
-      <div class="results" v-if="allServices">
-        <div v-for="s, i in filteredServices"
+      <div class="results">
+        <div v-if="loading" class="loading">
+          <h4>Loading Services . . .</h4>
+        </div>
+
+        <div v-if="allServices" v-for="s, i in filteredServices"
              class="result"
              :class="{'active': s.active, 'inactive': !s.active}">
 
@@ -570,10 +574,12 @@ export default {
     exampleSelect
   },
   mounted() {
+    this.loading = true;
     this.loadServices();
   },
   data() {
     return {
+      loading:          false,
       allServices:      [],
       serviceManagers:  [],
       addingServiceManager: false,
@@ -794,6 +800,7 @@ export default {
       .then((resolve) => {
         this.allServices = resolve;
         this.getEmployees();
+        this.loading = false;
         console.log(`%c loadServices 👌 `, this.consoleLog.success);
       }, (reject) => {
         console.log(reject);
@@ -1055,6 +1062,16 @@ export default {
           }
         }
       }
+    }
+  }
+
+  .loading {
+    padding: 20px;
+
+    h4 {
+      text-align: left;
+      font-size: 20px;
+      line-height: 20px;
     }
   }
 
