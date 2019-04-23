@@ -193,9 +193,7 @@
             </div>
           </div>
 
-          <!-- {{userServices[8]}} -->
-
-          <table>
+          <table class="fixed-header service-reqs">
             <caption class="sr-only">All User Requests</caption>
             <thead>
               <tr>
@@ -277,7 +275,7 @@
             <h4><strong>Action History</strong> associated with this <strong>Account Request</strong>.</h4>
           </div>
 
-          <table>
+          <table class="fixed-header">
             <caption class="sr-only">User Action History</caption>
             <thead>
               <tr>
@@ -331,6 +329,7 @@ const { mapFields } = createHelpers({
 });
 
 export default {
+  layout:           'account-reqs',
   validate({ params }) {
     console.log('param valid', params)
     return !isNaN(+params.id)
@@ -696,8 +695,6 @@ export default {
     }
   }
 
-
-
   table {
     color: $text-color;
 
@@ -710,27 +707,29 @@ export default {
       }
     }
 
-    thead {
-      tr {
-        th {
-          &.status {
-            width: 1px;
-            white-space: nowrap;
+    &.service-reqs {
+      thead,
+      tbody {
+        tr {
+          th {
+            &:nth-child(1) {
+              width: 120px;
+            }
+
+            &:nth-child(2) {
+              width: 300px;
+            }
           }
         }
       }
     }
 
     tbody {
+      height: calc(100vh - 350px);
+
       tr {
         th {
-          padding: 20px 0;
-
-          &.status {
-            width: 1px;
-            white-space: nowrap;
-            padding: 5px 20px 5px 8px;
-          }
+          padding: 20px 8px;
 
           div {
             &:nth-child(2) {

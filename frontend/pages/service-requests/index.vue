@@ -22,7 +22,7 @@
 
       <h2 v-if="!displayResults">Loading</h2>
 
-      <table v-if="displayResults">
+      <table v-if="displayResults" class="fixed-header">
         <caption class="sr-only">All User Requests</caption>
         <thead>
           <tr>
@@ -669,11 +669,9 @@ export default {
     table {
       margin: 60px 0 0 0;
       color: $text-color;
-      table-layout: fixed;
 
       thead tr th,
       tbody tr td {
-
         &:nth-of-type(3) {
           min-width: 450px;
           width: 450px;
@@ -687,20 +685,12 @@ export default {
       thead {
         background-color: transparent;
         border-bottom: 1px solid #ddd;
-        width: 100%;
-        display: table;
-        table-layout: fixed;
       }
 
       tbody {
-        display: block;
         height: calc(100vh - 300px);
-        overflow-y: scroll;
 
         tr {
-          width: 100%;
-          display: table;
-          table-layout: fixed;
           cursor: pointer;
 
           &.active {
@@ -708,7 +698,6 @@ export default {
           }
 
           td {
-
             &.acct-req-row {
               display: block;
               width: 100%;

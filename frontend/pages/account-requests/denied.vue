@@ -84,7 +84,8 @@ const { mapFields } = createHelpers({
 });
 
 export default {
-  middleware: 'authenticated',
+  layout:           'account-reqs',
+  middleware:       'authenticated',
   components: {
     headerNav,
     exampleSelect,

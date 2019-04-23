@@ -27,7 +27,7 @@
           <h1>Sorry, no results.</h1>
         </template>
 
-        <table v-if="newAccounts.length">
+        <table v-if="newAccounts.length" class="fixed-header">
           <caption class="sr-only">All User Requests</caption>
           <thead>
             <tr>
@@ -116,7 +116,7 @@
           <h1>Sorry, no results.</h1>
         </template>
 
-        <table v-if="pendingAccounts.length">
+        <table v-if="pendingAccounts.length" class="fixed-header">
           <caption class="sr-only">All User Requests</caption>
           <thead>
             <tr>
@@ -334,6 +334,7 @@ const { mapFields } = createHelpers({
 });
 
 export default {
+  layout:           'account-reqs',
   middleware:       'authenticated',
   components: {
     headerNav,
@@ -579,6 +580,8 @@ export default {
 @import '@/assets/style.scss';
 
   .page-wrapper {
+    background-color: blue;
+    position: fixed;
     display: flex;
     flex-wrap: wrap;
     padding: 0;
@@ -596,23 +599,22 @@ export default {
       thead {
         tr {
           th {
-            &.status,
-            &.icon  {
-              width: 1px;
-              white-space: nowrap;
+            &:nth-child(1) {
+              width: 120px;
             }
           }
         }
       }
 
       tbody {
+        height: calc(100vh - 330px);
+
         tr {
           th {
             padding: 8px 0;
 
             &.status {
-              width: 1px;
-              white-space: nowrap;
+              width: 120px;
               padding: 5px 20px 5px 8px;
             }
 

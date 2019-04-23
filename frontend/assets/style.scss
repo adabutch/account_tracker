@@ -155,7 +155,28 @@ span.label {
   }
 }
 
-table {
+/deep/ table {
+  &.fixed-header {
+    table-layout: fixed;
+
+    thead {
+      width: 100%;
+      display: table;
+      table-layout: fixed;
+    }
+
+    tbody {
+      display: block;
+      overflow-y: scroll;
+
+      tr {
+        width: 100%;
+        display: table;
+        table-layout: fixed;
+      }
+    }
+  }
+
   thead {
     th {
       background-color: lighten($color-grey, 10%);
