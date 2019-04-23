@@ -103,6 +103,7 @@ export default {
   mounted() {
     this.mondays;
     this.thursdays;
+    this.fullTimeStartDays;
 
     axios.get(`${process.env.ttApi}${process.env.deptService}`)
     .then((res) => {
