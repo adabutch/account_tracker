@@ -9,106 +9,112 @@
       <asideComponent />
 
       <form>
-        <h1><strong>Step Five:&nbsp;</strong>Extra information</h1>
+        <h1><strong>Step Five:</strong> Extra information</h1>
 
-        <div class="dept-questions" v-if="!hasDeptExQuestions">
-          <h1>Dept. Questions</h1>
-          <template v-for="(question, index) in exDeptQuestions">
-            <template v-if="question.type == 'select'">
-              <div class="field-group">
-                <label :for="question">{{question.text}}</label>
-                <select v-model="exDeptQsSelects[question.text]"
-                        :name="question"
-                        :id="question"
-                        type="select">
-                  <option>---</option>
-                  <option v-for="(value, index) in question.value"
-                          :value="value">
-                    {{ value }}
-                  </option>
-                </select>
-              </div>
-            </template>
+        <div class="wrapper">
+          <div class="dept-questions" v-if="!hasDeptExQuestions">
+            <h1>Dept. Questions</h1>
+            <div class="inner-wrapper">
+              <template v-for="(question, index) in exDeptQuestions">
+                <template v-if="question.type == 'select'">
+                  <div class="field-group">
+                    <label :for="question">{{question.text}}</label>
+                    <select v-model="exDeptQsSelects[question.text]"
+                            :name="question"
+                            :id="question"
+                            type="select">
+                      <option>---</option>
+                      <option v-for="(value, index) in question.value"
+                              :value="value">
+                        {{ value }}
+                      </option>
+                    </select>
+                  </div>
+                </template>
 
-            <template v-if="question.type == 'text'">
-              <fn1-input v-model="exDeptQsTexts[question.text]"
-                         :key="index"
-                         :label="question.text"
-                         :placeholder="question.text"
-                         :name="question.text"
-                         :id="question.text" />
-            </template>
+                <template v-if="question.type == 'text'">
+                  <fn1-input v-model="exDeptQsTexts[question.text]"
+                             :key="index"
+                             :label="question.text"
+                             :placeholder="question.text"
+                             :name="question.text"
+                             :id="question.text" />
+                </template>
 
-            <template v-if="question.type == 'number'">
-              <fn1-input type="number"
-                         v-model="exDeptQsNumbers[question.text]"
-                         :label="question.text"
-                         :placeholder="question.text"
-                         :name="question.text"
-                         :id="question.text" />
-            </template>
+                <template v-if="question.type == 'number'">
+                  <fn1-input type="number"
+                             v-model="exDeptQsNumbers[question.text]"
+                             :label="question.text"
+                             :placeholder="question.text"
+                             :name="question.text"
+                             :id="question.text" />
+                </template>
 
-            <template v-if="question.type == 'textarea'">
-              <div class="field-group">
-                <label :for="question.text">{{question.text}}</label>
-                <textarea type="textarea"
-                          v-model="exDeptQsTextareas[question.text]"
-                          :id="question.text"
-                          :name="question.text"
-                          :placeholder="question.text"></textarea>
-              </div>
-            </template>
-          </template>
-        </div>
+                <template v-if="question.type == 'textarea'">
+                  <div class="field-group">
+                    <label :for="question.text">{{question.text}}</label>
+                    <textarea type="textarea"
+                              v-model="exDeptQsTextareas[question.text]"
+                              :id="question.text"
+                              :name="question.text"
+                              :placeholder="question.text"></textarea>
+                  </div>
+                </template>
+              </template>
+            </div>
+          </div>
 
-        <div class="group-questions" v-if="!hasGroupExQuestions">
-          <h1>Group Questions</h1>
-          <template v-for="(question, index) in exGroupQuestions">
-            <template v-if="question.type == 'select'">
-              <div class="field-group">
-                <label :for="question">{{question.text}}</label>
-                <select v-model="exGroupQsSelects[question.text]"
-                        :name="question"
-                        :id="question"
-                        type="select">
-                  <option>---</option>
-                  <option v-for="(value, index) in question.value"
-                          :value="value">
-                    {{ value }}
-                  </option>
-                </select>
-              </div>
-            </template>
+          <div class="group-questions" v-if="!hasGroupExQuestions">
+            <h1>Group Questions</h1>
+            <div class="inner-wrapper">
+              <template v-for="(question, index) in exGroupQuestions">
+                <template v-if="question.type == 'select'">
+                  <div class="field-group">
+                    <label :for="question">{{question.text}}</label>
+                    <select v-model="exGroupQsSelects[question.text]"
+                            :name="question"
+                            :id="question"
+                            type="select">
+                      <option>---</option>
+                      <option v-for="(value, index) in question.value"
+                              :value="value">
+                        {{ value }}
+                      </option>
+                    </select>
+                  </div>
+                </template>
 
-            <template v-if="question.type == 'text'">
-              <fn1-input v-model="exGroupQsTexts[question.text]"
-                         :key="index"
-                         :label="question.text"
-                         :placeholder="question.text"
-                         :name="question.text"
-                         :id="question.text" />
-            </template>
+                <template v-if="question.type == 'text'">
+                  <fn1-input v-model="exGroupQsTexts[question.text]"
+                             :key="index"
+                             :label="question.text"
+                             :placeholder="question.text"
+                             :name="question.text"
+                             :id="question.text" />
+                </template>
 
-            <template v-if="question.type == 'number'">
-              <fn1-input type="number"
-                         v-model="exGroupQsNumbers[question.text]"
-                         :label="question.text"
-                         :placeholder="question.text"
-                         :name="question.text"
-                         :id="question.text" />
-            </template>
+                <template v-if="question.type == 'number'">
+                  <fn1-input type="number"
+                             v-model="exGroupQsNumbers[question.text]"
+                             :label="question.text"
+                             :placeholder="question.text"
+                             :name="question.text"
+                             :id="question.text" />
+                </template>
 
-            <template v-if="question.type == 'textarea'">
-              <div class="field-group">
-                <label :for="question.text">{{question.text}}</label>
-                <textarea type="textarea"
-                          v-model="exGroupQsTextareas[question.text]"
-                          :id="question.text"
-                          :name="question.text"
-                          :placeholder="question.text"></textarea>
-              </div>
-            </template>
-          </template>
+                <template v-if="question.type == 'textarea'">
+                  <div class="field-group">
+                    <label :for="question.text">{{question.text}}</label>
+                    <textarea type="textarea"
+                              v-model="exGroupQsTextareas[question.text]"
+                              :id="question.text"
+                              :name="question.text"
+                              :placeholder="question.text"></textarea>
+                  </div>
+                </template>
+              </template>
+            </div>
+          </div>
         </div>
       </form>
     </div>
@@ -217,21 +223,32 @@ export default {
     &:nth-of-type(2) {
       display: flex;
       flex-wrap: wrap;
-      background-color: red;
+      // background-color: red;
     }
   }
 
   form {
-    background-color: blue;
+    // background-color: blue;
     display: flex;
     flex-wrap: wrap;
     // align-self: flex-start;
+
+    .field-group {
+      width: calc(100% - 6px);
+      margin: 0 auto 20px auto;
+
+      &:last-of-type {
+        display: flex;
+        margin: 0 auto 20px auto;
+      }
+    }
 
     .dept-questions,
     .group-questions {
       align-self: flex-start;
       flex: 1;
       max-width: 50%;
+      height: 100%;
     }
 
     .dept-questions {
@@ -246,6 +263,12 @@ export default {
 
     .button-wrapper {
       width: 100%;
+    }
+
+    .inner-wrapper {
+      // background-color: green;
+      height: calc(100vh - 375px);
+      overflow-y: scroll;
     }
   }
 

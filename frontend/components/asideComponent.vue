@@ -203,13 +203,14 @@ export default {
     color: $text-color;
     width: 350px;
     margin: 0 40px 0 0;
+    height: calc(100vh - 240px);
 
     h1 {
       color: $text-color;
       font-size: $size-l;
       line-height: $size-l;
       font-weight: $weight-semi-bold;
-      margin: 0 0 $space-m 0;
+      margin: 0;
       padding: 0 0 $space-s 0;
       border-bottom: 1px solid lighten($text-color, 50%);
     }
@@ -232,8 +233,11 @@ export default {
     }
 
     ul {
+      height: calc(100% - 45px);
+      overflow-y: scroll;
       list-style: none;
       padding: 0;
+      margin: $space-s 0 0 0;
 
       li {
         display: flex;
@@ -263,7 +267,7 @@ export default {
           color: white;
           border-radius: $radius-default;
 
-          &:first-of-type() {
+          &:nth-of-type(1) {
             margin: 0 0 10px 0;
           }
         }

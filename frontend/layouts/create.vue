@@ -60,8 +60,9 @@ export default {
       // background-color: yellow;
       display: flex;
       flex-wrap: wrap;
+      width: 100%;
       height: calc(100vh - 310px);
-      overflow: hidden;
+      overflow-y: hidden;
     }
   }
 }

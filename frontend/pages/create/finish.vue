@@ -85,11 +85,6 @@ export default {
     },
     previousStep() {
       return true;
-      // if(this.stepActive < this.totalSteps) {
-      //   return { name: 'five'}
-      // } else if (this.stepActive == this.totalSteps) {
-      //   return { name: 'finish'}
-      // }
     },
     ...mapFields([
       'startDateFormat',
@@ -243,13 +238,15 @@ export default {
 
   .alert {
     width: 700px;
-    margin: 0 auto 40px auto;
+    margin: 20px auto 0 auto;
     display: block;
   }
 
   aside {
+    // background-color: blue;
     width: 700px;
-    margin: 0 auto;
+    height: auto;
+    margin: 40px auto 0 auto;
     display: block;
 
     /deep/ .step-title {
@@ -303,7 +300,7 @@ export default {
 
   .success-wrapper {
     width: 500px;
-    margin: 0 auto;
+    margin: 40px auto 0 auto;
     display: block;
 
     h1 {
