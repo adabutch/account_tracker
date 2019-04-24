@@ -21,7 +21,7 @@
 
     <div class="form-group">
       <fieldset>
-        <legend>Filter by Acct. Req:</legend>
+        <legend>Filter by Account Req.:</legend>
         <small>ID: Name</small>
         <div class="checkbox-wrapper">
           <div v-for="a, i in sortAcctReqsByServiceReq" :key="i">
