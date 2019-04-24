@@ -7,6 +7,7 @@ Vue.mixin({
       this.$store.dispatch('createUser/resetCrUsrState');
       this.$store.dispatch('depts/resetDeptsState');
       this.$store.dispatch('services/resetServicesState');
+      this.$store.dispatch('serviceReqs/resetServicesState');
     }
   }
 })

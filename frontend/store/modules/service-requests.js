@@ -8,6 +8,7 @@ export const serviceReqsState = () => ({
 
   // url: /service-requests/
   services:             [],
+  mgrServices:          [],
   mgrProfileIDs:        [],
   mgrFullProfiles:      [],
   mgrServiceReqs:       [],
@@ -17,6 +18,7 @@ export const serviceReqsState = () => ({
   activeFullServices:   [],
   filterByService:      [],
   acctReqsByServiceReq: [],
+  master:               [],
 })
 
 const state = () => serviceReqsState();
@@ -32,6 +34,9 @@ const mutations = {
   },
   SET_SERVCIES(state, payload) {
     state.services = payload
+  },
+  SET_MGR_SERVICES(state, payload) {
+    state.mgrServices = payload
   },
   SET_ACCT_REQ_SERVCIES(state, payload) {
     state.acctReqServices = payload
@@ -62,6 +67,9 @@ const mutations = {
   },
   SET_ACCT_REQ_X_SERVICE_REQ(state, payload) {
     state.acctReqsByServiceReq = payload
+  },
+  SET_MASTER(state, payload) {
+    state.master = payload
   }
 }
 
@@ -71,6 +79,9 @@ const actions = {
   },
   setServices(context, payload) {
     context.commit("SET_SERVCIES", payload)
+  },
+  setMgrServices(context, payload) {
+    context.commit("SET_MGR_SERVICES", payload)
   },
   setAcctReqServices(context, payload) {
     context.commit("SET_ACCT_REQ_SERVCIES", payload)
@@ -101,6 +112,9 @@ const actions = {
   },
   setAcctReqsByServiceReq(context, payload) {
     context.commit("SET_ACCT_REQ_X_SERVICE_REQ", payload)
+  },
+  setMaster(context, payload) {
+    context.commit("SET_MASTER", payload)
   }
 }
 

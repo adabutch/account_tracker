@@ -27,20 +27,15 @@
         <thead>
           <tr>
             <th scope="col">Status</th>
-            <th scope="col">Acct. Req.</th>
+            <th scope="col">Account Req.</th>
             <th scope="col">Service</th>
-            <th scope="col">Created</th>
-            <th scope="col">Requested</th>
             <th scope="col">Updated</th>
+            <th scope="col">Requested</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          <!-- <tr v-for="s, i in displayResults"
-              :key="i"
-              :class="{'active': acctReqRow === i}"
-              @click="toggleAcctReqRow(s,i)"> -->
           <template v-for="s, i in displayResults" >
             <tr :class="{'active': acctReqRow === i}"
                 :key="i"
@@ -50,26 +45,15 @@
                   {{s.request_status}}
                 </fn1-badge>
               </td>
-              <td>{{s.account_request}}</td>
-              <td>{{s.service}}: {{s.name}}</td>
+              <td>{{s.ar.full_name}}</td>
+              <td>{{s.sr.name}}</td>
               <td>
-                <template v-if="s.created == null">
-                  <div></div>
-                  <div>&mdash;</div>
-                </template>
-
-                <template v-if="s.created != null">
-                  <div>{{MMDYYYYDateFormat(s.created)}}</div>
-                  <div>{{timeAgo(s.created)}}</div>
-                </template>
+                <div>{{MMDYYYYDateFormat(s.updated)}}</div>
+                <div>{{timeAgo(s.updated)}}</div>
               </td>
               <td>
                 <div>{{MMDYYYYDateFormat(s.requested)}}</div>
                 <div>{{timeAgo(s.requested)}}</div>
-              </td>
-              <td>
-                <div>{{MMDYYYYDateFormat(s.updated)}}</div>
-                <div>{{timeAgo(s.updated)}}</div>
               </td>
               <td>
                 <exampleDropdown
@@ -170,35 +154,6 @@
                         <p>{{acctReqRowAcct.employee_status}}</p>
                       </div>
                     </div>
-
-                    <!-- <div class="three">
-                      <template v-if="acctReqRowAcct.start_date">
-                        <h5>Start Date: {{timeAgo(acctReqRowAcct.start_date)}}</h5>
-                        <p>{{MMDYYYYDateFormat(acctReqRowAcct.start_date)}}</p>
-                      </template>
-
-                      <template v-if="acctReqRowAcct.end_date">
-                        <h5>End Date: {{timeAgo(acctReqRowAcct.end_date)}}</h5>
-                        <p>{{MMDYYYYDateFormat(acctReqRowAcct.end_date)}}</p>
-                      </template>
-
-
-                      <template v-if="acctReqRowAcct.requested">
-                        <h5>Requested Date: {{timeAgo(acctReqRowAcct.requested)}}</h5>
-                        <p>{{MMDYYYYDateFormat(acctReqRowAcct.requested)}}</p>
-                      </template>
-
-                      <template v-if="acctReqRowAcct.updated">
-                        <h5>Updated Date: {{timeAgo(acctReqRowAcct.updated)}}</h5>
-                        <p>{{MMDYYYYDateFormat(acctReqRowAcct.updated)}}</p>
-                      </template>
-
-                      <template v-if="acctReqRowAcct.created">
-                         <h5>Updated Date: {{timeAgo(acctReqRowAcct.created)}}</h5>
-                        <p>{{MMDYYYYDateFormat(acctReqRowAcct.created)}}</p>
-                                   disabled />
-                      </template>
-                    </div> -->
                   </div>
                 </div>
               </td>
@@ -232,7 +187,12 @@ export default {
   },
   mounted() {
     this.mgrID = this.authUser.id;
+
     this.loadData();
+
+    this.$nextTick(() => {
+      this.displayResults;
+    });
   },
   data() {
     return {
@@ -259,41 +219,63 @@ export default {
         this.$store.dispatch('serviceReqs/setServices', resolve);
         console.log(`%c 1. getServices 👌 `, this.consoleLog.success);
 
-        this.getMgrProfiles()
+        this.getServiceRequests()
         .then((resolve) => {
-          let data    = resolve,
-          ids         = [];
-          data.forEach((service) => {
-            ids.push(service.service);
-          });
-          this.$store.dispatch('serviceReqs/setMgrProfileIDs', ids);
-          console.log(`%c 2. getMgrProfiles 👌 `, this.consoleLog.success);
+          this.$store.dispatch('serviceReqs/setRequests', resolve);
+          console.log(`%c 2. getServiceRequests 👌 `, this.consoleLog.success);
 
-          this.mgrServices()
+          this.getManagerServiceSet()
           .then((resolve) => {
-            this.$store.dispatch('serviceReqs/setMgrFullProfiles', resolve);
-            console.log(`%c 3. mgrServices 👌 `, this.consoleLog.success);
+            console.log(`%c 3. getManagerServiceSet 👌 `, this.consoleLog.success);
+            this.$store.dispatch('serviceReqs/setMgrProfileIDs', resolve);
 
-            this.getServiceRequests()
+            this.mgrServices()
             .then((resolve) => {
-              this.$store.dispatch('serviceReqs/setRequests', resolve);
-              console.log(`%c 4. getServiceRequests 👌 `, this.consoleLog.success);
-              this.filterMgrServiceReqs();
-              this.fullActiveServices();
-              this.mgrARbySR();
+              this.$store.dispatch('serviceReqs/setMgrFullProfiles', resolve);
+              console.log(`%c 4. mgrServices 👌 `, this.consoleLog.success);
+
+              this.setMgrServiceReqs()
+              .then((resolve) => {
+                this.$store.dispatch('serviceReqs/setMgrServiceReqs', resolve);
+                console.log(`%c 5. setMgrServiceReqs 👌 `, this.consoleLog.success);
+
+                this.filterActives()
+                .then((resolve) => {
+                  this.managerAcctReqXServiceReq();
+
+                  console.log(`%c 6. filterActives 👌 `, this.consoleLog.success);
+                }, (reject) => {
+                  console.log(`%c 6. filterActives 🛑 `, this.consoleLog.error);
+                });
+              }, (reject) => {
+                console.log(`%c 5. setMgrServiceReqs 🛑 `, this.consoleLog.error);
+              })
             }, (reject) => {
-              console.log(`%c 4. getServiceRequests 🛑 `, this.consoleLog.error);
+              console.log(`%c 4. mgrServices 🛑 `, this.consoleLog.error);
             });
-          })
+          }, (reject) => {
+            console.log(`%c 3. getManagerServiceSet 🛑 `, this.consoleLog.error);
+          });
         }, (reject) => {
-          console.log(`%c getMgrProfiles 🛑 `, this.consoleLog.error);
+          console.log(`%c 2. getServiceRequests 🛑 `, this.consoleLog.error);
         });
       }, (reject) => {
-        console.log(`%c getServices 🛑 `, this.errLogStyle);
+        console.log(`%c 1. getServices 🛑 `, this.errLogStyle);
+      });
+    },
+    getManagerServiceSet() {
+      return new Promise((resolve,reject) => {
+        this.$axios
+        .get(`${process.env.api}${process.env.employee}${this.mgrID}/`)
+        .then((res) => {
+          resolve(res.data.service_set);
+        })
+        .catch((e) => {
+          reject(e);
+        });
       });
     },
     getServices() {
-      // store as 'services'
       return new Promise((resolve,reject) => {
         this.$axios
         .get(`${process.env.api}${process.env.service}?limit=5000`)
@@ -305,21 +287,7 @@ export default {
         });
       });
     },
-    getMgrProfiles() {
-      // store as 'mgrProfileIDs'
-      return new Promise((resolve, reject) => {
-        this.$axios
-        .get(`${process.env.api}${process.env.serviceManager}?manager=${this.mgrID}&limit=5000`)
-        .then((res) => {
-          resolve(res.data.results);
-        })
-        .catch((e) => {
-          reject(e);
-        });
-      });
-    },
     getServiceRequests() {
-      // store as 'requests'
       return new Promise((resolve, reject) => {
         this.$axios
         .get(`${process.env.api}${process.env.serviceReq}?limit=5000`)
@@ -331,7 +299,92 @@ export default {
         });
       });
     },
-    mgrARbySR() {
+    mgrServices() {
+      return new Promise((resolve) => {
+        resolve(this.services.filter((item) => {
+            return this.mgrProfileIDs.indexOf(item.id) >= 0;
+          })
+        )
+      });
+    },
+    setMgrServiceReqs() {
+      return new Promise((resolve) => {
+        resolve(this.requests.filter((item) => {
+          return this.mgrProfileIDs.indexOf(item.service) >= 0;
+          })
+        )
+      });
+    },
+    serviceStatusChange(acctReq, status) {
+      let payload = {
+        "request_status": status,
+      }
+
+      this.$axios
+      .patch(`${process.env.api}${process.env.serviceReq}${acctReq.id}/`,payload)
+      .then((res) => {
+        console.log(`serviceStatusChange() :: `, res.data);
+
+        this.$axios
+        .post(`${process.env.api}${process.env.action}`,{
+          "user":    this.authUser.id,
+          "account": acctReq.ar.id,
+          "action":  `Service Request (${acctReq.id}): ${acctReq.sr.name}`,
+          "comment": `Changed from '${acctReq.request_status}' to '${status}'.`
+        })
+        .then(response => {
+          console.log(`ACTION SR serviceStatusChange :: `, response);
+          this.loadData();
+        })
+        .catch(e => {
+          console.log(`ACTION SR serviceStatusChange error :: `, e)
+        });
+
+      })
+      .catch((error) => {
+        console.log(`serviceStatusChange() error:: `, error);
+      })
+    },
+    toggleAcctReqRow(service, i, e) {
+      let clicked = e.srcElement.nodeName;
+      if(clicked === 'TD') {
+        this.acctReqRowAcct = null;
+        let serviceIdx      = service.account_request,
+        sameRow             = (this.acctReqRow === i);
+        sameRow ? this.acctReqRow = null : this.acctReqRow = i;
+
+        let copy = [...this.acctReqsByServiceReq];
+        let copyResults = copy.filter((acctReq) => {
+          if(acctReq.id === serviceIdx)
+            return acctReq
+        })
+
+        this.acctReqRowAcct = copyResults[0];
+      }
+    },
+    filterActives() {
+      return new Promise((resolve, reject) => {
+        let activeServices = [],
+        activeAcctReqs     = [];
+
+        this.mgrServiceReqs.forEach((item) => {
+          resolve(
+            activeServices.push(item.service),
+            activeAcctReqs.push(item.account_request)
+          )
+        });
+
+        let uniqActiveServices = [...new Set(activeServices)],
+        uniqActiveAcctReqs     = [...new Set(activeAcctReqs)];
+
+        this.$store.dispatch('serviceReqs/setActiveServiceIDs', uniqActiveServices);
+
+        this.$store.dispatch('serviceReqs/setActiveAcctReqIDs', uniqActiveAcctReqs);
+
+        reject('The filterActives forEach failed ...');
+      })
+    },
+    managerAcctReqXServiceReq() {
       let results           = [],
       acctReqsXService      = this.activeAcctReqIDs,
       uAcctReqsXService     = [...new Set(acctReqsXService)];
@@ -350,104 +403,31 @@ export default {
       });
 
       Promise.all(requests).then(() =>
-       this.$store.dispatch('serviceReqs/setAcctReqsByServiceReq', results)
-       // console.log(`%c mgrARbySR 👌 `, this.consoleLog.success);
-      );
+       this.$store.dispatch('serviceReqs/setAcctReqsByServiceReq', results),
+      ).then(() => this.masterManagerServiceReqs());
     },
-    mgrServices() {
-      // store as 'mgrFullProfiles'
-      // getServices() && getMgrProfiles()
-      return new Promise((resolve) => {
-        resolve(this.services.filter((item) => {
-            return this.mgrProfileIDs.indexOf(item.id) >= 0;
-          })
-        )
-      });
-    },
-    filterMgrServiceReqs() {
-      // store as 'mgrServiceReqs'
-      // getServiceRequests()
-      let results = this.requests.filter((item) => {
-        return this.mgrProfileIDs.indexOf(item.service) >= 0;
-      });
-      this.$store.dispatch('serviceReqs/setMgrServiceReqs', results);
-      this.filterActives();
-    },
-    filterActives() {
-      let activeServices = [],
-      activeAcctReqs     = [];
-
-      this.mgrServiceReqs.forEach((item) => {
-        activeServices.push(item.service);
-        activeAcctReqs.push(item.account_request);
-      });
-
-      let uniqActiveServices = [...new Set(activeServices)],
-      uniqActiveAcctReqs     = [...new Set(activeAcctReqs)];
-
-      this.$store.dispatch('serviceReqs/setActiveServiceIDs', uniqActiveServices);
-      this.$store.dispatch('serviceReqs/setActiveAcctReqIDs', uniqActiveAcctReqs);
-    },
-    serviceStatusChange(acctReq, status) {
-      let payload = {
-        "request_status": status,
-      }
-
-      this.$axios
-      .patch(`${process.env.api}${process.env.serviceReq}${acctReq.id}/`,payload)
-      .then((res) => {
-        console.log(`serviceStatusChange() :: `, res.data.results);
-
-        this.$axios
-        .post(`${process.env.api}${process.env.action}`,{
-          "user":    this.authUser.id,
-          "account": acctReq.account_request,
-          "action":  `Service Request (${acctReq.id}): ${acctReq.name}`,
-          "comment": `Changed from '${acctReq.request_status}' to '${status}'.`
+    masterManagerServiceReqs() {
+      let masterServices = [];
+      let newNew = this.mgrServiceReqs.filter((item) => {
+        this.acctReqsByServiceReq.filter((ar) => {
+          if(ar.id === item.account_request) {
+            this.mgrFullProfiles.filter((s) => {
+              if(s.id === item.service) {
+                masterServices.push({...item, sr: {...s}, ar: {...ar}})
+              }
+            })
+          }
         })
-        .then(response => {
-          console.log(`ACTION SR serviceStatusChange :: `, response);
-          this.loadData();
-        })
-        .catch(e => {
-          console.log(`ACTION SR serviceStatusChange error :: `, e)
-        });
-
-      })
-      .catch((error) => {
-        console.log(`serviceStatusChange() error:: `, error);
-      })
-    },
-    fullActiveServices() {
-      let fullActives = this.mgrFullProfiles.filter((item) => {
-        return this.activeServiceIDs.indexOf(item.id) >= 0;
       });
-
-      this.$store.dispatch('serviceReqs/setFullActiveServices', fullActives);
+      return this.$store.dispatch('serviceReqs/setMaster', masterServices)
     },
-    toggleAcctReqRow(service, i, e) {
-      let clicked = e.srcElement.nodeName;
-      if(clicked === 'TD') {
-        this.acctReqRowAcct = null;
-        let serviceIdx      = service.account_request,
-        sameRow             = (this.acctReqRow === i);
-        sameRow ? this.acctReqRow = null : this.acctReqRow = i;
-
-        let copy = [...this.acctReqsByServiceReq];
-        let copyResults = copy.filter((acctReq) => {
-          if(acctReq.id === serviceIdx)
-            return acctReq
-        })
-
-        this.acctReqRowAcct = copyResults[0];
-      }
-    }
   },
   computed: {
     ...mapFields([
       'auth.authUser',
       'consoleLog',
       'requestStatuses',
+      'serviceReqs.master',
       'serviceReqs.requests',
       'serviceReqs.services',
       'serviceReqs.mgrProfileIDs',
@@ -457,46 +437,34 @@ export default {
       'serviceReqs.activeAcctReqIDs',
       'serviceReqs.acctReqsByServiceReq'
     ]),
-    testNew() {
-      let masterServices = [];
-      this.mgrFullProfiles.forEach((item, i) => {
-        this.mgrServiceReqs.forEach((s, i) => {
-          if(item.id === s.service) {
-            // delete item.id
-            // delete item.created
-            // delete item.updated
-            masterServices.push({...item,...s})
-          }
-        })
-      });
-      return masterServices
-    },
     displayResults() {
       let hasServiceFilters = this.serviceFilterIDs.length != 0,
       hasAcctReqFilters     = this.acctReqFilterIDs.length != 0,
       hasBothFilters        = hasServiceFilters && hasAcctReqFilters;
 
+      let masterCopy = [...this.master];
+
       if(hasBothFilters){
-        return this.testNew
+        return masterCopy
         .filter((item) => {
           return this.serviceFilterIDs.indexOf(item.service) >= 0 &&
                  this.acctReqFilterIDs.indexOf(item.account_request) >= 0;
         })
         .sort((a, b) => new Date(b.updated) - new Date(a.updated))
       } else if(hasServiceFilters) {
-        return this.testNew
+        return masterCopy
         .filter((item) => {
           return this.serviceFilterIDs.indexOf(item.service) >= 0;
         })
         .sort((a, b) => new Date(b.updated) - new Date(a.updated))
       } else if(hasAcctReqFilters) {
-        return this.testNew
+        return masterCopy
         .filter((item) => {
           return this.acctReqFilterIDs.indexOf(item.account_request) >= 0;
         })
         .sort((a, b) => new Date(b.updated) - new Date(a.updated))
       } else {
-        return this.testNew
+        return masterCopy
         .sort((a, b) => new Date(b.updated) - new Date(a.updated))
       }
     },
@@ -672,9 +640,13 @@ export default {
 
       thead tr th,
       tbody tr td {
+        &:nth-child(2) {
+          width: 300px;
+        }
+
         &:nth-of-type(3) {
-          min-width: 450px;
-          width: 450px;
+          min-width: 350px;
+          width: 350px;
         }
 
         &:last-of-type {

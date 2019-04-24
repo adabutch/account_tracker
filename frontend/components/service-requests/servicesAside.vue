@@ -13,7 +13,7 @@
               name="servicesFilter"
               v-model="serviceFilterIDs"
               :value="p.id">
-            <label :for="p.id"><strong>{{p.id}}:</strong> {{p.name}}</label>
+            <label :for="p.id"><!-- <strong>{{p.id}}:</strong>  -->{{p.name}}</label>
           </div>
         </div>
       </fieldset>
@@ -31,7 +31,7 @@
               name="acctReqFilter"
               v-model="acctReqFilterIDs"
               :value="a.id">
-            <label :for="a.id"><strong>{{a.id}}:</strong> {{a.full_name}}</label>
+            <label :for="a.id"><!-- <strong>{{a.id}}:</strong>  -->{{a.full_name}}</label>
           </div>
         </div>
       </fieldset>
@@ -68,6 +68,7 @@ export default {
   methods: {},
   computed: {
     ...mapFields([
+      'serviceReqs.master',
       'serviceReqs.mgrFullProfiles',
       'serviceReqs.activeFullServices',
       'serviceReqs.activeServiceIDs',
@@ -76,8 +77,12 @@ export default {
       'serviceReqs.acctReqsByServiceReq'
     ]),
     sortActiveFullServices() {
-      let copy = [...this.activeFullServices]
-      return copy.sort((a, b) => a.id - b.id);
+      let copy = [...this.activeServiceIDs];
+
+      return this.mgrFullProfiles.filter((item) => {
+        return copy.indexOf(item.id) >= 0
+      })
+      .sort();
     },
     sortAcctReqsByServiceReq() {
       let copy = [...this.acctReqsByServiceReq];
