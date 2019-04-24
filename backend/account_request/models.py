@@ -58,6 +58,7 @@ class AccountRequest(models.Model):
 
     # Temp. placeholder for services associated w/ an account request
     requested_services = models.TextField(blank=True, null=True)
+    # Is this worth migrating to a many to many relationship?
 
     # is it new? approved? completed? denied?
     request_status = models.CharField(max_length=50)

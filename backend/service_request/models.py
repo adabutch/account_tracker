@@ -15,7 +15,7 @@ class ServiceRequest(models.Model):
     """
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
 
-    # Optional way to specify what permission level the user needs. 
+    # Optional way to specify what permission level the user needs.
     permission_level = models.CharField(max_length=50, blank=True, null=True)
 
     # who will have access to the Service

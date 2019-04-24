@@ -9,7 +9,7 @@ import json
 # from rest_framework import status
 # from rest_framework.test import APITestCase
 # from rest_framework.test import APIRequestFactory
-# from rest_framework.test import APIClient
+from rest_framework.test import APIClient
 
 # class AccountTests(APITestCase):
 #     def test_create_account(self):
@@ -24,6 +24,7 @@ import json
 #         self.assertEqual(AccountRequest.objects.count(), 1)
 #         self.assertEqual(AccountRequest.objects.get().name, 'DabApps')
 #
+
 
 class AccountRequestTestCase(TestCase):
     def setUp(self):
@@ -44,26 +45,38 @@ class AccountRequestTestCase(TestCase):
         self.assertEqual("Fred (yabba dabba) Flintstone Sr.", fn)
 
     def test_AccountRequest_has_Service(self):
-        """If a AccountRequest already exists for a service, don't duplicate
-        TODO: This test is not working
         """
+        If a AccountRequest already exists for a service, don't duplicate
+        """
+        # there should be a ServiceRequest for AD already,
+        # but it's not tied to an AccountRequest
         ad_service = Service.objects.get(name="Active Directory")
-        service_ids = [ ad_service.id ]
+        service_ids = [ad_service.id]
         ar = AccountRequest.objects.get(first_name="Fred")
         ar.requested_services = json.dumps(service_ids)
         ar.save()
-        # this should not create a duplicate service request
-        # (one was already started in setUp)
 
-        # # Using the standard RequestFactory API to create a form POST request
-        # factory = APIClient()
-        # url = '/api/account-request/%s/pending' % ar.id
+        # this process should add a second ServiceRequest
+        # Using the standard API to create a form POST request
+        client = APIClient()
+        url = '/api/account-request/%s/pending/' % ar.id
         # print(url)
-        # request = factory.get(url)
+        request = client.get(url)
         # print("REQUEST:", request)
 
-        #ar.pending()
         matches = ServiceRequest.objects.all().filter(service=ad_service)
-        for match in matches:
-            print("Match:", match)
+        # print(matches)
+        # print(len(matches))
+        # for match in matches:
+        #    print("Match:", match)
+        self.assertEqual(len(matches), 2)
+
+        # this should not create a duplicate service request
+        client = APIClient()
+        url = '/api/account-request/%s/pending/' % ar.id
+        client.get(url)
+
+        # if checks were preventing duplicates, should still be one
+        matches = ServiceRequest.objects.filter(
+            service=ad_service, account_request=ar)
         self.assertEqual(len(matches), 1)
