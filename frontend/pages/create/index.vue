@@ -287,6 +287,7 @@ export default {
     margin: 0 40px 0 0;
     align-items: flex-start;
     width: 480px;
+    height: fit-content;
 
     .croppie-wrapper {
       width: 180px;
@@ -325,11 +326,11 @@ export default {
     }
 
     /deep/  ol, ul {
-      margin: 0;
+      margin: 10px 0;
       padding: 0 0 0 20px;
 
       /deep/ li {
-        margin: 0 0 10px 0;
+        margin: 0 0 16px 0;
       }
     }
 
