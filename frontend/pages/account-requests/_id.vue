@@ -280,8 +280,8 @@
             <thead>
               <tr>
                 <th scope="col">Details</th>
-                <th scope="col">Created</th>
-                <th scope="col">Updated</th>
+                <th scope="col">Action by</th>
+                <th scope="col">Date</th>
               </tr>
             </thead>
 
@@ -292,8 +292,12 @@
                   <div>{{a.comment}}</div>
                 </th>
                 <th>
-                  <div>{{MMDYYYYDateFormat(a.created)}}</div>
-                  <div>{{timeAgo(a.created)}}</div>
+                  <template v-for="u, i in usersWithActions">
+                    <template v-if="u.id === a.user">
+                      <div>{{u.first_name}} {{u.last_name}}</div>
+                      <div>{{u.username}}</div>
+                    </template>
+                  </template>
                 </th>
                 <th>
                   <div>{{MMDYYYYDateFormat(a.updated)}}</div>
@@ -364,6 +368,7 @@ export default {
       serviceDetails: [],
       servicesStatus: [],
       acctReqActions: [],
+      usersWithActions: [],
     }
   },
   computed: {
@@ -394,7 +399,7 @@ export default {
               delete item.id
               delete item.created
               delete item.updated
-              masterServices.push({...item,...s})
+              masterServices.push({...s,...item})
             }
           })
         });
@@ -446,10 +451,11 @@ export default {
       .then((res) => {
         console.log(`getAcctReqActions() :: `, res.data.results);
         this.acctReqActions = res.data.results;
+        this.idsToNames();
       })
       .catch((error) => {
         console.log(`getAcctReqActions() error:: `, error);
-      })
+      });
     },
     getServices() {
       this.$axios
@@ -480,6 +486,31 @@ export default {
       });
       this.serviceDetails = results;
       this.usersServices;
+    },
+    idsToNames() {
+      let users = new Set();
+      this.acctReqActions.map((s) => {
+        return users.add(s.user);
+      });
+
+      users = [...users];
+
+      let userRequests = users.map((user) => {
+        return new Promise((resolve, reject) => {
+          this.$axios
+          .get(`${process.env.api}${process.env.employee}${user}/`)
+          .then((res) => {
+            resolve(this.usersWithActions.push(res.data));
+          })
+          .catch((e) => {
+            reject(e);
+          });
+        })
+      });
+
+      Promise.all(userRequests).then(() =>
+        console.log(this.usersWithActions)
+      );
     },
   },
 }
