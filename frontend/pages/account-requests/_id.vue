@@ -188,12 +188,12 @@
               </fn1-badge>
             </div>
 
-            <div class="notes">
-              <p v-if="acctReqIsNew"><strong>Note:</strong> <strong>Service Request</strong> actions become available when the <strong>Account Request</strong> reaches <fn1-badge class="pending">pending</fn1-badge>.</p>
+            <div class="notes" v-if="acctReqIsNew">
+              <p><strong>Note:</strong> <strong>Service Requests</strong> become available when the <strong>Account Request</strong> reaches <fn1-badge class="pending">pending</fn1-badge>.</p>
             </div>
           </div>
 
-          <table class="fixed-header service-reqs">
+          <table class="fixed-header service-reqs" v-if="!acctReqIsNew">
             <caption class="sr-only">All User Requests</caption>
             <thead>
               <tr>
@@ -209,6 +209,7 @@
             </thead>
 
             <tbody>
+              <tr></tr>
               <tr v-for="s, i in usersServices" :key="i">
                 <th class="status">
                   <fn1-badge v-if="s.request_status == null"
