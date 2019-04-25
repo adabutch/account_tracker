@@ -42,6 +42,7 @@
               <th scope="col">Name</th>
               <th scope="col">Dept.</th>
               <th scope="col">Created</th>
+              <th scope="col">Requested By</th>
               <th scope="col">Actions</th>
             </tr>
           </thead>
@@ -82,6 +83,14 @@
               <th>
                 <div>{{ MMDYYYYDateFormat(item.requested) }}</div>
                 <div>{{ timeAgo(item.requested) }}</div>
+              </th>
+              <th>
+                <template v-for="u, i in usersWithAcctReqs">
+                  <template v-if="u.id === item.requester">
+                    <div>{{u.first_name}} {{u.last_name}}</div>
+                    <div>{{u.username}}</div>
+                  </template>
+                </template>
               </th>
               <th>
                 <fn1-button @click.native="showDetails(item)">view</fn1-button>
@@ -131,6 +140,7 @@
               <th scope="col">Name</th>
               <th scope="col">Dept.</th>
               <th scope="col">Created</th>
+              <th scope="col">Requested By</th>
               <th scope="col">Actions</th>
             </tr>
           </thead>
@@ -171,6 +181,14 @@
               <th>
                 <div>{{ MMDYYYYDateFormat(item.updated) }}</div>
                 <div>{{ timeAgo(item.updated) }}</div>
+              </th>
+              <th>
+                <template v-for="u, i in usersWithAcctReqs">
+                  <template v-if="u.id === item.requester">
+                    <div>{{u.first_name}} {{u.last_name}}</div>
+                    <div>{{u.username}}</div>
+                  </template>
+                </template>
               </th>
               <th>
                 <nuxt-link class="button" :to="'/account-requests/'+item.id">
@@ -356,6 +374,7 @@ export default {
       searchUsers:         "",
       batchRequestIDs:     [],
       selected:            [],
+      usersWithAcctReqs:   [],
     }
   },
   mounted() {
@@ -464,34 +483,78 @@ export default {
       })
     },
     getAccountRequests() {
-      this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=pending`)
-      .then((res) => {
-        this.$store.dispatch('accountRequestsPending', res.data.results)
-      })
-      .catch((e) => {
-        console.log(e);
-      })
+      let pendingReqs = new Promise((resolve, reject) => {
+        this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=pending`)
+        .then((res) => {
+          resolve(
+            this.$store.dispatch('accountRequestsPending', res.data.results)
+          )
+        })
+        .catch((e) => {
+          reject(
+            console.log(e)
+          )
+        })
+      });
 
-      this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=new`)
-      .then((res) => {
-        // let newResults = res.data;
-        let newResults = res.data.results;
-        this.$store.dispatch('accountRequestsNew', newResults);
-      })
-      .catch((e) => {
-        console.log(e);
-      })
+      let newReqs = new Promise((resolve, reject) => {
+        this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=new`)
+        .then((res) => {
+          resolve(
+            this.$store.dispatch('accountRequestsNew', res.data.results)
+          )
+        })
+        .catch((e) => {
+          reject(
+            console.log(e)
+          )
+        })
+      });
+
+      Promise.all([pendingReqs,newReqs])
+      .then(() => this.idsToNames())
+    },
+    idsToNames() {
+      let allAcctReqs = new Set(),
+      users           = new Set();
+
+      allAcctReqs = [...this.pending,...this.new];
+
+      allAcctReqs.map((u) => {
+        return users.add(u.requester);
+      });
+
+      users = [...users];
+
+      let filteredUsers = users.filter(n => n);
+
+      let userRequests = filteredUsers.map((user) => {
+        return new Promise((resolve, reject) => {
+          this.$axios
+          .get(`${process.env.api}${process.env.employee}${user}/`)
+          .then((res) => {
+            resolve(this.usersWithAcctReqs.push(res.data));
+          })
+          .catch((e) => {
+            reject(e);
+          });
+        })
+      });
+
+      Promise.all(userRequests).then(() =>
+        console.log(`%c AR x userRequests 👌 `, this.consoleLog.success)
+      );
     },
   },
   computed: {
     ...mapFields([
+      'consoleLog',
       'accountRequests.new',
       'accountRequests.pending',
       'accountRequests.approved',
       'accountRequests.denied',
       'auth.authUser'
     ]),
-
     batchApprovalCount() {
       return this.selected.length;
     },
