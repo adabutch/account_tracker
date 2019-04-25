@@ -489,7 +489,7 @@
                 </div>
               </div>
 
-              <div class="group-questions">
+              <div class="group-questions" v-if="selectedGroup">
                 <div class="title-row">
                   <h5>Group Questions</h5>
                   <exampleModal ref="addGroupQuestionModal"

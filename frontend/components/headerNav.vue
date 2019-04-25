@@ -14,7 +14,7 @@
 
       :application="{
         name:         'Account Track',
-        url:          'https://dhcp-cityhall-101-164.bloomington.in.gov:8080'
+        url:          '/'
       }"
 
       :navItems="[

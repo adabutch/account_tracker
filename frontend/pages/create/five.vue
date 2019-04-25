@@ -235,11 +235,23 @@ export default {
 
     .field-group {
       width: calc(100% - 6px);
-      margin: 0 auto 20px auto;
+      margin: 0 auto;
+      padding: 40px 16px;
+      border-bottom: 1px solid lighten($text-color, 50%);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+
+      &:first-of-type {
+        padding: 20px 16px;
+      }
+
+      &:nth-child(even) {
+        background: rgba($color-cloud, 0.3);
+      }
 
       &:last-of-type {
-        display: flex;
-        margin: 0 auto 20px auto;
+        border-bottom: none;
       }
     }
 
@@ -248,7 +260,10 @@ export default {
       align-self: flex-start;
       flex: 1;
       max-width: 50%;
-      height: 100%;
+
+      h1 {
+        margin: 0;
+      }
     }
 
     .dept-questions {

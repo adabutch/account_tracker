@@ -566,6 +566,7 @@ export default {
     &:after {
       position: absolute;
       content: '';
+      pointer-events: none;
       right: 0;
       bottom: 0;
       left: 0;

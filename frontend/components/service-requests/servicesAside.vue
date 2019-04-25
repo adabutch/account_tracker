@@ -118,6 +118,7 @@ export default {
 
       &:after {
         position: absolute;
+        pointer-events: none;
         content: '';
         right: 0;
         bottom: 0;

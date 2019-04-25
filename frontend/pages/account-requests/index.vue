@@ -515,6 +515,8 @@ export default {
       .then(() => this.idsToNames())
     },
     idsToNames() {
+      this.usersWithAcctReqs = [];
+
       let allAcctReqs = new Set(),
       users           = new Set();
 
@@ -654,6 +656,7 @@ export default {
 
       thead tr th,
       tbody tr th {
+
         &:last-of-type {
           text-align: right;
         }
