@@ -180,7 +180,7 @@ span.label {
   thead {
     th {
       background-color: lighten($color-grey, 10%);
-      padding: 16px 8px;
+      padding: 16px 0;
       text-align: left;
 
       &:first-of-type,
@@ -205,8 +205,14 @@ span.label {
       }
 
       th, td {
+        padding: 16px 0;
         font-weight: 600;
         text-align: left;
+
+        &:first-of-type,
+        &:last-of-type {
+          padding: 0 8px;
+        }
       }
     }
   }

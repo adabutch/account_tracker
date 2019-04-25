@@ -611,7 +611,6 @@ export default {
 
         tr {
           th {
-            padding: 8px 0;
 
             &.status {
               width: 120px;

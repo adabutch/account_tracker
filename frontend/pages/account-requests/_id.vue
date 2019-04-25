@@ -199,8 +199,7 @@
               <tr>
                 <th scope="col">Status</th>
                 <th scope="col">Name</th>
-                <th scope="col">Primary Contact</th>
-                <th scope="col">Secondary Contact</th>
+                <th scope="col">Managers</th>
                 <th scope="col">Requested</th>
                 <th scope="col">Updated</th>
                 <th scope="col">Created</th>
@@ -222,9 +221,13 @@
                     {{ s.request_status }}
                   </fn1-badge>
                 </th>
-                <th>{{s.service}} - {{s.name}}<!--  {{s.service}} --></th>
-                <th>{{s.primary_poc}}</th>
-                <th>{{s.secondary_poc}}</th>
+                <th><!-- {{s.service}} -  -->{{s.name}}<!--  {{s.service}} --></th>
+                <th>
+                  <template v-for="m, i in s.managers">
+                    <div>{{m.first_name}} {{m.last_name}}</div>
+                    <div>{{m.username}}</div>
+                  </template>
+                </th>
                 <th>
                   <div>{{MMDYYYYDateFormat(s.requested)}}</div>
                   <div>{{timeAgo(s.requested)}}</div>
@@ -431,6 +434,7 @@ export default {
           console.log(`ACTION SR serviceStatusChange :: `, response);
           this.getServices();
           this.getUserServices();
+          this.usersWithActions = [];
           this.getAcctReqActions();
         })
         .catch(e => {
@@ -510,7 +514,7 @@ export default {
       });
 
       Promise.all(userRequests).then(() =>
-        console.log(this.usersWithActions)
+        console.log(`UwA`,this.usersWithActions)
       );
     },
   },
@@ -761,10 +765,21 @@ export default {
 
       tr {
         th {
-          padding: 20px 8px;
+
+          &:nth-child(3) {
+            div {
+              &:nth-child(even) {
+                margin: 0 0 10px 0;
+              }
+
+              &:last-child {
+                margin: 0;
+              }
+            }
+          }
 
           div {
-            &:nth-child(2) {
+            &:nth-child(even) {
               font-size: 14px;
               color: lighten($text-color, 25%);
             }
