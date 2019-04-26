@@ -10,8 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-import os
+import os, configparser
 from datetime import timedelta
+
+config = configparser.ConfigParser(strict=True, interpolation=None)
+config.read(os.environ["ACCOUNT_TRACKER_CONF"]);
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,15 +24,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # Allow for higher-res images
-DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
+DATA_UPLOAD_MAX_MEMORY_SIZE = config['hosting'].get('max_upload_size', 5242880)
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'v(69g86_0un_0daqp41*y%a25=)lm+s2aow4p8zk91bwf!(%)6'
+SECRET_KEY = config['hosting'].get('secret_key')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config['hosting'].getboolean('debug')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.bloomington.in.gov']
 
 # Application definition
 
@@ -87,23 +91,23 @@ WSGI_APPLICATION = 'account_tracker.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
+db_engine = config['database'].get('engine')
+db_name   = config['database'].get('name')
+db_host   = config['database'].get('host')
+db_port   = config['database'].get('port')
+db_user   = config['database'].get('user')
+db_pass   = config['database'].get('pass')
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.' + db_engine,
+        'NAME': db_name
     }
 }
-
-CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOW_CREDENTIALS = True
-
-CORS_ORIGIN_WHITELIST = (
-    # TODO - set this properly for production
-    'http://localhost:3000/',
-    'https://dhcp-cityhall-101-164.bloomington.in.gov:8080/'
-)
+if db_host: DATABASES['default']['HOST'    ] = db_host
+if db_port: DATABASES['default']['PORT'    ] = db_port
+if db_user: DATABASES['default']['USER'    ] = db_user
+if db_pass: DATABASES['default']['PASSWORD'] = db_pass
 
 # Adapting from Netbox approach for configuring LDAP
 # Attempt to import LDAP configuration if it has been defined
@@ -188,15 +192,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+LANGUAGE_CODE = config['locale'].get('lang')
+TIME_ZONE     = config['locale'].get('tz'  )
 USE_I18N = True
-
 USE_L10N = True
-
-USE_TZ = True
+USE_TZ   = True
 
 
 # Static files (CSS, JavaScript, Images)
