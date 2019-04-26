@@ -9,6 +9,7 @@ This is a Python3 application.  It will not run using Python2.
 * python3-dev
 * libldap3-dev
 * libsasl2-dev
+* libmysqlclient-dev
 * libapache2-mod-wsgi-py3
 
 ```bash
@@ -26,8 +27,8 @@ You will need to create your own ini conf file.  The path to this file must be d
 After making changes to the models, generate new database migrations and then apply them:
 
 ```bash
-python3 manage.py makemigrations
-python3 manage.py migrate
+ACCOUNT_TRACKER_CONF=/path/to/config.ini python manage.py makemigrations
+ACCOUNT_TRACKER_CONF=/path/to/config.ini python manage.py migrate
 ```
 
 ## Hosting with Apache
@@ -55,13 +56,13 @@ You will need to create your own version of the wsgi file to suit your environme
 Run the dev server with:
 
 ```bash
-python3 manage.py runserver
+ACCOUNT_TRACKER_CONF=/path/to/config.ini python manage.py runserver
 ```
 
 ## Testing
 
 ```bash
-python3 manage.py test
+ACCOUNT_TRACKER_CONF=/path/to/config.ini python manage.py test
 ```
 
 
