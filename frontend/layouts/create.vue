@@ -12,6 +12,7 @@
 import headerNav    from '~/components/headerNav'
 
 export default {
+  middleware: ['authenticated','isAdmin'],
   components: { headerNav },
   data() {
     return {}

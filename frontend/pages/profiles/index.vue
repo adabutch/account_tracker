@@ -794,7 +794,6 @@ import exampleCheckbox from '~/components/exampleCheckbox'
 
 export default {
   layout:           'profiles',
-  middleware:       'authenticated',
   components: {
     headerNav,
     exampleModal,

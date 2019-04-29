@@ -568,7 +568,6 @@ import exampleSelect  from '~/components/exampleSelect'
 
 export default {
   layout:           'services',
-  middleware:       'authenticated',
   components: {
     exampleModal,
     exampleSelect

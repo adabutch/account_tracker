@@ -1,5 +1,5 @@
 const pkg = require('./package')
-
+// require('dotenv').config()
 
 module.exports = {
   mode: 'universal',
@@ -75,7 +75,12 @@ module.exports = {
   ** Nuxt.js modules
   */
   modules: [
-    { src: '@nuxtjs/axios' }
+    ['@nuxtjs/axios'],
+    // PWA having issues w/ nodemon
+    // ['@nuxtjs/pwa', {
+    //   icon: true,
+    //   sizes: [16, 120, 144, 152, 192, 384, 512],
+    // }]
   ],
 
   // axios: {
@@ -86,11 +91,15 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    /*
-    ** You can extend webpack config here
-    */
-    extend(config, ctx) {
-
+    extend (config, { isDev, isClient }) {
+      if (isDev && isClient) {
+        config.module.rules.push({
+          enforce: 'pre',
+          test: /\.(js|vue)$/,
+          loader: 'eslint-loader',
+          exclude: /(node_modules)/
+        })
+      }
     }
   }
 }

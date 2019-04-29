@@ -139,7 +139,6 @@ import exampleSelect    from '~/components/exampleSelect'
 
 export default {
   layout:           'create',
-  middleware:       ['authenticated','isAdmin'],
   components: {
     progressStepper,
     asideComponent,

@@ -180,7 +180,6 @@ import servicesAside    from '~/components/service-requests/servicesAside'
 
 export default {
   layout:           'service-requests',
-  middleware:       'authenticated',
   components: {
     exampleDropdown,
     servicesAside,

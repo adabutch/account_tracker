@@ -1,6 +1,7 @@
 <template>
   <div class="header-wrapper" ref="headerWrapper">
-    <fn1-header
+    <exampleHeader
+      :active.sync="$route.name"
       :logo="{
         url:          'https://bloomington.in.gov/',
         image:        '/city-of-bloomington-logo.svg',
@@ -12,18 +13,8 @@
         subHeading:   'John Hamilton, Mayor',
       }"
 
-      :application="{
-        name:         'Account Track',
-        url:          '/'
-      }"
-
-      :navItems="[
-        {name: 'Account Requests',  href: '/account-requests'},
-        {name: 'Service Requests',  href: '/service-requests'},
-        {name: 'Services',          href: '/services'},
-        {name: 'Profiles',          href: '/profiles'},
-      ]"
-
+      :application="navigation.application"
+      :navItems="navItems"
       :subNavItems="subNavItems">
 
       <fn1-button slot="dropdown"
@@ -32,7 +23,7 @@
                   @click.native="logout()">
         Logout
       </fn1-button>
-    </fn1-header>
+    </exampleHeader>
   </div>
 </template>
 
@@ -46,42 +37,67 @@ import {
   mapFields }          from 'vuex-map-fields'
 
 import exampleDropdown from '~/components/exampleDropdown'
+import exampleHeader   from '~/components/exampleHeader'
 
 export default {
   mounted(context) {
     this.routeParam = this.$route.name;
+    this.isAccountRequestRoute;
+    this.subNavItems;
   },
   components: {
-    exampleDropdown
+    exampleDropdown,
+    exampleHeader
   },
   data() {
     return {
       routeParam:   '',
+      routes: {
+        accountReq: ['account-requests','create'],
+        serviceReq: ['service-requests'],
+        services:   ['services'],
+        profiles:   ['profiles'],
+      }
     }
   },
-  created() {},
   computed: {
     ...mapFields([
-      'groupLevels',
-      'endpoints',
       'auth.auth',
       'auth.authUser',
       'auth.authLevel',
       'auth.isAuthenticated',
-      'subNav.acctReq',
+      'navigation',
     ]),
+    navItems() {
+      return this.navigation.nav.admin
+    },
+    isAccountRequestRoute() {
+      if(this.routes.accountReq.includes(this.routeParam))
+        return true;
+    },
+    isServiceRequestRoute() {
+      if(this.routes.serviceReq.includes(this.routeParam))
+        return true;
+    },
+    isServicesRoute() {
+      if(this.routes.services.includes(this.routeParam))
+        return true;
+    },
+    isProfilesRoute() {
+      if(this.routes.profiles.includes(this.routeParam))
+        return true;
+    },
     subNavItems() {
-      if(this.routeParam.includes('account-requests') ||
-         this.routeParam.includes('create')) {
+      if(this.isAccountRequestRoute) {
         if(this.authLevel.admin) {
-          return this.acctReq.admin;
+          return this.navigation.subNav.accountRequest.admin;
         } else if(this.authLevel.regular) {
-          return this.acctReq.regular;
+          return this.navigation.subNav.accountRequest.regular;
         }
       } else {
         return [{}]
       }
-    }
+    },
   },
   methods: {
     logout() {
@@ -101,6 +117,21 @@ header {
   position: fixed;
   top: 0;
   z-index: 0 !important;
+
+  /deep/ nav {
+    &[role="navigation"] {
+      ul {
+        li {
+          a {
+            &.active,
+            &:hover {
+              color: $color-blue;
+            }
+          }
+        }
+      }
+    }
+  }
 
   /deep/ button {
     font-size: $size-s;

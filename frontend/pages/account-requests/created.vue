@@ -85,7 +85,6 @@ const { mapFields } = createHelpers({
 
 export default {
   layout:           'account-reqs',
-  middleware:       'authenticated',
   components: {
     headerNav,
     exampleSelect,

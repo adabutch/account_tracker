@@ -15,7 +15,8 @@
 
 <script>
 export default {
-  name: 'NuxtError',
+  middleware:       'authenticated',
+  name:             'Error',
   props: {
     error: {
       type: Object,

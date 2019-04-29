@@ -80,7 +80,6 @@ import axios           from 'axios'
 
 export default {
   layout:           'search',
-  middleware:       'authenticated',
   components:       {},
   data() {
     return {

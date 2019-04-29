@@ -11,7 +11,7 @@ import facilities   from './modules/facilities'
 import depts        from './modules/depts'
 import serviceReqs  from './modules/service-requests'
 import services     from './modules/services'
-import subNav       from './modules/subNavigation'
+import navigation   from './modules/navigation'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -127,7 +127,7 @@ export default {
     depts:          depts,
     serviceReqs:    serviceReqs,
     services:       services,
-    subNav:         subNav,
+    navigation:     navigation,
   },
   mutations,
   actions,
