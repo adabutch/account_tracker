@@ -68,6 +68,7 @@ module.exports = {
     { src: '~/plugins/resetGlobalStore' },
     { src: '~/plugins/clearAuth' },
     { src: '~/plugins/clearStorage' },
+    { src: '~/plugins/getAccountRequests' },
     { src: '~/plugins/croppie.js', ssr: false }
   ],
 

@@ -369,7 +369,6 @@ export default {
       showModal:           false,
       showDetailsFor:      null,
       showingUserDetails:  false,
-      selectFilter:        "",
       searchUsers:         "",
       batchRequestIDs:     [],
       selected:            [],
@@ -377,13 +376,12 @@ export default {
     }
   },
   mounted() {
-    this.getAccountRequests();
+    this.getAccountRequests()
+    .then(() => this.idsToNames());
   },
   watch: {},
   methods: {
     outside(e) {
-      alert('clicked');
-      console.log(e);
       this.showingUserDetails = false;
     },
     parseExtras(extras){
@@ -437,10 +435,6 @@ export default {
       console.log(`WI :: PAYLOAD ::: ${payload}`)
       this.searchUsers = payload;
     },
-    watchSelect(payload) {
-      console.log(`WS :: PAYLOAD ::: ${payload}`)
-      this.selectFilter = payload;
-    },
     approveUserAccountRequest(payload) {
       this.$axios
       .patch(`${process.env.api}${process.env.accountRequest}${payload.id}/`,{
@@ -481,38 +475,6 @@ export default {
         console.log(`approveUserAccountRequest req. error :: `, e)
       })
     },
-    getAccountRequests() {
-      let pendingReqs = new Promise((resolve, reject) => {
-        this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=pending`)
-        .then((res) => {
-          resolve(
-            this.$store.dispatch('accountRequestsPending', res.data.results)
-          )
-        })
-        .catch((e) => {
-          reject(
-            console.log(e)
-          )
-        })
-      });
-
-      let newReqs = new Promise((resolve, reject) => {
-        this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=new`)
-        .then((res) => {
-          resolve(
-            this.$store.dispatch('accountRequestsNew', res.data.results)
-          )
-        })
-        .catch((e) => {
-          reject(
-            console.log(e)
-          )
-        })
-      });
-
-      Promise.all([pendingReqs,newReqs])
-      .then(() => this.idsToNames())
-    },
     idsToNames() {
       this.usersWithAcctReqs = [];
 
@@ -550,10 +512,12 @@ export default {
   computed: {
     ...mapFields([
       'consoleLog',
-      'accountRequests.new',
-      'accountRequests.pending',
-      'accountRequests.approved',
-      'accountRequests.denied',
+      'acctReqs',
+      'acctReqs.accountRequests',
+      'acctReqs.accountRequests.new',
+      'acctReqs.accountRequests.pending',
+      'acctReqs.accountRequests.approved',
+      'acctReqs.accountRequests.denied',
       'auth.authUser'
     ]),
     batchApprovalCount() {

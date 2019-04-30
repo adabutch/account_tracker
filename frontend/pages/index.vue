@@ -75,45 +75,33 @@ export default {
   data() {
     return {
       acctReqSearch: '',
-      accountReqs:   []
     }
   },
   mounted() {
-    this.getAccountRequests()
-    .then((resolve) => {
-      this.accountReqs = resolve;
-      console.log(`%c getAccountRequests 👌 `, this.consoleLog.success)
-    })
-    .catch((reject) => {
-      console.log(`%c getAccountRequests 🛑 `,
-                    this.consoleLog.error,
-                    `\n\n ${reject} \n\n`);
-    });
+    this.getAccountRequests();
   },
   methods: {
-    getAccountRequests() {
-      return new Promise((resolve, reject) => {
-        this.$axios
-        .get(`${process.env.api}${process.env.accountRequest}?limit=1000`)
-        .then((response) => resolve(response.data.results))
-        .catch((e)       => reject(e));
-      });
-    },
     goCreateAccountRequest() {
-      this.$router.push(`/create/`);
+      this.$router.push(this.paths.createAccountRequest);
     },
     viewAccountRequest(id) {
-      this.$router.push(`/account-requests/${id}`);
+      this.$router.push(this.paths.accountRequests + id);
     }
   },
   computed: {
     ...mapFields([
+      'paths',
       'requestStatuses',
-      'consoleLog'
+      'consoleLog',
+      'acctReqs.accountRequests'
     ]),
+    allAccountRequests() {
+      let master = [...this.accountRequests.approved,...this.accountRequests.denied,...this.accountRequests.new,...this.accountRequests.pending];
+      return master
+    },
     filteredAcctReqs() {
       if(this.acctReqSearch.length) {
-        return this.accountReqs
+        return this.allAccountRequests
         .filter(user => {
           let fullName   = user.full_name.toLowerCase(),
           firstName      = user.first_name.toLowerCase(),
@@ -132,7 +120,7 @@ export default {
         })
         .sort((a, b) => new Date(b.requested) - new Date(a.requested))
       } else {
-        return this.accountReqs
+        return this.allAccountRequests
         .sort((a, b) => new Date(b.requested) - new Date(a.requested))
       }
     },
