@@ -63,7 +63,10 @@ export default {
     }
   },
   computed: {
-    ...mapFields(['auth.isAuthenticated'])
+    ...mapFields([
+      'consoleLog',
+      'auth.isAuthenticated'
+    ])
   },
   methods: {
     login() {
@@ -73,22 +76,29 @@ export default {
       }
       axios.post(`${process.env.api}${process.env.obtainJWT}`, payload)
       .then((response) => {
-        // console.log(`login ::: `, response);
         this.$store.commit('auth/SET_AUTH', response.data.token)
         Cookie.set('auth', response.data.token)
+        console.log(`%c JWT loginUser 👌 `, this.consoleLog.success)
 
         this.$axios
         .get(`${process.env.api}${process.env.user}`)
         .then((response) => {
-          console.log(`login user ::: `, response.data)
+          console.log(`%c loginUser 👌 `, this.consoleLog.success);
           this.$store.dispatch('auth/authUser', response.data)
           this.$store.dispatch('auth/authUserAuthenticated', true)
           this.$router.push('/')
         })
+        .catch((error) => {
+          console.log(`%c loginUser 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${error} \n\n`);
+        })
       })
       .catch((error) => {
-        this.loginError = error.response.data;
-        console.log(`login error ::: `, error.response.data);
+        this.loginError = error;
+        console.log(`%c JWT loginUser 🛑 `,
+                    this.consoleLog.error,
+                    `\n\n ${error} \n\n`);
       })
     }
   }

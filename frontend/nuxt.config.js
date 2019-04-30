@@ -83,15 +83,15 @@ module.exports = {
     // }]
   ],
 
-  // axios: {
-  //   withCredentials: true
-  // },
+  axios: {
+    withCredentials: true
+  },
 
   /*
   ** Build configuration
   */
   build: {
-    // ESLint fails with `Unexpected token {`
+    // ESLint needs config for Nuxt
     // extend (config, { isDev, isClient }) {
     //   if (isDev && isClient) {
     //     config.module.rules.push({

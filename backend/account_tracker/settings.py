@@ -33,7 +33,7 @@ SECRET_KEY = config['hosting'].get('secret_key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config['hosting'].getboolean('debug')
 
-ALLOWED_HOSTS = ['.bloomington.in.gov']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -108,6 +108,10 @@ if db_host: DATABASES['default']['HOST'    ] = db_host
 if db_port: DATABASES['default']['PORT'    ] = db_port
 if db_user: DATABASES['default']['USER'    ] = db_user
 if db_pass: DATABASES['default']['PASSWORD'] = db_pass
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = ('https://dhcp-cityhall-101-164.bloomington.in.gov:8080/')
 
 # Adapting from Netbox approach for configuring LDAP
 # Attempt to import LDAP configuration if it has been defined

@@ -42,7 +42,8 @@ import exampleHeader   from '~/components/exampleHeader'
 export default {
   mounted(context) {
     this.routeParam = this.$route.name;
-    this.isAccountRequestRoute;
+    this.checkAuthLevel;
+    this.navItems;
     this.subNavItems;
   },
   components: {
