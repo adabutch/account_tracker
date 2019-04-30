@@ -352,7 +352,7 @@ const { mapFields } = createHelpers({
 });
 
 export default {
-  layout:           'account-reqs',
+  layout:           'account-requests',
   components: {
     headerNav,
     exampleSelect,

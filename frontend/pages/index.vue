@@ -16,7 +16,7 @@
 
     <div class="results-wrapper">
       <div class="status-legend">
-        <fn1-badge v-for="s, i in statusLegend"
+        <fn1-badge v-for="s, i in requestStatuses"
                    :key="i"
                    :class="s">
           {{s}}
@@ -24,15 +24,12 @@
       </div>
 
       <div class="results">
-        <h4 v-if="!acctReqSearch">Search results will appear here.</h4>
-
         <div class="no-results" v-if="!filteredAcctReqs.length">
           <h4>No results for, <strong>"{{acctReqSearch}}"</strong>.</h4>
-          <fn1-button @click.native="goCreateAR">New Account Request</fn1-button>
+          <fn1-button @click.native="goCreateAccountRequest">New Account Request</fn1-button>
         </div>
 
-        <div v-if="acctReqSearch"
-             v-for="a, i in filteredAcctReqs"
+        <div v-for="a, i in filteredAcctReqs"
              class="result"
              :class="a.request_status">
           <div class="profile-image" v-if="a.cropped_image">
@@ -61,7 +58,7 @@
           </div>
 
           <div>
-            <fn1-button @click.native="viewAcctReq(a.id)">view</fn1-button>
+            <fn1-button @click.native="viewAccountRequest(a.id)">view</fn1-button>
           </div>
         </div>
       </div>
@@ -70,63 +67,74 @@
 </template>
 
 <script>
-  import {
-  mapState,
-  mapMutations,
-  mapGetters,
-  mapActions }         from 'vuex'
 import { mapFields }   from 'vuex-map-fields'
 import axios           from 'axios'
 
 export default {
   layout:           'search',
-  components:       {},
   data() {
     return {
       acctReqSearch: '',
-      accountReqs:   [],
-      statusLegend:  ['new','pending','approved','active','denied','inactive']
+      accountReqs:   []
     }
   },
   mounted() {
-    this.filteredAcctReqs =
-    this.$axios
-    .get(`${process.env.api}${process.env.accountRequest}?limit=1000`)
-    .then(response => {
-      this.accountReqs = response.data.results;
+    this.getAccountRequests()
+    .then((resolve) => {
+      this.accountReqs = resolve;
+      console.log(`%c getAccountRequests 👌 `, this.consoleLog.success)
     })
-    .catch(e => {
-      console.log(e)
+    .catch((reject) => {
+      console.log(`%c getAccountRequests 🛑 `,
+                    this.consoleLog.error,
+                    `\n\n ${reject} \n\n`);
     });
   },
   methods: {
-    goCreateAR() {
+    getAccountRequests() {
+      return new Promise((resolve, reject) => {
+        this.$axios
+        .get(`${process.env.api}${process.env.accountRequest}?limit=1000`)
+        .then((response) => resolve(response.data.results))
+        .catch((e)       => reject(e));
+      });
+    },
+    goCreateAccountRequest() {
       this.$router.push(`/create/`);
     },
-    viewAcctReq(id) {
+    viewAccountRequest(id) {
       this.$router.push(`/account-requests/${id}`);
     }
   },
   computed: {
+    ...mapFields([
+      'requestStatuses',
+      'consoleLog'
+    ]),
     filteredAcctReqs() {
-      return this.accountReqs
-      .filter(user => {
-        let fullName   = user.full_name.toLowerCase(),
-        firstName      = user.first_name.toLowerCase(),
-        middleName     = user.middle_name.toLowerCase(),
-        lastName       = user.last_name.toLowerCase(),
-        userDept       = user.department.toLowerCase(),
-        userGroup      = user.group.toLowerCase();
+      if(this.acctReqSearch.length) {
+        return this.accountReqs
+        .filter(user => {
+          let fullName   = user.full_name.toLowerCase(),
+          firstName      = user.first_name.toLowerCase(),
+          middleName     = user.middle_name.toLowerCase(),
+          lastName       = user.last_name.toLowerCase(),
+          userDept       = user.department.toLowerCase(),
+          userGroup      = user.group.toLowerCase();
 
-        return fullName.includes(this.acctReqSearch.toLowerCase()) ||
-               firstName.includes(this.acctReqSearch.toLowerCase()) ||
-               middleName.includes(this.acctReqSearch.toLowerCase()) ||
-               lastName.includes(this.acctReqSearch.toLowerCase()) ||
-               userDept.includes(this.acctReqSearch.toLowerCase()) ||
-               userGroup.includes(this.acctReqSearch.toLowerCase()) ||
-               fullName.includes(this.acctReqSearch.toLowerCase())
-      })
-      .sort((a, b) => new Date(b.requested) - new Date(a.requested))
+          return fullName.includes(this.acctReqSearch.toLowerCase()) ||
+                 firstName.includes(this.acctReqSearch.toLowerCase()) ||
+                 middleName.includes(this.acctReqSearch.toLowerCase()) ||
+                 lastName.includes(this.acctReqSearch.toLowerCase()) ||
+                 userDept.includes(this.acctReqSearch.toLowerCase()) ||
+                 userGroup.includes(this.acctReqSearch.toLowerCase()) ||
+                 fullName.includes(this.acctReqSearch.toLowerCase())
+        })
+        .sort((a, b) => new Date(b.requested) - new Date(a.requested))
+      } else {
+        return this.accountReqs
+        .sort((a, b) => new Date(b.requested) - new Date(a.requested))
+      }
     },
   }
 }
