@@ -1,15 +1,25 @@
-// require('dotenv').config()
+const pkg = require('./package')
+require('dotenv').config()
 const {
   Nuxt,
-  Builder }   = require('nuxt');
-const config  = require('./nuxt.config.js');
-const https   = require('https');
-const fs      = require('fs');
-const port    = 8080;
-const isProd  = (process.env.NODE_ENV === 'production');
+  Builder }         = require('nuxt'),
+config              = require('./nuxt.config.js'),
+https               = require('https'),
+fs                  = require('fs'),
+port                = process.env.NUXT_PORT,
+isProd              = (process.env.NODE_ENV === 'production'),
+nuxt                = new Nuxt(config);
+options             = {
+  key:  fs.readFileSync('certs/server.key', 'utf8'),
+  cert: fs.readFileSync('certs/server.crt', 'utf8')
+},
+envMsg              = config.dev ? 'Development' : 'Production',
+devUrl              = `https://dhcp-cityhall-xxx-xxx.bloomington.in.gov`,
+dividerMsg          = `🛠️\xa0\xa0⛓️\xa0\xa0👩‍💻\xa0🔮\xa0👨‍💻\xa0⛓️\xa0\xa0🛠️`,
+dividerStars        = `★\xa0\xa0`,
+starRepeatCount     = 22;
 
-config.dev    = !isProd
-const nuxt    = new Nuxt(config)
+config.dev          = !isProd;
 
 // Build only in dev mode with hot-reloading
 if (config.dev) {
@@ -22,21 +32,19 @@ if (config.dev) {
 } else { listen() }
 
 function listen() {
-  const options = {
-    // you'll need to generate these,
-    // & I used a sym link to reference
-    key: fs.readFileSync('certs/server.key', 'utf8'),
-    cert: fs.readFileSync('certs/server.crt', 'utf8')
-  };
-
-  https.createServer(options, nuxt.render)
+  https
+  .createServer(options, nuxt.render)
   .listen(port);
 
-  console.log(`City of Bloomington\n`
-            + `/ * * * * * * * * * * * * * * * /\n`
-            + `Account Track\n`
-            + `/ * * * * * * * * * * * * * * * /\n`
-            + `https://localhost:${port}`
-            + `/ * * * * * * * * * * * * * * * /\n`
-            + `https://dhcp-cityhall-xxx-xxx.bloomington.in.gov:${port}`);
+  console.log();
+
+  console.log(`\n\n${dividerMsg}\n`
+            + `${dividerStars.repeat(starRepeatCount)}\n`
+            + `App:  ${pkg.prettyName}\n`
+            + `Env:  ${envMsg}\n`
+            + `Who:  ${pkg.company}\n`
+            + `Repo: ${pkg.repository.url}\n`
+            + `Url:  ${devUrl}:${port}`
+            + `\n${dividerStars.repeat(starRepeatCount)}\n`
+            + `${dividerMsg}\n\n`);
 }

@@ -1,10 +1,5 @@
 import Vue          from 'vue'
 import {
-  mapState,
-  mapMutations,
-  mapGetters,
-  mapActions }      from 'vuex'
-import {
   mapFields }       from 'vuex-map-fields'
 
 Vue.mixin({
@@ -18,6 +13,15 @@ Vue.mixin({
     ])
   },
   methods: {
+    /**
+     * A Promise for Account Requests by Request Status
+     *
+     * @promise  getAccountRequests
+     * @resolve  { Object }
+     * @reject   { Error }
+     * @return   { Promise <Object[]> } Resolves to an Object of Arrays.
+     *
+     */
     getAccountRequests() {
       return new Promise((resolve, reject) => {
         let pendingReqs = new Promise((resolve, reject) => {

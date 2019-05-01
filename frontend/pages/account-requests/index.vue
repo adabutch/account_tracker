@@ -332,16 +332,9 @@
 </template>
 
 <script>
-import moment           from 'moment'
-import {
-  mapState,
-  mapMutations,
-  mapGetters,
-  mapActions }          from 'vuex'
 import {
   createHelpers }       from 'vuex-map-fields';
 
-import headerNav        from '~/components/headerNav'
 import exampleSelect    from '~/components/exampleSelect'
 import exampleDropdown  from '~/components/exampleDropdown'
 import exampleModal     from '~/components/exampleModal'
@@ -354,7 +347,6 @@ const { mapFields } = createHelpers({
 export default {
   layout:           'account-requests',
   components: {
-    headerNav,
     exampleSelect,
     exampleDropdown,
     exampleModal
@@ -379,7 +371,6 @@ export default {
     this.getAccountRequests()
     .then(() => this.idsToNames());
   },
-  watch: {},
   methods: {
     outside(e) {
       this.showingUserDetails = false;
@@ -432,17 +423,16 @@ export default {
       this.showingUserDetails = false;
     },
     watchInput(payload) {
-      console.log(`WI :: PAYLOAD ::: ${payload}`)
       this.searchUsers = payload;
     },
     approveUserAccountRequest(payload) {
-      this.$axios
-      .patch(`${process.env.api}${process.env.accountRequest}${payload.id}/`,{
+      let data = {
         "request_status": "pending"
-      })
-      .then(response => {
-        // console.log(`approveUserAccountRequest req. :: `, response);
+      }
 
+      this.$axios
+      .patch(`${process.env.api}${process.env.accountRequest}${payload.id}/`, data)
+      .then(response => {
         // note: `/pending/` below triggers the Service Req.
         this.$axios
         .get(`${process.env.api}${process.env.accountRequest}${payload.id}/pending/`)
@@ -453,13 +443,15 @@ export default {
           console.log(`/pending/ Service Req. error :: `, e)
         });
 
-        this.$axios
-        .post(`${process.env.api}${process.env.action}`,{
+        let actionData = {
           "user":    this.authUser.id,
           "account": payload.id,
           "action":  this.acctReqActionApprove,
           "comment": this.acctReqActionApproveMsg
-        })
+        }
+
+        this.$axios
+        .post(`${process.env.api}${process.env.action}`, actionData)
         .then(response => {
           console.log(`ACTION AR approve :: `, response)
         })

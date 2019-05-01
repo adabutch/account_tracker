@@ -1,11 +1,17 @@
 {
-  "name": "accounttrack",
+  "name": "account_tracker",
+  "prettyName": "Account Tracker",
+  "company": "City of Bloomington, Indiana - ITS",
   "version": "1.0.0",
   "description": "Account creation and management application for the City of Bloomington, Indiana.",
   "author": "Adam Butcher <butcherad@bloomington.in.gov>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/City-of-Bloomington/account_tracker.git"
+  },
   "private": true,
   "scripts": {
-    "dev": "nuxt",
+    "dev": "nodemon server.js",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -20,6 +26,7 @@
     "cookieparser": "^0.1.0",
     "core-js": "^2.6.5",
     "cross-env": "^5.2.0",
+    "dotenv": "^7.0.0",
     "exif-js": "^2.3.0",
     "file-saver": "^2.0.1",
     "js-cookie": "^2.2.0",
