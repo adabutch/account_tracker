@@ -93,7 +93,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/assets/style.scss';
   aside {
     position: fixed;
     color: $text-color;

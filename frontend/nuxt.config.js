@@ -40,11 +40,6 @@ module.exports = {
 
   loading: { color: '#fff' },
 
-  css: [
-    './assets/style.scss',
-    './assets/cobDS-tokens.scss',
-  ],
-
   plugins: [
     { src: '~/plugins/design-system' },
     { src: '~/plugins/axios' },
@@ -61,6 +56,7 @@ module.exports = {
   ],
 
   modules: [
+    ['@nuxtjs/style-resources'],
     ['@nuxtjs/axios'],
     // PWA having issues w/ nodemon
     // ['@nuxtjs/pwa', {
@@ -68,6 +64,18 @@ module.exports = {
     //   sizes: [16, 120, 144, 152, 192, 384, 512],
     // }]
   ],
+
+  css: [
+    '@/assets/css/style.scss',
+    '@/assets/css/cobDS-tokens.scss',
+  ],
+
+  styleResources: {
+    scss: [
+      './assets/css/style.scss',
+      './assets/css/cobDS-tokens.scss',
+    ]
+  },
 
   axios: {
     withCredentials: true

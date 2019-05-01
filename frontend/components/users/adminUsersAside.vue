@@ -64,7 +64,6 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '@/assets/style.scss';
   aside {
     color: $text-color;
     width: 300px;

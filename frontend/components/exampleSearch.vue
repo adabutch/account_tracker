@@ -112,7 +112,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/assets/style.scss';
 .field-group {
   display: flex;
   flex-wrap: wrap;

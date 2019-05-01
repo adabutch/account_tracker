@@ -21,7 +21,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/style.scss';
 
 .account-requests-wrapper {
   background: $color-grey-lighter;

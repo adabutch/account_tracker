@@ -157,7 +157,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/style.scss';
   div {
     &:nth-of-type(2) {
       display: flex;

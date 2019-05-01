@@ -111,8 +111,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/style.scss';
-
 header {
   padding: 15px 20px;
   position: fixed;

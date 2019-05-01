@@ -198,7 +198,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '@/assets/style.scss';
   aside {
     color: $text-color;
     width: 350px;

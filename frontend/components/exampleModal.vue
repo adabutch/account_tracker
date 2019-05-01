@@ -79,7 +79,6 @@ export default {
 
 <!-- note: remove the `scoped` below for use, it's only for Docs scoping -->
 <style lang="scss">
-@import '@/assets/style.scss';
 
 body.showing-modal {
   overflow: hidden;

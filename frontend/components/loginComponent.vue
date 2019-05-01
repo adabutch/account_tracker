@@ -106,7 +106,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/style.scss';
   .body-cover {
     background-color: $color-blue;
     display: flex;

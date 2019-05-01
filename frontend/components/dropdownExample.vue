@@ -102,7 +102,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/assets/style.scss';
 .navigation-dropdown {
   position: relative;
   display: inline-flex;

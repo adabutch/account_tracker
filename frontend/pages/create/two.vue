@@ -419,7 +419,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/style.scss';
 
   h1, h2, h3, h4 {
     color: $text-color;
@@ -442,8 +441,6 @@ export default {
 </style>
 
 <style lang="scss">
-@import '@/assets/style.scss';
-
 .flatpickr-day {
   &.selected {
     background: $color-blue !important;

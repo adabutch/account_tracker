@@ -277,8 +277,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/style.scss';
-
   .image-upload-wrapper {
     display: flex;
     flex-wrap: wrap;

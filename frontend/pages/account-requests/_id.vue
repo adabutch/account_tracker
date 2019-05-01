@@ -522,8 +522,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/style.scss';
-
   $image-left-margin: 40px;
   $image-width-height: 130px;
 

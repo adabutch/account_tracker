@@ -120,8 +120,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/assets/style.scss';
-
 .step-wrapper {
   display: flex;
   flex-wrap: wrap;

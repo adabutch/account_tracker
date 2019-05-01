@@ -21,7 +21,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/style.scss';
 
 .service-requests-wrapper {
   /deep/ .page-wrapper {
