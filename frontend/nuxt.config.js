@@ -50,7 +50,7 @@ module.exports = {
     { src: '~/plugins/resetGlobalStore' },
     { src: '~/plugins/clearAuth' },
     { src: '~/plugins/clearStorage' },
-    { src: '~/plugins/getAccountRequests' },
+    { src: '~/plugins/methods' },
     { src: '~/plugins/localStorage', ssr: false },
     { src: '~/plugins/croppie.js',   ssr: false }
   ],

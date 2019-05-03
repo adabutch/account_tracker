@@ -316,44 +316,33 @@
 </template>
 
 <script>
-import FileSaver, { saveAs } from 'file-saver'
+import FileSaver,
+       { saveAs }      from 'file-saver'
 
-import {
-  mapState,
-  mapMutations,
-  mapGetters,
-  mapActions }          from 'vuex'
+import { mapFields }   from 'vuex-map-fields'
 
-import {
-  createHelpers }       from 'vuex-map-fields'
-
-import headerNav       from '~/components/headerNav'
-import exampleSelect    from '~/components/exampleSelect'
-import exampleDropdown  from '~/components/exampleDropdown'
-
-const { mapFields } = createHelpers({
-  getterType: `getField`,
-  mutationType: `updateField`,
-});
+import exampleSelect   from '~/components/exampleSelect'
+import exampleDropdown from '~/components/exampleDropdown'
 
 export default {
   layout:           'account-reqs',
   validate({ params }) {
-    console.log('param valid', params)
     return !isNaN(+params.id)
   },
   mounted(context) {
     this.paramID = this.$route.params.id;
 
-    this.$axios
-    .get(`${process.env.api}${process.env.accountRequest}?id=${this.paramID}`)
-    .then(response => {
-      console.log(`/ID/ AR Req. :: `, response.data.results[0])
-      this.acctReq = response.data.results[0];
+    this.getAccountRequestByID(this.$route.params.id)
+    .then((resolve) => {
+      this.acctReq = resolve;
+      console.log(`%c accountRequestbyID 👌 `, this.consoleLog.success);
     })
-    .catch(e => {
-      console.log(`/ID/ AR Req. error :: `, e)
-    });
+    .catch((reject) => {
+      console.log(`%c accountRequestbyID 🛑 `,
+                    this.consoleLog.error,
+                    `\n\n ${reject} \n\n`);
+    })
+
 
     this.getServices();
     this.getUserServices();
@@ -361,7 +350,6 @@ export default {
   },
   middleware:       'authenticated',
   components: {
-    headerNav,
     exampleSelect,
     exampleDropdown,
   },
