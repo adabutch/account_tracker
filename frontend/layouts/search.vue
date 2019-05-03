@@ -21,8 +21,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/style.scss';
-
 .search-wrapper {
   background: $color-grey-lighter;
 
