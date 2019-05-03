@@ -21,6 +21,7 @@ const cookieparser = process.server ? require('cookieparser') : undefined;
 export const strict = false;
 
 export const defaultState = () => ({
+  apiLimit:         1000,
   groupLevels: {
     admin:          1,
     helpdesk:       2,

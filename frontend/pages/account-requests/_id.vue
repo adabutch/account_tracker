@@ -1,6 +1,6 @@
 <template>
   <div>
-    <fn1-tabs>
+    <fn1-tabs v-if="acctReq">
         <fn1-tab name="Account" :selected="true">
           <div class="left" v-if="acctReq.cropped_image">
             <div class="profile-image">
@@ -254,7 +254,7 @@
                     :disabled="acctReqIsNew">
                     <li v-for="rs, i in requestStatuses"
                         :class="rs"
-                        @click="serviceStatusChange(s, rs)">
+                        @click="changeStatus(s, rs)">
                         <span>{{rs}}</span>
                     </li>
                   </exampleDropdown>
@@ -330,23 +330,7 @@ export default {
     return !isNaN(+params.id)
   },
   mounted(context) {
-    this.paramID = this.$route.params.id;
-
-    this.getAccountRequestByID(this.$route.params.id)
-    .then((resolve) => {
-      this.acctReq = resolve;
-      console.log(`%c accountRequestbyID 👌 `, this.consoleLog.success);
-    })
-    .catch((reject) => {
-      console.log(`%c accountRequestbyID 🛑 `,
-                    this.consoleLog.error,
-                    `\n\n ${reject} \n\n`);
-    })
-
-
-    this.getServices();
-    this.getUserServices();
-    this.getAcctReqActions();
+    this.loadData();
   },
   middleware:       'authenticated',
   components: {
@@ -355,17 +339,17 @@ export default {
   },
   data() {
     return {
-      paramID:        "",
-      acctReq:        "",
-      serviceDetails: [],
-      servicesStatus: [],
-      acctReqActions: [],
+      acctReq:          null,
+      serviceDetails:   [],
+      servicesStatus:   [],
+      acctReqActions:   [],
       usersWithActions: [],
     }
   },
   computed: {
     ...mapFields([
       'auth.authUser',
+      'apiLimit',
       'services.services',
       'requestStatuses'
     ]),
@@ -401,76 +385,137 @@ export default {
     },
   },
   methods: {
-    serviceStatusChange(acctReq, status) {
-      let payload = {
-        "request_status": status,
-      }
-
-      this.$axios
-      .patch(`${process.env.api}${process.env.serviceReq}${acctReq.id}/`,payload)
-      .then((res) => {
-        console.log(`serviceStatusChange() :: `, res.data.results);
-
-        this.$axios
-        .post(`${process.env.api}${process.env.action}`,{
-          "user":    this.authUser.id,
-          "account": acctReq.account_request,
-          "action":  `Service Request (${acctReq.id}): ${acctReq.name}`,
-          "comment": `Changed from '${acctReq.request_status}' to '${status}'.`
-        })
-        .then(response => {
-          console.log(`ACTION SR serviceStatusChange :: `, response);
-          this.getServices();
-          this.getUserServices();
-          this.usersWithActions = [];
-          this.getAcctReqActions();
-        })
-        .catch(e => {
-          console.log(`ACTION SR serviceStatusChange error :: `, e)
-        });
-
+    /**
+     * Loads init page data required to fire up
+     * an Account Request page based on URL param ID
+     */
+    loadData() {
+      this.getServices(this.apiLimit)
+      .then((resolve) => {
+        console.log(`%c getServices 👌 `, this.consoleLog.success);
+        this.$store.dispatch('services/setServices', resolve);
+        this.namedServices();
       })
-      .catch((error) => {
-        console.log(`serviceStatusChange() error:: `, error);
+      .catch((reject) => {
+        console.log(`%c getServices 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${reject} \n\n`);
+      });
+
+      this.getAccountRequestByID(this.$route.params.id)
+      .then((resolve) => {
+        this.acctReq = resolve;
+        console.log(`%c accountRequestbyID 👌 `, this.consoleLog.success);
       })
+      .catch((reject) => {
+        console.log(`%c accountRequestbyID 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${reject} \n\n`);
+      });
+
+      this.getServiceReqsByAcctReqId(this.$route.params.id, this.apiLimit)
+      .then((resolve) => {
+        this.servicesStatus = resolve;
+        console.log(`%c getServiceReqsByAcctReqId 👌 `, this.consoleLog.success);
+      })
+      .catch((reject) => {
+        console.log(`%c getServiceReqsByAcctReqId 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${reject} \n\n`);
+      });
+
+      this.getActionsByAcctReqId(this.$route.params.id, this.apiLimit)
+      .then((resolve) => {
+        console.log(`%c getActionsByAcctReqId 👌 `, this.consoleLog.success);
+        this.acctReqActions = resolve;
+        this.usersByIds();
+      })
+      .catch((reject) => {
+        console.log(`%c getActionsByAcctReqId 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${reject} \n\n`);
+      });
     },
+    /**
+     * Changes the Request Status of a Service Request,
+     * and logs a Service Action.
+     *
+     * @function    changeStatus
+     * @param       { Object } req - Service Req{} x Service{},
+     *                               joined where Service Req
+     *                               Service.ID = Service.ID
+     * @param       { String } status - From `requestStatuses`
+     */
+    changeStatus(req, status) {
+      this.serviceReqStatusChange(req.id, status)
+      .then((resolve) => {
+        console.log(`%c serviceReqStatusChange (changeStatus) 👌 `,
+                    this.consoleLog.success);
+
+        this.serviceReqAction(this.authUser.id, req, status)
+        .then((resolve) => {
+          console.log(`%c serviceReqAction (changeStatus) 👌 `,
+                      this.consoleLog.success);
+          this.usersWithActions = [];
+          this.loadData();
+        })
+        .catch((reject) =>  {
+          console.log(`%c serviceReqAction (changeStatus) 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${reject} \n\n`);
+        });
+      })
+      .catch((reject) => {
+        console.log(`%c serviceReqStatusChange (changeStatus) 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${reject} \n\n`);
+      });
+    },
+    /**
+     * Gets User(s) via ID(s)
+     *
+     * Requires `getActionsByAcctReqId()` to prior
+     * resolve fulfillment filling `acctReqActions`
+     *
+     * @return      { Promise <Object[]> } An Array of Objects for
+     *              each user with an Action.
+     *
+     */
+    usersByIds() {
+      let users = new Set();
+
+      this.acctReqActions.map(s => users.add(s.user));
+
+      users = [...users];
+
+      let userRequests = users.map((user) => {
+        this.getUserById(user)
+        .then((resolve) => {
+          this.usersWithActions.push(resolve)
+        })
+        .catch((reject) => {
+          console.log(`%c getUserById (usersByIds) 🛑 `,
+                        this.consoleLog.error,
+                        `\n\n ${reject} \n\n`);
+        });
+      });
+
+      Promise.all(userRequests).then(() =>
+        console.log(`%c getUserById (usersByIds) 👌 `,
+                    this.consoleLog.success)
+      );
+    },
+    /**
+     * Saves/downloads the User's Image
+     *
+     * @function    downloadARImages
+     * @param       { String } image - Image URL String
+     * @param       { String } name  - Name for Image (User's)
+     * @return      { File }   saves a file of the Image
+     */
     downloadARImages(image, name) {
       let nameToLower = name.toLowerCase();
       FileSaver.saveAs(image, `${nameToLower}.jpg`);
-    },
-    getAcctReqActions() {
-      this.$axios
-      .get(`${process.env.api}${process.env.action}?account=${this.paramID}&limit=1000`)
-      .then((res) => {
-        console.log(`getAcctReqActions() :: `, res.data.results);
-        this.acctReqActions = res.data.results;
-        this.idsToNames();
-      })
-      .catch((error) => {
-        console.log(`getAcctReqActions() error:: `, error);
-      });
-    },
-    getServices() {
-      this.$axios
-      .get(`${process.env.api}${process.env.service}?limit=1000`)
-      .then((res) => {
-        this.$store.dispatch('services/setServices', res.data.results);
-        this.namedServices();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    },
-    getUserServices() {
-      this.$axios
-      .get(`${process.env.api}${process.env.serviceReq}?account_request=${this.paramID}&limit=1000`)
-      .then((res) => {
-        console.log(`getUserServices() :: `,res.data.results);
-        this.servicesStatus = res.data.results;
-      })
-      .catch((error) => {
-        console.log(error);
-      })
     },
     namedServices() {
       let attachedServices = JSON.parse(this.acctReq.requested_services);
@@ -479,31 +524,6 @@ export default {
       });
       this.serviceDetails = results;
       this.usersServices;
-    },
-    idsToNames() {
-      let users = new Set();
-      this.acctReqActions.map((s) => {
-        return users.add(s.user);
-      });
-
-      users = [...users];
-
-      let userRequests = users.map((user) => {
-        return new Promise((resolve, reject) => {
-          this.$axios
-          .get(`${process.env.api}${process.env.employee}${user}/`)
-          .then((res) => {
-            resolve(this.usersWithActions.push(res.data));
-          })
-          .catch((e) => {
-            reject(e);
-          });
-        })
-      });
-
-      Promise.all(userRequests).then(() =>
-        console.log(`UwA`,this.usersWithActions)
-      );
     },
   },
 }
