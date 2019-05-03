@@ -1,9 +1,10 @@
 export default function ({ $axios, app, store, redirect, route }) {
   $axios.onRequest(config => {
-    // alert('hi')
     config.headers.common['Authorization'] = `JWT ${store.state.auth.auth}`
     config.headers.common['Content-Type']  = `application/json`
-    console.log('Making request to ' + config.url)
+
+    if(process.env.NODE_ENV === 'development')
+      console.log(`${config.method.toUpperCase()} :: ${config.url}`)
   })
 
   $axios.onError(error => {
