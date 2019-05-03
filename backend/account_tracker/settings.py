@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # Allow for higher-res images
-DATA_UPLOAD_MAX_MEMORY_SIZE = config['hosting'].get('max_upload_size', 5242880)
+DATA_UPLOAD_MAX_MEMORY_SIZE = int(config['hosting'].get('max_upload_size', 5242880))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config['hosting'].get('secret_key')
