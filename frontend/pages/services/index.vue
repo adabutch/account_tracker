@@ -556,12 +556,7 @@
 </template>
 
 <script>
-import { createHelpers } from 'vuex-map-fields'
-
-const { mapFields } = createHelpers({
-  getterType: `getField`,
-  mutationType: `updateField`,
-});
+import { mapFields } from 'vuex-map-fields'
 
 import exampleModal   from '~/components/exampleModal'
 import exampleSelect  from '~/components/exampleSelect'
@@ -624,6 +619,7 @@ export default {
   },
   computed: {
     ...mapFields([
+      'apiLimit',
       'auth.authUser',
       'consoleLog',
       'requestStatuses',
@@ -778,32 +774,24 @@ export default {
         console.log(`%c removeService 👌 `, this.consoleLog.success);
       })
       .catch((e) => {
-        console.log(e);
-        console.log(`%c removeService 🛑 `, this.errLogStyle);
-      });
-    },
-    getServices() {
-      return new Promise((resolve,reject) => {
-        this.$axios
-        .get(`${process.env.api}${process.env.service}?limit=5000`)
-        .then((res) => {
-          resolve(res.data.results);
-        })
-        .catch((e) => {
-          reject(e);
-        });
+        console.log(`%c removeService 🛑 `,
+                    this.consoleLog.error,
+                    `\n\n ${e} \n\n`);
       });
     },
     loadServices(){
-      this.getServices()
+      this.getServices(this.apiLimit)
       .then((resolve) => {
         this.allServices = resolve;
         this.getEmployees();
         this.loading = false;
-        console.log(`%c loadServices 👌 `, this.consoleLog.success);
-      }, (reject) => {
-        console.log(reject);
-        console.log(`%c loadServices 🛑 `, this.errLogStyle);
+        console.log(`%c getServices (loadServices) 👌 `,
+                    this.consoleLog.success);
+      })
+      .catch((reject) => {
+        console.log(`%c getServices (loadServices) 🛑 `,
+                    this.consoleLog.error,
+                    `\n\n ${reject} \n\n`);
       });
     },
     editModalHandler(s, i) {
