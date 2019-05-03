@@ -351,7 +351,8 @@ export default {
       'auth.authUser',
       'apiLimit',
       'services.services',
-      'requestStatuses'
+      'requestStatuses',
+      'consoleLog'
     ]),
     historyByUpdated() {
       return this.acctReqActions.sort(
