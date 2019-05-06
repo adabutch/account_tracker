@@ -226,5 +226,64 @@ Vue.mixin({
         .catch(e =>  reject(e));
       })
     },
+    /**
+     * A Promise for the Service Profile of a Department
+     *
+     * @promise     getDeptProfile
+     * @param       { Number } deptID - ID of the Department
+     * @resolve     { Resolve }
+     * @reject      { Error }
+     * @return      { Promise <Object> } The Service Profile of the Dept.
+     *
+     */
+    getDeptProfile(deptID) {
+      let errorLog = console.log(`%c getDeptProfile 🛑 `,
+                                  this.consoleLog.error,
+                                  `\n\n No Service Profile for this Department. \n\n`);
+
+      return new Promise((resolve, reject) => {
+        this.$axios.get(`${process.env.api}${process.env.profile}?department_id=${deptID}`)
+        .then((res) => {
+          console.log('yooo');
+          console.log(res.data.results[0]);
+          if(res.data.results.length > 0) {
+            resolve(res.data.results[0]);
+          } else {
+            reject(errorLog)
+          }
+        })
+        .catch(e => reject(e))
+      });
+    },
+    /**
+     * A Promise for the Service Profile
+     * of a Department's Group
+     *
+     * @promise     getGroupProfile
+     * @param       { Number } deptID  - ID of the Department
+     * @param       { Number } groupID - ID of the Department's Group
+     * @resolve     { Resolve }
+     * @reject      { Error }
+     * @return      { Promise <Object> } The Service Profile of the Dept. Group
+     *
+     */
+    getGroupProfile(deptID, groupID) {
+      let errorLog = console.log(`%c getGroupProfile 🛑 `,
+                                  this.consoleLog.error,
+                                  `\n\n No Service Profile for this Department Group. \n\n`);
+
+      return new Promise((resolve, reject) => {
+        this.$axios.get(`${process.env.api}${process.env.profile}?department_id=${deptID}&group_id=${groupID}`)
+        .then((res) => {
+          console.log(res.data.results);
+          if(res.data.results.length > 0) {
+            resolve(res.data.results[0]);
+          } else {
+            reject(errorLog)
+          }
+        })
+        .catch(e => reject(e))
+      });
+    },
   }
 })
