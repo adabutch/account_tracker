@@ -3,7 +3,7 @@ import {
   updateField }     from 'vuex-map-fields';
 
 export const state = () => ({
-  facilities: [
+  OLDfacilities: [
     {
       text: "Showers Building",
       value: "Showers Building",
@@ -115,6 +115,28 @@ export const state = () => ({
       address: "300 E 4th St"
     }
   ],
+  facilities: [
+    {
+      text:  "Bloomington Transit",
+      value: "Bloomington Transit"
+    },
+    {
+      text:  "City Hall",
+      value: "City Hall"
+    },
+    {
+      text:  "Fire",
+      value: "Fire"
+    },
+    {
+      text:  "Police",
+      value: "Police"
+    },
+    {
+      text:  "Utilities",
+      value: "Utilities"
+    }
+  ]
 })
 
 export const mutations = {
