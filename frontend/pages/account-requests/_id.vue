@@ -199,12 +199,15 @@
             </fn1-badge>
           </div>
 
+          {{acctReqIsNew()}}
+
           <div class="notes" v-if="acctReqIsNew">
             <p><strong>Note:</strong> <strong>Service Requests</strong> become available when the <strong>Account Request</strong> reaches <fn1-badge class="pending">pending</fn1-badge>.</p>
           </div>
         </div>
 
-        <table class="fixed-header service-reqs" v-if="!acctReqIsNew">
+        <table class="fixed-header service-reqs" v-if="true">
+        <!-- <table class="fixed-header service-reqs" v-if="!acctReqIsNew"> -->
           <caption class="sr-only">All User Requests</caption>
           <thead>
             <tr>
@@ -404,6 +407,8 @@ export default {
     acctReqIsNew() {
       let arStatus  = this.acctReq.request_status,
       isNew         = "new";
+
+      alert(arStatus);
 
       if(arStatus == isNew) {
         return true

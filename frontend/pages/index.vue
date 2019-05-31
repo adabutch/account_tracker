@@ -183,7 +183,7 @@ export default {
     height: calc(100vh - 320px);
     position: fixed;
     overflow-y: scroll;
-    top: 325px;
+    top: 322px;
     bottom: 0;
     display: flex;
     flex-wrap: wrap;
