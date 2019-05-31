@@ -309,7 +309,7 @@
            :class="['slideover']"
            ref="slideover">
         <button @click="hideDetails" class="close">close</button>
-        <h4>Detailed Information</h4>
+        <h4>New Request Overview</h4>
         <fn1-button-group>
           <fn1-button @click.native="approveUserAccountRequest(showDetailsFor)">
             <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -350,14 +350,19 @@
           </exampleModal>
 
         </fn1-button-group>
+
         <ul>
-          <li v-if="showDetailsFor.request_status">
-            <span>Request Status</span>
-              <fn1-badge
+          <li v-if="showDetailsFor.cropped_image || showDetailsFor.request_status">
+            <div class="profile-image" v-if="showDetailsFor.cropped_image">
+              <img :src="showDetailsFor.cropped_image" alt="User Image">
+            </div>
+
+            <fn1-badge v-if="showDetailsFor.request_status"
                 :class="showDetailsFor.request_status">
                 {{ showDetailsFor.request_status }}
-              </fn1-badge>
+            </fn1-badge>
           </li>
+
 
           <li v-if="showDetailsFor.first_name">
             <span>Name: </span>
@@ -1081,6 +1086,12 @@ export default {
       }
     }
 
+    .profile-image {
+      margin: 0 10px 0 0;
+      width: 50px;
+      height: 50px;
+    }
+
     h4 {
       padding: 20px 0 0 0;
       // border-bottom: 1px solid lighten($text-color, 50%);
@@ -1096,10 +1107,17 @@ export default {
       width: 100%;
 
       li {
-        margin: 0 0 10px 10px;
+        margin: 0 0 15px 10px;
         font-weight: $weight-semi-bold;
         color: lighten($text-color, 15%);
-        font-size: 14px;
+        // font-size: 14px;
+
+        &:first-child {
+          // background-color: red;
+          margin: 0 0 10px 0;
+          display: inline-flex;
+          align-items: center;
+        }
 
         span:not(.badge) {
           // display: block;
@@ -1115,6 +1133,10 @@ export default {
           li {
             margin: 0 0 10px 0;
             padding: 0;
+
+            &:last-of-type {
+              margin: 0;
+            }
           }
         }
       }
