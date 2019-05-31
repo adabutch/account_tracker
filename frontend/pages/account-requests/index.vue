@@ -360,8 +360,8 @@
           </li>
 
           <li v-if="showDetailsFor.first_name">
-            <span>Name</span>
-            - {{showDetailsFor.first_name}}
+            <span>Name: </span>
+            {{showDetailsFor.first_name}}
             <template v-if="showDetailsFor.nickname">
               ({{showDetailsFor.nickname}})
             </template>
@@ -371,57 +371,68 @@
           </li>
 
           <li v-if="showDetailsFor.employee_phone">
-            <span>Employee Phone</span>
-            - {{showDetailsFor.employee_phone}}
+            <span>Employee Phone: </span>
+            {{showDetailsFor.employee_phone}}
           </li>
 
           <li v-if="showDetailsFor.supervisor">
-            <span>Supervisor</span>
-            - {{showDetailsFor.supervisor}} ({{showDetailsFor.supervisor_phone}})
+            <span>Supervisor: </span>
+            {{showDetailsFor.supervisor}}
+
+            <template v-if="showDetailsFor.supervisor_phone">
+              ({{showDetailsFor.supervisor_phone}})
+            </template>
           </li>
 
           <li v-if="showDetailsFor.facility">
-            <span>Facility</span>
-            - {{showDetailsFor.facility}}
+            <span>Facility: </span>
+            {{showDetailsFor.facility}}
           </li>
 
           <li v-if="showDetailsFor.department">
-            <span>Department</span>
-            - {{showDetailsFor.department}}
+            <span>Department: </span>
+            {{showDetailsFor.department}}
           </li>
 
           <li v-if="showDetailsFor.group">
-            <span>Group</span>
-            - {{showDetailsFor.group}}
+            <span>Group: </span>
+            {{showDetailsFor.group}}
           </li>
 
           <li v-if="showDetailsFor.job">
-            <span>Job</span>
-            - {{showDetailsFor.job}}
+            <span>Job: </span>
+            {{showDetailsFor.job}}
           </li>
 
           <li v-if="showDetailsFor.clock_entry_only">
-            <span>Clock-In Required</span>
-            - {{showDetailsFor.clock_entry_only}}
+            <span>Clock-In Required: </span>
+            {{showDetailsFor.clock_entry_only}}
           </li>
 
           <li v-if="showDetailsFor.employee_status">
-            <span>Employee Status</span>
-            - {{showDetailsFor.employee_status}}
+            <span>Employee Status: </span>
+            {{showDetailsFor.employee_status}}
           </li>
 
           <li v-if="showDetailsFor.start_date">
-            <span>Start Date</span>
-            - {{showDetailsFor.start_date}}
+            <span>Start Date: </span>
+            {{showDetailsFor.start_date}}
           </li>
 
           <li v-if="showDetailsFor.requested_services">
-            <span>Requested Services</span>
-            - {{showDetailsFor.requested_services}}
+            <span>Requested Services: </span>
+            <template v-if="showDetailsForServices">
+              <ul>
+                <li v-for="s, i in showDetailsForServices">
+                  <template v-if="s.name">- {{s.name}}</template>
+                </li>
+              </ul>
+            </template>
+            <!-- {{showDetailsFor.requested_services}} -->
           </li>
 
           <li v-if="showDetailsFor.dynamic_options">
-            <span>Extra Questions</span>
+            <span>Extra Questions: </span>
               <ul>
                 <li v-for="ex, index in parseExtras(showDetailsFor.dynamic_options)">
                   - {{ex}}
@@ -463,6 +474,7 @@ export default {
       acctReqActionApproveMsg: "Account Request advanced from 'new' to 'pending'.",
       showModal:           false,
       showDetailsFor:      null,
+      showDetailsForServices: [],
       showingUserDetails:  false,
       searchUsers:         "",
       batchRequestIDs:     [],
@@ -521,6 +533,7 @@ export default {
 
         this.$refs.modal.showModal = false;
         this.showDetailsFor = null;
+        this.showDetailsForServices = [];
         this.denyRequestReason = "";
         this.showingUserDetails = false;
         this.getAccountRequests();
@@ -530,11 +543,42 @@ export default {
       });
     },
     showDetails(item) {
+      let servicesArray = JSON.parse(item.requested_services);
+
+      let namedServices = servicesArray.map((s) => {
+
+        // note: validateStatus: false
+        //
+        // incase we get a service that is
+        // no longer a valid service in our system
+        return new Promise((resolve, reject) => {
+          this.$axios
+          .get(`${process.env.api}${process.env.service}${s}/`,
+            { validateStatus: false })
+          .then(res => {
+            resolve(this.showDetailsForServices.push(res.data))
+          })
+          .catch(e  => reject(e));
+        });
+      });
+
+      Promise.all(namedServices)
+      .then((resolve) =>
+        console.log(`%c namedServices 👌 `,
+                    this.consoleLog.success)
+      )
+      .catch((reject) => {
+        console.log(`%c namedServices 🛑 `,
+                  this.consoleLog.error,
+                  `\n\n ${reject} \n\n`);
+      });
+
       this.showDetailsFor = item;
       this.showingUserDetails = true;
     },
     hideDetails() {
       this.showDetailsFor = null;
+      this.showDetailsForServices = [];
       this.showingUserDetails = false;
     },
     watchInput(payload) {
@@ -575,6 +619,7 @@ export default {
         });
 
         this.showDetailsFor = null;
+        this.showDetailsForServices = [];
         this.showingUserDetails = false;
         this.getAccountRequests();
       })
@@ -1045,9 +1090,10 @@ export default {
     ul {
       overflow-y: scroll;
       margin: 15px 0 0 0;
-      padding: 0;
+      padding: 0 0 40px 0;
       list-style: none;
       height: calc(100% - 181px);
+      width: 100%;
 
       li {
         margin: 0 0 10px 10px;
@@ -1056,14 +1102,14 @@ export default {
         font-size: 14px;
 
         span:not(.badge) {
-          display: block;
+          // display: block;
           margin: 0 0 5px -10px;
           color: $text-color;
           font-size: $size-m;
         }
 
         ul {
-          margin: 0;
+          margin: 10px 0 0 0;
           padding: 0;
 
           li {
