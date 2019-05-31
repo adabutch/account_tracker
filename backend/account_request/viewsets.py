@@ -36,7 +36,22 @@ class AccountRequestViewSet(viewsets.ModelViewSet):
                                 ',DC=' + 'seth' +
                                 ',DC=' + 'test')
 
-        ad_displayName      = ar.first_name + ' ' + ar.last_name
+        # note: Charles - I need some `displayName` syntactic sugar below
+        if ar.nickname != '' or ar.nickname != null and ar.suffix == '' or ar.suffix == null:
+            ad_displayName  = (ar.first_name + ' ' + '(' +
+                               ar.nickname + ')' + ' ' +
+                               ar.middle_name + ' ' +
+                               ar.last_name)
+
+        elif ar.nickname != '' or ar.nickname != null and ar.suffix != '' or ar.suffix != null:
+             ad_displayName = (ar.first_name + ' ' + '(' +
+                               ar.nickname + ')' + ' ' +
+                               ar.middle_name + ' ' +
+                               ar.last_name + ',' + ' ' +
+                               ar.suffix)
+
+        else:
+            ad_displayName = (ar.first_name + ' ' + ar.last_name)
 
         ad_sAMAccountName   = (ar.first_name.lower() + '.' +
                                ar.last_name.lower())

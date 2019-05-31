@@ -363,7 +363,6 @@
             </fn1-badge>
           </li>
 
-
           <li v-if="showDetailsFor.first_name">
             <span>Name: </span>
             {{showDetailsFor.first_name}}
@@ -371,8 +370,9 @@
               ({{showDetailsFor.nickname}})
             </template>
             {{showDetailsFor.middle_name}}
-            {{showDetailsFor.last_name}}
-            {{showDetailsFor.suffix}}
+            {{showDetailsFor.last_name}}<template v-if="showDetailsFor.suffix">,
+              {{showDetailsFor.suffix}}
+            </template>
           </li>
 
           <li v-if="showDetailsFor.employee_phone">
@@ -433,10 +433,9 @@
                 </li>
               </ul>
             </template>
-            <!-- {{showDetailsFor.requested_services}} -->
           </li>
 
-          <li v-if="showDetailsFor.dynamic_options">
+          <li v-if="showDetailsFor.dynamic_options.length > 2">
             <span>Extra Questions: </span>
               <ul>
                 <li v-for="ex, index in parseExtras(showDetailsFor.dynamic_options)">
