@@ -80,38 +80,44 @@ export default {
   mounted() {
     this.getAccountRequests();
   },
+  updated() {
+    this.authLevel;
+    this.allAccountRequests();
+  },
   methods: {
     goCreateAccountRequest() {
       this.$router.push(this.paths.createAccountRequest);
     },
     viewAccountRequest(id) {
-      if(this.authLevel.admin && id.request_status == "new") {
+      if(this.authLevel.admin && id.request_status == "pending") {
         this.$router.push(
-          { name: `account-requests`, params: { new: id.id }}
+          { name: `account-requests`, params: { 'pending': id.id }}
         );
       } else {
         this.$router.push(this.paths.accountRequests + id.id);
       }
-    }
+    },
+    allAccountRequests() {
+      console.dir(this.authLevel);
+      if(this.authLevel.regular || this.authLevel.support) {
+        var master = [...this.accountRequests.approved,...this.accountRequests.denied,...this.accountRequests.inProgress];
+      } else {
+        var master = [...this.accountRequests.approved,...this.accountRequests.denied,...this.accountRequests.inProgress,...this.accountRequests.pending];
+      }
+      return master
+    },
   },
   computed: {
     ...mapFields([
+      'auth.authLevel',
       'paths',
       'requestStatuses',
       'consoleLog',
       'acctReqs.accountRequests'
     ]),
-    allAccountRequests() {
-      if(this.authLevel.regular || this.authLevel.support) {
-        var master = [...this.accountRequests.approved,...this.accountRequests.denied,...this.accountRequests.pending];
-      } else {
-        var master = [...this.accountRequests.approved,...this.accountRequests.denied,...this.accountRequests.new,...this.accountRequests.pending];
-      }
-      return master
-    },
     filteredAcctReqs() {
       if(this.acctReqSearch.length) {
-        return this.allAccountRequests
+        return this.allAccountRequests()
         .filter(user => {
           let fullName   = user.full_name.toLowerCase(),
           firstName      = user.first_name.toLowerCase(),
@@ -130,7 +136,7 @@ export default {
         })
         .sort((a, b) => new Date(b.requested) - new Date(a.requested))
       } else {
-        return this.allAccountRequests
+        return this.allAccountRequests()
         .sort((a, b) => new Date(b.requested) - new Date(a.requested))
       }
     },
@@ -191,15 +197,15 @@ export default {
 
     .status-legend {
       position: fixed;
-      transform: translate(-495%);
+      transform: translate(-430%);
       left: 50%;
       top: 343px;
-      width: 100px;
+      width: 120px;
 
       span {
         display: flex;
         flex-wrap: wrap;
-        width: 100px;
+        width: 100%;
         margin: 0 0 10px auto;
 
         &:last-of-type {
@@ -265,11 +271,11 @@ export default {
     border-bottom: 1px solid darken($color-grey-lighter, 7%);
     border-left: 10px solid;
 
-    &.new {
+    &.pending {
       border-left-color: $color-ucla-gold-dark;
     }
 
-    &.pending {
+    &.in-progress {
       border-left-color: $color-blue;
     }
 
@@ -277,7 +283,7 @@ export default {
       border-left-color: $color-green-light;
     }
 
-    &.active {
+    &.completed {
       border-left-color: $color-green;
     }
 

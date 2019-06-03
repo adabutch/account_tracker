@@ -42,6 +42,16 @@ Vue.mixin({
      *
      */
     getAccountRequests() {
+      let inProgressReqs = new Promise((resolve, reject) => {
+          this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=in-progress`)
+          .then((res) => {
+            resolve(
+              this.$store.dispatch('acctReqs/accountRequestsInProgress', res.data.results)
+            )
+          })
+          .catch((e) => reject(`In-Progress (new) Account Requests:: ${e}`))
+        });
+
       return new Promise((resolve, reject) => {
         let pendingReqs = new Promise((resolve, reject) => {
           this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=pending`)
@@ -53,14 +63,34 @@ Vue.mixin({
           .catch((e) => reject(`Pending Account Requests:: ${e}`))
         });
 
-        let newReqs = new Promise((resolve, reject) => {
-          this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=new`)
+        let approvedReqs = new Promise((resolve, reject) => {
+          this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=approved`)
           .then((res) => {
             resolve(
-              this.$store.dispatch('acctReqs/accountRequestsNew', res.data.results)
+              this.$store.dispatch('acctReqs/accountRequestsApproved', res.data.results)
             )
           })
-          .catch((e) => reject(`New Account Requests:: ${e}`))
+          .catch((e) => reject(`Approved Account Requests:: ${e}`))
+        });
+
+        let completedReqs = new Promise((resolve, reject) => {
+          this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=completed`)
+          .then((res) => {
+            resolve(
+              this.$store.dispatch('acctReqs/accountRequestsCompleted', res.data.results)
+            )
+          })
+          .catch((e) => reject(`Completed Account Requests:: ${e}`))
+        });
+
+        let inActiveReqs = new Promise((resolve, reject) => {
+          this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=inactive`)
+          .then((res) => {
+            resolve(
+              this.$store.dispatch('acctReqs/accountRequestsInactive', res.data.results)
+            )
+          })
+          .catch((e) => reject(`Inactive Account Requests:: ${e}`))
         });
 
         let deniedReqs = new Promise((resolve, reject) => {
@@ -73,17 +103,14 @@ Vue.mixin({
           .catch((e) => reject(`Denied Account Requests:: ${e}`))
         });
 
-        let approvedReqs = new Promise((resolve, reject) => {
-          this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=denied`)
-          .then((res) => {
-            resolve(
-              this.$store.dispatch('acctReqs/accountRequestsApproved', res.data.results)
-            )
-          })
-          .catch((e) => reject(`Approved Account Requests:: ${e}`))
-        });
-
-        Promise.all([pendingReqs,newReqs,deniedReqs,approvedReqs])
+        Promise.all(
+          [inProgressReqs,
+           pendingReqs,
+           approvedReqs,
+           completedReqs,
+           inActiveReqs,
+           deniedReqs]
+        )
         .then(() => {
           resolve(
             console.log(`%c getAccountRequests 👌 `, this.consoleLog.success)

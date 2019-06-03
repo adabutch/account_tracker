@@ -281,7 +281,7 @@
         </p>
 
         <div class="status-legend">
-          <fn1-badge v-for="s, i in filterStatusLegend"
+          <fn1-badge v-for="s, i in serviceStatuses"
                      :key="i"
                      :class="s">
             <template v-if="s === 'active'">
@@ -332,7 +332,9 @@
                           @displayModal="editModalHandler(s, i)"
                           launchButtonText="edit">
 
-              <template slot="body" ref="editServiceFormBody" slot-scope="editServiceData">
+              <template slot="body"
+                        ref="editServiceFormBody"
+                        slot-scope="editServiceData">
                 <template v-if="addingServiceManager">
                   <div class="search-wrapper">
                     <fn1-input v-model="serviceManagerSearch"
@@ -353,7 +355,7 @@
                               </fn1-button>
                             </div>
                           </div>
-                          <strong>{{m.id}}:</strong>&nbsp;{{m.first_name}}
+                          {{m.first_name}} {{m.last_name}}
                         </li>
                       </ul>
                   </div>
@@ -626,16 +628,10 @@ export default {
       'auth.authUser',
       'consoleLog',
       'requestStatuses',
+      'serviceStatuses',
     ]),
     editServiceFormBody() {
       this.editServiceBodyHeight = this.$refs.editServiceFormBody.clientHeight;
-    },
-    filterStatusLegend() {
-      return this.requestStatuses
-      .filter((q) => q !== 'new')
-      .filter((q) => q !== 'pending')
-      .filter((q) => q !== 'approved')
-      .filter((q) => q !== 'denied');
     },
     activeServicesCount() {
       return this.allServices.filter((s) => s.active == true).length
@@ -798,8 +794,6 @@ export default {
     },
     editModalHandler(s, i) {
       let copy = Object.assign({}, s);
-      // let copy = s;
-      alert(JSON.stringify(copy));
       this.formEditID           = copy.id,
       this.formEditName         = copy.name,
       this.formEditManagers     = copy.managers,
@@ -816,9 +810,6 @@ export default {
       this.formEditDeveloper    = copy.developer;
     },
     editService(i) {
-      alert(JSON.stringify(i));
-      // alert('editing it')
-
       let fD = new FormData();
 
       fD.append(`active`,         this.formEditActive);

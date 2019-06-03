@@ -26,7 +26,7 @@ class AccountRequestViewSet(viewsets.ModelViewSet):
     filterset_class = ProfileFilter
 
     @action(detail=True)
-    def pending(self, request, *args, **kwargs):
+    def inprogress(self, request, *args, **kwargs):
         ar = self.get_object()
 
         ad_distinguishedName = ('CN=' + ar.first_name + ' ' + ar.last_name +
@@ -37,21 +37,21 @@ class AccountRequestViewSet(viewsets.ModelViewSet):
                                 ',DC=' + 'test')
 
         # note: Charles - I need some `displayName` syntactic sugar below
-        if ar.nickname != '' or ar.nickname != null and ar.suffix == '' or ar.suffix == null:
-            ad_displayName  = (ar.first_name + ' ' + '(' +
-                               ar.nickname + ')' + ' ' +
-                               ar.middle_name + ' ' +
-                               ar.last_name)
+        # if ar.nickname != '' or ar.nickname != null and ar.suffix == '' or ar.suffix == null:
+        #     ad_displayName  = (ar.first_name + ' ' + '(' +
+        #                        ar.nickname + ')' + ' ' +
+        #                        ar.middle_name + ' ' +
+        #                        ar.last_name)
 
-        elif ar.nickname != '' or ar.nickname != null and ar.suffix != '' or ar.suffix != null:
-             ad_displayName = (ar.first_name + ' ' + '(' +
-                               ar.nickname + ')' + ' ' +
-                               ar.middle_name + ' ' +
-                               ar.last_name + ',' + ' ' +
-                               ar.suffix)
+        # elif ar.nickname != '' or ar.nickname != null and ar.suffix != '' or ar.suffix != null:
+        #      ad_displayName = (ar.first_name + ' ' + '(' +
+        #                        ar.nickname + ')' + ' ' +
+        #                        ar.middle_name + ' ' +
+        #                        ar.last_name + ',' + ' ' +
+        #                        ar.suffix)
 
-        else:
-            ad_displayName = (ar.first_name + ' ' + ar.last_name)
+        # else:
+        ad_displayName = (ar.first_name + ' ' + ar.last_name)
 
         ad_sAMAccountName   = (ar.first_name.lower() + '.' +
                                ar.last_name.lower())
@@ -101,7 +101,7 @@ class AccountRequestViewSet(viewsets.ModelViewSet):
                 sr.account_request = ar
                 sr.service = service
                 sr.type_of_change = 'grant'
-                sr.request_status = 'new'
+                sr.request_status = 'pending'
                 sr.save()
                 # print("Created:", sr)
 

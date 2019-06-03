@@ -2,10 +2,10 @@
   <div>
     <fn1-tabs v-if="authLevel.admin">
       <fn1-tab v-if="authLevel.admin"
-               :name="`New (` + [[ newCount ]] + `)`"
+               :name="`Pending (` + [[ newCount ]] + `)`"
                :selected="true">
         <div class="title-row">
-          <h4><strong>New</strong> user <strong>Account Requests</strong>.</h4>
+          <h4><strong>Pending</strong> user <strong>Account Requests</strong>.</h4>
 
           <template v-if="batchApprovalCount > 1">
             <fn1-modal title="New Request Batch Confirmation"
@@ -103,9 +103,9 @@
         </table>
       </fn1-tab>
 
-      <fn1-tab :name="`Pending (` + [[ pendingCount ]] + `)`">
+      <fn1-tab :name="`In-Progress (` + [[ pendingCount ]] + `)`">
         <div class="title-row">
-          <h4><strong>Pending</strong> user <strong>Account Requests</strong>.</h4>
+          <h4><strong>In-Progress</strong> user <strong>Account Requests</strong>.</h4>
 
           <template v-if="batchApprovalCount > 1">
             <fn1-modal title="Pending Request Batch Confirmation"
@@ -124,21 +124,14 @@
           </div>
         </div>
 
-        <template v-if="!pendingAccounts.length">
+        <template v-if="!inProgressAccounts.length">
           <h1>Sorry, no results.</h1>
         </template>
 
-        <table v-if="pendingAccounts.length" class="fixed-header">
+        <table v-if="inProgressAccounts.length" class="fixed-header">
           <caption class="sr-only">All User Requests</caption>
           <thead>
             <tr>
-              <!-- <th scope="col">
-                <input v-model="batchPendingRequestApproval"
-                       id="select-all-requests"
-                       value="select-all-requests"
-                       type="checkbox"
-                       name="select-all-requests">
-              </th> -->
               <th scope="col">Status</th>
               <th scope="col">Name</th>
               <th scope="col">Dept.</th>
@@ -149,15 +142,7 @@
           </thead>
 
           <tbody>
-            <tr v-for="(item, index) in pendingAccounts" :key="index">
-              <!-- <th scope="row">
-                <input v-model="selected"
-                       :key="index"
-                       id="select-all-requests"
-                       :value="item.id"
-                       type="checkbox"
-                       name="select-all-requests">
-              </th> -->
+            <tr v-for="(item, index) in inProgressAccounts" :key="index">
               <th class="status">
                 <fn1-badge :class="item.request_status">
                   {{ item.request_status }}
@@ -204,9 +189,12 @@
       </fn1-tab>
     </fn1-tabs>
 
-    <template v-if="pendingAccounts.length && !authLevel.admin">
+    <template v-if="inProgressAccounts.length && !authLevel.admin">
       <div class="title-row">
-        <h4><strong>Pending</strong> user <strong>Account Requests</strong>.</h4>
+        <h4>
+          <strong>In-Progress </strong>
+          user <strong> Account Requests ({{this.acctReqs.accountRequests.inProgress.length}})</strong>
+        </h4>
 
         <template v-if="batchApprovalCount > 1">
           <fn1-modal title="Pending Request Batch Confirmation"
@@ -225,7 +213,7 @@
         </div>
       </div>
 
-      <template v-if="!pendingAccounts.length">
+      <template v-if="!inProgressAccounts.length">
         <h1>Sorry, no results.</h1>
       </template>
 
@@ -233,32 +221,16 @@
         <caption class="sr-only">All User Requests</caption>
         <thead>
           <tr>
-            <!-- <th scope="col">
-              <input v-model="batchPendingRequestApproval"
-                     id="select-all-requests"
-                     value="select-all-requests"
-                     type="checkbox"
-                     name="select-all-requests">
-            </th> -->
             <th scope="col">Status</th>
             <th scope="col">Name</th>
             <th scope="col">Dept.</th>
             <th scope="col">Created</th>
             <th scope="col">Requested By</th>
-            <th scope="col">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          <tr v-for="(item, index) in pendingAccounts" :key="index">
-            <!-- <th scope="row">
-              <input v-model="selected"
-                     :key="index"
-                     id="select-all-requests"
-                     :value="item.id"
-                     type="checkbox"
-                     name="select-all-requests">
-            </th> -->
+          <tr v-for="(item, index) in inProgressAccounts" :key="index">
             <th class="status">
               <fn1-badge :class="item.request_status">
                 {{ item.request_status }}
@@ -295,7 +267,8 @@
               </template>
             </th>
             <th>
-              <nuxt-link class="button" :to="'/account-requests/'+item.id">
+              <nuxt-link class="button"
+                         :to="'/account-requests/'+item.id">
                 view
               </nuxt-link>
             </th>
@@ -474,8 +447,8 @@ export default {
       denyRequestReason:   "",
       denyModalButtonText: "Deny Request",
       acctReqActionDenied: "Account Request: Denied",
-      acctReqActionApprove:"Account Request: Pending",
-      acctReqActionApproveMsg: "Account Request advanced from 'new' to 'pending'.",
+      acctReqActionApprove:"Account Request: In-Progress",
+      acctReqActionApproveMsg: "Account Request advanced from 'pending' to 'in-progress'.",
       showModal:           false,
       showDetailsFor:      null,
       showDetailsForServices: [],
@@ -494,9 +467,9 @@ export default {
     .then(() => {
       this.idsToNames();
 
-      if(this.$route.params.new) {
-        let view = this.new.filter(acctReq => {
-          return acctReq.id === this.$route.params.new
+      if(this.$route.params.pending) {
+        let view = this.pending.filter(acctReq => {
+          return acctReq.id === this.$route.params.pending
         });
         this.showDetails(view[0]);
       }
@@ -590,20 +563,22 @@ export default {
     },
     approveUserAccountRequest(payload) {
       let data = {
-        "request_status": "pending"
+        "request_status": "in-progress"
       }
 
       this.$axios
       .patch(`${process.env.api}${process.env.accountRequest}${payload.id}/`, data)
       .then(response => {
-        // note: `/pending/` below triggers the Service Req.
+        // note: `/inprogress/` below triggers the Service Req.
         this.$axios
-        .get(`${process.env.api}${process.env.accountRequest}${payload.id}/pending/`)
+        .get(`${process.env.api}${process.env.accountRequest}${payload.id}/inprogress/`)
         .then(response => {
-          // console.log(`/pending/ Service Req. :: `, response)
+          console.log(`%c /inprogress/ Service Req. Kickoff 👌 `, this.consoleLog.success)
         })
         .catch(e => {
-          console.log(`/pending/ Service Req. error :: `, e)
+          console.log(`%c /inprogress/ Service Req. Kickoff 🛑 `,
+                    this.consoleLog.error,
+                    `\n\n ${e} \n\n`);
         });
 
         let actionData = {
@@ -637,7 +612,7 @@ export default {
       let allAcctReqs = new Set(),
       users           = new Set();
 
-      allAcctReqs = [...this.pending,...this.new];
+      allAcctReqs = [...this.pending,...this.inProgress];
 
       allAcctReqs.map((u) => {
         return users.add(u.requester);
@@ -670,9 +645,11 @@ export default {
       'consoleLog',
       'acctReqs',
       'acctReqs.accountRequests',
-      'acctReqs.accountRequests.new',
       'acctReqs.accountRequests.pending',
+      'acctReqs.accountRequests.inProgress',
       'acctReqs.accountRequests.approved',
+      'acctReqs.accountRequests.completed',
+      'acctReqs.accountRequests.inactive',
       'acctReqs.accountRequests.denied',
       'auth.authUser',
       'auth.authLevel'
@@ -681,46 +658,46 @@ export default {
       return this.selected.length;
     },
     newCount() {
-      return this.new.length;
-    },
-    pendingCount() {
       return this.pending.length;
     },
-    batchPendingRequestApproval: {
-      get: function () {
-        return this.pending ? this.selected.length == this.pending.length : false;
-      },
-      set: function (value) {
-        var selected = [];
-
-        if (value) {
-          this.pending.forEach(function (item) {
-            selected.push(item.id);
-          });
-        }
-        this.selected = selected;
-      }
+    pendingCount() {
+      return this.inProgress.length;
     },
-    batchNewRequestApproval: {
-      get: function () {
-        return this.new ? this.selected.length == this.new.length : false;
-      },
-      set: function (value) {
-        var selected = [];
+    // batchPendingRequestApproval: {
+    //   get: function () {
+    //     return this.pending ? this.selected.length == this.pending.length : false;
+    //   },
+    //   set: function (value) {
+    //     var selected = [];
 
-        if (value) {
-          this.new.forEach(function (item) {
-            selected.push(item.id);
-          });
-        }
-        this.selected = selected;
-      }
-    },
+    //     if (value) {
+    //       this.pending.forEach(function (item) {
+    //         selected.push(item.id);
+    //       });
+    //     }
+    //     this.selected = selected;
+    //   }
+    // },
+    // batchNewRequestApproval: {
+    //   get: function () {
+    //     return this.new ? this.selected.length == this.new.length : false;
+    //   },
+    //   set: function (value) {
+    //     var selected = [];
+
+    //     if (value) {
+    //       this.new.forEach(function (item) {
+    //         selected.push(item.id);
+    //       });
+    //     }
+    //     this.selected = selected;
+    //   }
+    // },
     fullName() {
       return `${user.first_name}`
     },
     newAccounts() {
-      return this.new
+      return this.pending
       .filter(user => {
         let fullName   = user.full_name.toLowerCase(),
         firstName      = user.first_name.toLowerCase(),
@@ -738,8 +715,8 @@ export default {
       })
       .sort((a, b) => new Date(b.requested) - new Date(a.requested))
     },
-    pendingAccounts() {
-      return this.pending
+    inProgressAccounts() {
+      return this.inProgress
       .filter(user => {
         let fullName   = user.full_name.toLowerCase(),
         firstName      = user.first_name.toLowerCase(),
@@ -784,20 +761,20 @@ export default {
         tr {
           th {
             &:nth-child(1) {
-              width: 120px;
+              width: 140px;
             }
           }
         }
       }
 
       tbody {
-        height: calc(100vh - 330px);
+        height: calc(100vh - 350px);
 
         tr {
           th {
 
             &.status {
-              width: 120px;
+              width: 140px;
               padding: 5px 20px 5px 8px;
             }
 

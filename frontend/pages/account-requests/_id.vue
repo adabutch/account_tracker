@@ -186,7 +186,7 @@
         </div>
       </fn1-tab>
 
-      <fn1-tab name="Services">
+      <fn1-tab name="Services" v-if="!acctReqIsPending">
         <div class="title-row">
           <h4><strong>Service Profiles</strong> associated with this <strong>Account Request</strong>.</h4>
 
@@ -199,15 +199,12 @@
             </fn1-badge>
           </div>
 
-          {{acctReqIsNew()}}
-
-          <div class="notes" v-if="acctReqIsNew">
+          <div class="notes" v-if="acctReqIsPending">
             <p><strong>Note:</strong> <strong>Service Requests</strong> become available when the <strong>Account Request</strong> reaches <fn1-badge class="pending">pending</fn1-badge>.</p>
           </div>
         </div>
 
-        <table class="fixed-header service-reqs" v-if="true">
-        <!-- <table class="fixed-header service-reqs" v-if="!acctReqIsNew"> -->
+        <table class="fixed-header service-reqs">
           <caption class="sr-only">All User Requests</caption>
           <thead>
             <tr>
@@ -261,12 +258,10 @@
                   <div>{{timeAgo(s.created)}}</div>
                 </template>
               </th>
-              <th v-if="!authLevel.regular"
-                  :class="{'disabled': acctReqIsNew}">
+              <th v-if="!authLevel.regular">
                 <exampleDropdown
                   text="status"
-                  navAlign="right"
-                  :disabled="acctReqIsNew">
+                  navAlign="right">
                   <li v-for="rs, i in requestStatuses"
                       :class="rs"
                       @click="changeStatus(s, rs)">
@@ -345,11 +340,21 @@ export default {
     return !isNaN(+params.id)
   },
   mounted(context) {
-    this.loadData();
+    this.getAccountRequestByID(this.$route.params.id)
+    .then((resolve) => {
+      this.acctReq = resolve;
+      this.loadData();
+      console.log(`%c accountRequestbyID 👌 `, this.consoleLog.success);
+    })
+    .catch((reject) => {
+      console.log(`%c accountRequestbyID 🛑 `,
+                    this.consoleLog.error,
+                    `\n\n ${reject} \n\n`);
+    });
   },
   updated() {
     if(this.acctReq){
-      if(this.acctReqIsNew() && !this.authLevel.admin) {
+      if(this.acctReqIsPending && !this.authLevel.admin) {
         this.$router.push({ path: this.paths.accountRequests });
       }
     }
@@ -377,6 +382,16 @@ export default {
       'requestStatuses',
       'consoleLog'
     ]),
+    acctReqIsPending() {
+      if(this.acctReq){
+        let arStatus  = this.acctReq.request_status,
+        isPending     = "pending";
+
+        if(arStatus == isPending) {
+          return true
+        }
+      }
+    },
     historyByUpdated() {
       return this.acctReqActions.sort(
         (a, b) => new Date(b.updated) - new Date(a.updated)
@@ -404,16 +419,6 @@ export default {
     goBack() {
       this.$router.push({ path: this.paths.accountRequests });
     },
-    acctReqIsNew() {
-      let arStatus  = this.acctReq.request_status,
-      isNew         = "new";
-
-      alert(arStatus);
-
-      if(arStatus == isNew) {
-        return true
-      }
-    },
     /**
      * Loads init page data required to fire up
      * an Account Request page based on URL param ID
@@ -431,16 +436,7 @@ export default {
                       `\n\n ${reject} \n\n`);
       });
 
-      this.getAccountRequestByID(this.$route.params.id)
-      .then((resolve) => {
-        this.acctReq = resolve;
-        console.log(`%c accountRequestbyID 👌 `, this.consoleLog.success);
-      })
-      .catch((reject) => {
-        console.log(`%c accountRequestbyID 🛑 `,
-                      this.consoleLog.error,
-                      `\n\n ${reject} \n\n`);
-      });
+
 
       this.getServiceReqsByAcctReqId(this.$route.params.id, this.apiLimit)
       .then((resolve) => {
@@ -634,15 +630,21 @@ export default {
           border-radius: 50%;
         }
 
-        &.new {
+        &.pending {
           &:before {
             background-color: $color-ucla-gold-dark;
           }
         }
 
-        &.pending {
+        &.in-progress {
           &:before {
             background-color: $color-blue;
+          }
+        }
+
+        &.completed {
+          &:before {
+            background-color: $color-green;
           }
         }
 
@@ -699,7 +701,7 @@ export default {
           display: flex;
           align-items: center;
           flex-wrap: wrap;
-          margin: 20px 0;
+          margin: 0 0 20px 0;
           min-height: 25px;
           width: 100%;
           // background-color: red;
@@ -822,7 +824,7 @@ export default {
     }
 
     tbody {
-      height: calc(100vh - 350px);
+      height: calc(100vh - 380px);
 
       tr {
         th {

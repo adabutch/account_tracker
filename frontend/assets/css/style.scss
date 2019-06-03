@@ -245,11 +245,11 @@ span.label {
     background-color: $color-silver;
   }
 
-  &.new {
+  &.pending {
     background-color: $color-ucla-gold-dark;
   }
 
-  &.pending {
+  &.in-progress {
     background-color: $color-blue;
   }
 
@@ -257,6 +257,7 @@ span.label {
     background-color: $color-green-light;
   }
 
+  &.completed,
   &.active {
     background-color: $color-green;
   }

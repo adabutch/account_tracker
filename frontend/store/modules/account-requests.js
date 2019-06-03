@@ -4,9 +4,11 @@ import {
 
 export const accountRequestsState = () => ({
   accountRequests: {
-    new:            [],
     pending:        [],
+    inProgress:     [],
     approved:       [],
+    completed:      [],
+    inactive:       [],
     denied:         [],
   },
 })
@@ -22,17 +24,23 @@ const mutations = {
   RESET_ACCOUNT_REQUESTS_STATE(state) {
     Object.assign(state, accountRequestsState())
   },
-  ACCOUNT_REQUESTS_NEW(state, payload) {
-    state.accountRequests.new = payload
-  },
   ACCOUNT_REQUESTS_PENDING(state, payload) {
     state.accountRequests.pending = payload
   },
-  ACCOUNT_REQUESTS_DENIED(state, payload) {
-    state.accountRequests.denied = payload
+  ACCOUNT_REQUESTS_INPROGRESS(state, payload) {
+    state.accountRequests.inProgress = payload
   },
   ACCOUNT_REQUESTS_APPROVED(state, payload) {
     state.accountRequests.approved = payload
+  },
+  ACCOUNT_REQUESTS_COMPLETED(state, payload) {
+    state.accountRequests.completed = payload
+  },
+  ACCOUNT_REQUESTS_INACTIVE(state, payload) {
+    state.accountRequests.inactive = payload
+  },
+  ACCOUNT_REQUESTS_DENIED(state, payload) {
+    state.accountRequests.denied = payload
   },
 }
 
@@ -40,17 +48,23 @@ const actions = {
   resetAccountRequestsState({ commit }) {
     commit('RESET_ACCOUNT_REQUESTS_STATE')
   },
-  accountRequestsNew(context, payload) {
-    context.commit('ACCOUNT_REQUESTS_NEW', payload)
-  },
   accountRequestsPending(context, payload) {
     context.commit('ACCOUNT_REQUESTS_PENDING', payload)
   },
-  accountRequestsDenied(context, payload) {
-    context.commit('ACCOUNT_REQUESTS_DENIED', payload)
+  accountRequestsInProgress(context, payload) {
+    context.commit('ACCOUNT_REQUESTS_INPROGRESS', payload)
   },
   accountRequestsApproved(context, payload) {
     context.commit('ACCOUNT_REQUESTS_APPROVED', payload)
+  },
+  accountRequestsCompleted(context, payload) {
+    context.commit('ACCOUNT_REQUESTS_COMPLETED', payload)
+  },
+  accountRequestsInactive(context, payload) {
+    context.commit('ACCOUNT_REQUESTS_INACTIVE', payload)
+  },
+  accountRequestsDenied(context, payload) {
+    context.commit('ACCOUNT_REQUESTS_DENIED', payload)
   },
 }
 

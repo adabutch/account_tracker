@@ -27,8 +27,8 @@
         <thead>
           <tr>
             <th scope="col">Status</th>
-            <th scope="col">Account Req.</th>
-            <th scope="col">Service</th>
+            <th scope="col">Service Name</th>
+            <th scope="col">Account Request</th>
             <th scope="col">Updated</th>
             <th scope="col">Requested</th>
             <th scope="col">Actions</th>
@@ -45,8 +45,8 @@
                   {{s.request_status}}
                 </fn1-badge>
               </td>
-              <td>{{s.ar.full_name}}</td>
               <td>{{s.sr.name}}</td>
+              <td>{{s.ar.full_name}}</td>
               <td>
                 <div>{{MMDYYYYDateFormat(s.updated)}}</div>
                 <div>{{timeAgo(s.updated)}}</div>
@@ -168,12 +168,7 @@
 </template>
 
 <script>
-import { createHelpers } from 'vuex-map-fields';
-
-const { mapFields } = createHelpers({
-  getterType: `getField`,
-  mutationType: `updateField`,
-});
+import { mapFields } from 'vuex-map-fields';
 
 import exampleDropdown  from '~/components/exampleDropdown'
 import servicesAside    from '~/components/service-requests/servicesAside'
@@ -525,15 +520,21 @@ export default {
           border-radius: 50%;
         }
 
-        &.new {
+        &.pending {
           &:before {
             background-color: $color-ucla-gold-dark;
           }
         }
 
-        &.pending {
+        &.in-progress {
           &:before {
             background-color: $color-blue;
+          }
+        }
+
+        &.completed {
+          &:before {
+            background-color: $color-green;
           }
         }
 
@@ -603,6 +604,7 @@ export default {
       min-height: 25px;
 
       h4 {
+        width: auto;
         color: $text-color;
         font-size: 18px;
         line-height: 18px;
@@ -650,13 +652,18 @@ export default {
 
       thead tr th,
       tbody tr td {
+
+        &:nth-child(1) {
+          width: 140px;
+        }
+
         &:nth-child(2) {
           width: 300px;
         }
 
         &:nth-of-type(3) {
-          min-width: 350px;
-          width: 350px;
+          min-width: 240px;
+          width: 240px;
         }
 
         &:last-of-type {

@@ -70,8 +70,8 @@ export default {
       errorMsg:     [],
       asideHeader:  "Review & Create Account Request",
       imageID:      "",
-      acctReqActionNew: "Account Request: New",
-      acctReqActionNewMsg: "Account Request 'new' submission.",
+      acctReqActionNew: "Account Request: Pending",
+      acctReqActionNewMsg: "Account Request 'pending' submission.",
     }
   },
   mounted() {
@@ -173,7 +173,7 @@ export default {
       fD.append(`employee_status`, this.job.salaryGroup);
       fD.append(`clock_entry_only`, this.job.clockInRequired);
       fD.append(`start_date`, this.dateFormatted);
-      fD.append(`request_status`, `new`);
+      fD.append(`request_status`, `pending`);
       fD.append(`requester`, this.authUser.id);
       fD.append(`requested_services`, this.checkServices());
       fD.append(`dynamic_options`, JSON.stringify(this.extraQuestionAnswers));
