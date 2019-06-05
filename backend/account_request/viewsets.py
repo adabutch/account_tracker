@@ -30,11 +30,19 @@ class AccountRequestViewSet(viewsets.ModelViewSet):
         ar = self.get_object()
 
         ad_distinguishedName = ('CN=' + ar.first_name + ' ' + ar.last_name +
-                                ',OU=' + ar.department +
-                                ',OU=' + 'City Hall' +
+                                ',OU=' + 'Account Tests' +
                                 ',OU=' + 'Departments' +
-                                ',DC=' + 'seth' +
-                                ',DC=' + 'test')
+                                ',DC=' + 'cob' +
+                                ',DC=' + 'bloomington' +
+                                ',DC=' + 'in'
+                                ',DC=' + 'gov')
+
+        # ad_distinguishedName = ('CN=' + ar.first_name + ' ' + ar.last_name +
+        #                         ',OU=' + ar.department +
+        #                         ',OU=' + 'City Hall' +
+        #                         ',OU=' + 'Departments' +
+        #                         ',DC=' + 'seth' +
+        #                         ',DC=' + 'test')
 
         # note: Charles - I need some `displayName` syntactic sugar below
         # if ar.nickname != '' or ar.nickname != null and ar.suffix == '' or ar.suffix == null:

@@ -334,9 +334,10 @@
 
               <template slot="body"
                         ref="editServiceFormBody"
-                        slot-scope="editServiceData">
+                        slot-scope="editServiceDataScope">
                 <template v-if="addingServiceManager">
                   <div class="search-wrapper">
+                    {{editServiceData}}
                     <fn1-input v-model="serviceManagerSearch"
                                label="Search Service Managers"
                                autocomplete="off"
@@ -358,12 +359,14 @@
                           {{m.first_name}} {{m.last_name}}
                         </li>
                       </ul>
+                    }
                   </div>
                 </template>
 
                 <form v-show="!addingServiceManager">
+                  <!-- {{editServiceData}} -->
                   <div class="left">
-                    <exampleSelect v-model="formEditDeployment"
+                    <exampleSelect v-model="editServiceData.formEditDeployment"
                                  label="Deployment"
                                  name="deployment"
                                  id="deployment"
@@ -377,7 +380,7 @@
                                  name="active-radio"
                                  id="active-radio"
                                  :value="r.value"
-                                 v-model="formEditActive">
+                                 v-model="editServiceData.formEditActive">
                           <label for="active-radio">{{r.text}}</label>
                         </div>
                       </fieldset>
@@ -391,7 +394,7 @@
                                  name="standard-build"
                                  id="standard-build"
                                  :value="r.value"
-                                 v-model="formEditBuild">
+                                 v-model="editServiceData.formEditBuild">
                           <label for="standard-build">{{r.text}}</label>
                         </div>
                       </fieldset>
@@ -405,7 +408,7 @@
                                  name="public"
                                  id="public"
                                  :value="r.value"
-                                 v-model="formEditPublic">
+                                 v-model="editServiceData.formEditPublic">
                           <label for="public">{{r.text}}</label>
                         </div>
                       </fieldset>
@@ -419,7 +422,7 @@
                                  name="internal"
                                  id="internal"
                                  :value="r.value"
-                                 v-model="formEditInternal">
+                                 v-model="editServiceData.formEditInternal">
                           <label for="internal">{{r.text}}</label>
                         </div>
                       </fieldset>
@@ -465,26 +468,26 @@
                   </div>
 
                   <div class="right">
-                    <fn1-input v-model="formEditName"
+                    <fn1-input v-model="editServiceData.formEditName"
                                label="Name"
                                placeholder="Name"
                                name="name"
                                id="name" />
 
-                    <fn1-input v-model="formEditUrl"
+                    <fn1-input v-model="editServiceData.formEditUrl"
                                label="URL"
                                placeholder="URL"
                                name="formUrl"
                                id="formUrl" />
 
                     <div class="row">
-                      <fn1-input v-model="formEditDeveloper"
+                      <fn1-input v-model="editServiceData.formEditDeveloper"
                                label="Developer"
                                placeholder="Developer"
                                name="developer"
                                id="developer" />
 
-                      <fn1-input v-model="formEditVersion"
+                      <fn1-input v-model="editServiceData.formEditVersion"
                                label="Version"
                                placeholder="Version"
                                name="version"
@@ -493,7 +496,7 @@
 
                     <div class="field-group">
                       <label for="description">Description</label>
-                      <textarea v-model="formEditDescription"
+                      <textarea v-model="editServiceData.formEditDescription"
                                 type="textarea"
                                 id="description"
                                 placeholder="An optional Service description."></textarea>
@@ -614,19 +617,32 @@ export default {
 
       // Form - Edit
       editServiceData: {
-        formEditID:           null,
-        formEditName:         null,
-        formEditManagers:     null,
-        formEditDescription:  null,
-        formEditUrl:          null,
-        formEditActive:       null,
-        formEditDeployment:   null,
-        formEditBuild:        null,
-        formEditPublic:       null,
-        formEditInternal:     null,
-        formEditVersion:      null,
-        formEditDeveloper:    null,
+        // formEditID:           null,
+        // formEditName:         null,
+        // formEditManagers:     null,
+        // formEditDescription:  null,
+        // formEditUrl:          null,
+        // formEditActive:       null,
+        // formEditDeployment:   null,
+        // formEditBuild:        null,
+        // formEditPublic:       null,
+        // formEditInternal:     null,
+        // formEditVersion:      null,
+        // formEditDeveloper:    null,
       },
+
+      // formEditID:           null,
+      //   formEditName:         null,
+      //   formEditManagers:     null,
+      //   formEditDescription:  null,
+      //   formEditUrl:          null,
+      //   formEditActive:       null,
+      //   formEditDeployment:   null,
+      //   formEditBuild:        null,
+      //   formEditPublic:       null,
+      //   formEditInternal:     null,
+      //   formEditVersion:      null,
+      //   formEditDeveloper:    null,
     }
   },
   computed: {
@@ -823,16 +839,16 @@ export default {
     editService(i) {
       let fD = new FormData();
 
-      fD.append(`active`,         this.formEditActive);
-      fD.append(`name`,           this.formEditName);
-      fD.append(`public`,         this.formEditPublic);
-      fD.append(`description`,    this.formEditDescription);
-      fD.append(`url`,            this.formEditUrl);
-      fD.append(`deployment`,     this.formEditDeployment);
-      fD.append(`standard_build`, this.formEditBuild);
-      fD.append(`internal`,       this.formEditInternal);
-      fD.append(`version`,        this.formEditVersion);
-      fD.append(`developer`,      this.formEditDeveloper);
+      fD.append(`active`,         this.editServiceData.formEditActive);
+      fD.append(`name`,           this.editServiceData.formEditName);
+      fD.append(`public`,         this.editServiceData.formEditPublic);
+      fD.append(`description`,    this.editServiceData.formEditDescription);
+      fD.append(`url`,            this.editServiceData.formEditUrl);
+      fD.append(`deployment`,     this.editServiceData.formEditDeployment);
+      fD.append(`standard_build`, this.editServiceData.formEditBuild);
+      fD.append(`internal`,       this.editServiceData.formEditInternal);
+      fD.append(`version`,        this.editServiceData.formEditVersion);
+      fD.append(`developer`,      this.editServiceData.formEditDeveloper);
 
       this.$axios
       .patch(`${process.env.api}${process.env.service}${this.formEditID}/`,fD)
