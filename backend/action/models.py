@@ -19,7 +19,7 @@ class Action(models.Model):
                                 blank=True, null=True)
 
     # what was done?
-    action = models.CharField(max_length=50)
+    action = models.CharField(max_length=150)
 
     # any other details?
     comment = models.TextField(default='', blank=True, null=True)

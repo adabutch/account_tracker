@@ -1,169 +1,177 @@
 <template>
   <div class="inner-wrapper">
-    <servicesAside
-      :filterServiceIDs="serviceFilterIDs"
-      @filterServiceChange="watchServiceFilters"
-      :filterAcctReqIDs="acctReqFilterIDs"
-      @filterAcctReqChange="watchAcctReqFilters" />
+    <template v-if="loading">
+      <p>Loading ...</p>
+    </template>
 
-    <div class="table-wrapper">
-      <div class="title-row">
-        <h4><strong>Services Requests ({{displayResults.length}})</strong> you manage.</h4>
+    <template v-if="(displayResults == 0 && !loading) || noManagerServiceSet">
+      <p>No <strong>Service Requests</strong> at this time.</p>
+    </template>
 
-        <div class="filters">
-          <fn1-badge
-            v-for="s, i in requestStatuses"
-            :key="i"
-            :class="s">
-            {{s}}
-          </fn1-badge>
+    <template v-if="displayResults != 0 && !loading && !noManagerServiceSet">
+      <servicesAside
+        :filterServiceIDs="serviceFilterIDs"
+        @filterServiceChange="watchServiceFilters"
+        :filterAcctReqIDs="acctReqFilterIDs"
+        @filterAcctReqChange="watchAcctReqFilters" />
+
+      <div class="table-wrapper">
+        <div class="title-row">
+          <h4><strong>Services Requests ({{displayResults.length}})</strong> you manage.</h4>
+
+          <div class="filters">
+            <fn1-badge
+              v-for="s, i in requestStatuses"
+              :key="i"
+              :class="s">
+              {{s}}
+            </fn1-badge>
+          </div>
         </div>
+
+        <table class="fixed-header">
+          <caption class="sr-only">All User Requests</caption>
+          <thead>
+            <tr>
+              <th scope="col">Status</th>
+              <th scope="col">Service Name</th>
+              <th scope="col">Account Request</th>
+              <th scope="col">Updated</th>
+              <th scope="col">Requested</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <template v-for="s, i in displayResults" >
+              <tr :class="{'active': acctReqRow === i}"
+                  :key="i"
+                  @click.stop="toggleAcctReqRow(s,i,$event)">
+                <td>
+                  <fn1-badge :class="s.request_status">
+                    {{s.request_status}}
+                  </fn1-badge>
+                </td>
+                <td>{{s.sr.name}}</td>
+                <td>{{s.ar.full_name}}</td>
+                <td>
+                  <div>{{MMDYYYYDateFormat(s.updated)}}</div>
+                  <div>{{timeAgo(s.updated)}}</div>
+                </td>
+                <td>
+                  <div>{{MMDYYYYDateFormat(s.requested)}}</div>
+                  <div>{{timeAgo(s.requested)}}</div>
+                </td>
+                <td>
+                  <exampleDropdown
+                    text="status"
+                    navAlign="right">
+                    <li v-for="rs, i in requestStatuses"
+                        :class="rs"
+                        @click="serviceStatusChange(s, rs)">
+                        <span>{{rs}}</span>
+                    </li>
+                  </exampleDropdown>
+                </td>
+              </tr>
+              <tr v-if="acctReqRow === i"
+                  :class="{'active': acctReqRow === i}">
+                <td class="acct-req-row">
+                  <div class="wrapper">
+                    <div class="profile-image" v-if="acctReqRowAcct.cropped_image">
+                      <img :src="acctReqRowAcct.cropped_image" :alt="acctReqRowAcct.first_name + ' ' + acctReqRowAcct.last_name">
+                    </div>
+                    <div class="avatar" v-if="!acctReqRowAcct.cropped_image">
+                      {{ userInitial(acctReqRowAcct.first_name) }}{{ userInitial(acctReqRowAcct.last_name) }}
+                    </div>
+
+
+                    <div class="account-fields">
+                      <h4>
+                        <template v-if="acctReqRowAcct.first_name">
+                          {{acctReqRowAcct.first_name}}
+                        </template>
+
+                        <template v-if="acctReqRowAcct.nickname">
+                          ({{acctReqRowAcct.nickname}})
+                        </template>
+
+                        <template v-if="acctReqRowAcct.middle_name">
+                          {{acctReqRowAcct.middle_name}}
+                        </template>
+
+                        <template v-if="acctReqRowAcct.last_name">
+                          {{acctReqRowAcct.last_name}}
+                        </template>
+
+                        <template v-if="acctReqRowAcct.suffix">
+                          {{acctReqRowAcct.suffix}}
+                        </template>
+
+                        <fn1-badge :class="acctReqRowAcct.request_status">
+                          {{acctReqRowAcct.request_status}}
+                        </fn1-badge>
+                      </h4>
+
+                      <div class="first">
+                        <div v-if="acctReqRowAcct.facility">
+                          <h5>Facility</h5>
+                          <p>{{acctReqRowAcct.facility}}</p>
+                        </div>
+
+                        <div v-if="acctReqRowAcct.department">
+                          <h5>Department</h5>
+                          <p>{{acctReqRowAcct.department}}</p>
+                        </div>
+
+                        <div v-if="acctReqRowAcct.group">
+                          <h5>Group</h5>
+                          <p>{{acctReqRowAcct.group}}</p>
+                        </div>
+
+                        <div v-if="acctReqRowAcct.job">
+                          <h5>Job</h5>
+                          <p>{{acctReqRowAcct.job}}</p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div v-if="acctReqRowAcct.supervisor">
+                          <h5>Supervisor</h5>
+                          <p>{{acctReqRowAcct.supervisor}}</p>
+                        </div>
+
+                        <div v-if="acctReqRowAcct.supervisor_phone">
+                          <h5>Supervisor Phone</h5>
+                          <p>{{acctReqRowAcct.supervisor_phone}}</p>
+                        </div>
+
+                        <div v-if="acctReqRowAcct.employee_phone">
+                          <h5>Employee Phone</h5>
+                          <p>{{acctReqRowAcct.employee_phone}}</p>
+                        </div>
+
+                        <div v-if="acctReqRowAcct.clock_entry_only">
+                          <h5>Clock Entry Only</h5>
+                          <p>{{acctReqRowAcct.clock_entry_only}}</p>
+                        </div>
+
+                        <div v-if="acctReqRowAcct.employee_status">
+                          <h5>Employee Status</h5>
+                          <p>{{acctReqRowAcct.employee_status}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+            </template>
+
+          </tbody>
+        </table>
       </div>
-
-      <h2 v-if="!displayResults">Loading</h2>
-
-      <table v-if="displayResults" class="fixed-header">
-        <caption class="sr-only">All User Requests</caption>
-        <thead>
-          <tr>
-            <th scope="col">Status</th>
-            <th scope="col">Service Name</th>
-            <th scope="col">Account Request</th>
-            <th scope="col">Updated</th>
-            <th scope="col">Requested</th>
-            <th scope="col">Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <template v-for="s, i in displayResults" >
-            <tr :class="{'active': acctReqRow === i}"
-                :key="i"
-                @click.stop="toggleAcctReqRow(s,i,$event)">
-              <td>
-                <fn1-badge :class="s.request_status">
-                  {{s.request_status}}
-                </fn1-badge>
-              </td>
-              <td>{{s.sr.name}}</td>
-              <td>{{s.ar.full_name}}</td>
-              <td>
-                <div>{{MMDYYYYDateFormat(s.updated)}}</div>
-                <div>{{timeAgo(s.updated)}}</div>
-              </td>
-              <td>
-                <div>{{MMDYYYYDateFormat(s.requested)}}</div>
-                <div>{{timeAgo(s.requested)}}</div>
-              </td>
-              <td>
-                <exampleDropdown
-                  text="status"
-                  navAlign="right">
-                  <li v-for="rs, i in requestStatuses"
-                      :class="rs"
-                      @click="serviceStatusChange(s, rs)">
-                      <span>{{rs}}</span>
-                  </li>
-                </exampleDropdown>
-              </td>
-            </tr>
-            <tr v-if="acctReqRow === i"
-                :class="{'active': acctReqRow === i}">
-              <td class="acct-req-row">
-                <div class="wrapper">
-                  <div class="profile-image" v-if="acctReqRowAcct.cropped_image">
-                    <img :src="acctReqRowAcct.cropped_image" :alt="acctReqRowAcct.first_name + ' ' + acctReqRowAcct.last_name">
-                  </div>
-                  <div class="avatar" v-if="!acctReqRowAcct.cropped_image">
-                    {{ userInitial(acctReqRowAcct.first_name) }}{{ userInitial(acctReqRowAcct.last_name) }}
-                  </div>
-
-
-                  <div class="account-fields">
-                    <h4>
-                      <template v-if="acctReqRowAcct.first_name">
-                        {{acctReqRowAcct.first_name}}
-                      </template>
-
-                      <template v-if="acctReqRowAcct.nickname">
-                        ({{acctReqRowAcct.nickname}})
-                      </template>
-
-                      <template v-if="acctReqRowAcct.middle_name">
-                        {{acctReqRowAcct.middle_name}}
-                      </template>
-
-                      <template v-if="acctReqRowAcct.last_name">
-                        {{acctReqRowAcct.last_name}}
-                      </template>
-
-                      <template v-if="acctReqRowAcct.suffix">
-                        {{acctReqRowAcct.suffix}}
-                      </template>
-
-                      <fn1-badge :class="acctReqRowAcct.request_status">
-                        {{acctReqRowAcct.request_status}}
-                      </fn1-badge>
-                    </h4>
-
-                    <div class="first">
-                      <div v-if="acctReqRowAcct.facility">
-                        <h5>Facility</h5>
-                        <p>{{acctReqRowAcct.facility}}</p>
-                      </div>
-
-                      <div v-if="acctReqRowAcct.department">
-                        <h5>Department</h5>
-                        <p>{{acctReqRowAcct.department}}</p>
-                      </div>
-
-                      <div v-if="acctReqRowAcct.group">
-                        <h5>Group</h5>
-                        <p>{{acctReqRowAcct.group}}</p>
-                      </div>
-
-                      <div v-if="acctReqRowAcct.job">
-                        <h5>Job</h5>
-                        <p>{{acctReqRowAcct.job}}</p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div v-if="acctReqRowAcct.supervisor">
-                        <h5>Supervisor</h5>
-                        <p>{{acctReqRowAcct.supervisor}}</p>
-                      </div>
-
-                      <div v-if="acctReqRowAcct.supervisor_phone">
-                        <h5>Supervisor Phone</h5>
-                        <p>{{acctReqRowAcct.supervisor_phone}}</p>
-                      </div>
-
-                      <div v-if="acctReqRowAcct.employee_phone">
-                        <h5>Employee Phone</h5>
-                        <p>{{acctReqRowAcct.employee_phone}}</p>
-                      </div>
-
-                      <div v-if="acctReqRowAcct.clock_entry_only">
-                        <h5>Clock Entry Only</h5>
-                        <p>{{acctReqRowAcct.clock_entry_only}}</p>
-                      </div>
-
-                      <div v-if="acctReqRowAcct.employee_status">
-                        <h5>Employee Status</h5>
-                        <p>{{acctReqRowAcct.employee_status}}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </td>
-            </tr>
-
-          </template>
-
-        </tbody>
-      </table>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -182,12 +190,27 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.loadData();
-      this.displayResults;
+      this.getManagerServiceSet()
+      .then((resolve) => {
+        console.log(`%c 0. getManagerServiceSet 👌 `, this.consoleLog.success);
+        this.$store.dispatch('serviceReqs/setMgrProfileIDs', resolve);
+
+        this.loadData();
+        this.displayResults;
+      }, (reject) => {
+
+        this.loading = false;
+
+        console.log(`%c 0. getManagerServiceSet 🛑 `,
+                    this.consoleLog.error,
+                    `\n\n ${reject} \n\n`);
+      });
     });
   },
   data() {
     return {
+      loading:          true,
+      noManagerServiceSet: false,
       mgrID:            null,
       serviceFilterIDs: [],
       acctReqFilterIDs: [],
@@ -221,47 +244,40 @@ export default {
           this.$store.dispatch('serviceReqs/setRequests', resolve);
           console.log(`%c 2. getServiceRequests 👌 `, this.consoleLog.success);
 
-          this.getManagerServiceSet()
+          this.mgrServices()
           .then((resolve) => {
-            console.log(`%c 3. getManagerServiceSet 👌 `, this.consoleLog.success);
-            this.$store.dispatch('serviceReqs/setMgrProfileIDs', resolve);
+            this.$store.dispatch('serviceReqs/setMgrFullProfiles', resolve);
+            console.log(`%c 3. mgrServices 👌 `, this.consoleLog.success);
 
-            this.mgrServices()
+            this.setMgrServiceReqs()
             .then((resolve) => {
-              this.$store.dispatch('serviceReqs/setMgrFullProfiles', resolve);
-              console.log(`%c 4. mgrServices 👌 `, this.consoleLog.success);
+              this.$store.dispatch('serviceReqs/setMgrServiceReqs', resolve);
+              console.log(`%c 4. setMgrServiceReqs 👌 `, this.consoleLog.success);
 
-              this.setMgrServiceReqs()
+              this.filterActives()
               .then((resolve) => {
-                this.$store.dispatch('serviceReqs/setMgrServiceReqs', resolve);
-                console.log(`%c 5. setMgrServiceReqs 👌 `, this.consoleLog.success);
+                this.managerAcctReqXServiceReq();
 
-                this.filterActives()
-                .then((resolve) => {
-                  this.managerAcctReqXServiceReq();
-
-                  console.log(`%c 6. filterActives 👌 `, this.consoleLog.success);
-                }, (reject) => {
-                  console.log(`%c 6. filterActives 🛑 `, this.consoleLog.error);
-                });
+                console.log(`%c 5. filterActives 👌 `, this.consoleLog.success);
               }, (reject) => {
-                console.log(`%c 5. setMgrServiceReqs 🛑 `, this.consoleLog.error);
-              })
+                console.log(`%c 6. filterActives 🛑 `, this.consoleLog.error);
+              });
             }, (reject) => {
-              console.log(`%c 4. mgrServices 🛑 `,
-                        this.consoleLog.error,
-                        `\n\n ${reject} \n\n`);
-            });
+              console.log(`%c 4. setMgrServiceReqs 🛑 `, this.consoleLog.error);
+            })
           }, (reject) => {
-            console.log(`%c 3. getManagerServiceSet 🛑 `,
-                        this.consoleLog.error,
-                        `\n\n ${reject} \n\n`);
+            console.log(`%c 3. mgrServices 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${reject} \n\n`);
           });
+
         }, (reject) => {
           console.log(`%c 2. getServiceRequests 🛑 `,
                         this.consoleLog.error,
                         `\n\n ${reject} \n\n`);
         });
+
+        this.loading = false;
       }, (reject) => {
         console.log(`%c 1. getServices 🛑 `,
                         this.consoleLog.error,
@@ -273,11 +289,16 @@ export default {
         this.$axios
         .get(`${process.env.api}${process.env.employee}${this.authUser.id}/`)
         .then((res) => {
-          resolve(res.data.service_set);
+          let response = res.data.service_set;
+          if( response.length === 0) {
+            this.noManagerServiceSet = true;
+            reject('Manager has No Services')
+          } else {
+            this.noManagerServiceSet = false;
+            resolve(res.data.service_set)
+          }
         })
-        .catch((e) => {
-          reject(e);
-        });
+        .catch(e  => reject(e));
       });
     },
     getServices() {
@@ -330,13 +351,15 @@ export default {
       .then((res) => {
         console.log(`serviceStatusChange() :: `, res.data);
 
-        this.$axios
-        .post(`${process.env.api}${process.env.action}`,{
+        let statusPayload = {
           "user":    this.authUser.id,
           "account": acctReq.ar.id,
           "action":  `Service Request (${acctReq.id}): ${acctReq.sr.name}`,
           "comment": `Changed from '${acctReq.request_status}' to '${status}'.`
-        })
+        }
+
+        this.$axios
+        .post(`${process.env.api}${process.env.action}`, statusPayload)
         .then(response => {
           console.log(`ACTION SR serviceStatusChange :: `, response);
           this.loadData();
