@@ -558,6 +558,7 @@
 
 <script>
 import { mapFields } from 'vuex-map-fields'
+import axios         from 'axios'
 
 import exampleModal   from '~/components/exampleModal'
 import exampleSelect  from '~/components/exampleSelect'
@@ -569,6 +570,12 @@ export default {
     exampleModal,
     exampleSelect
   },
+  // asyncData ({ store, params }) {
+  //   return axios.get(`https://dhcp-cityhall-101-164.bloomington.in.gov:9090/api/service/?limit=1000`)
+  //   .then((res) => {
+  //     return { allServices: res.data.results }
+  //   })
+  // },
   mounted() {
     this.loading = true;
     this.loadServices();
@@ -619,7 +626,7 @@ export default {
         formEditInternal:     null,
         formEditVersion:      null,
         formEditDeveloper:    null,
-      }
+      },
     }
   },
   computed: {
@@ -629,6 +636,7 @@ export default {
       'consoleLog',
       'requestStatuses',
       'serviceStatuses',
+      'services.services'
     ]),
     editServiceFormBody() {
       this.editServiceBodyHeight = this.$refs.editServiceFormBody.clientHeight;
@@ -777,12 +785,15 @@ export default {
       });
     },
     loadServices(){
-      // this.getServices(this.apiLimit)
       this.getServices(this.apiLimit)
       .then((resolve) => {
+
+        // this.$store.dispatch('services/setServices', resolve);
+
         this.allServices = resolve;
         this.getEmployees();
         this.loading = false;
+
         console.log(`%c getServices (loadServices) 👌 `,
                     this.consoleLog.success);
       })
@@ -794,20 +805,20 @@ export default {
     },
     editModalHandler(s, i) {
       let copy = Object.assign({}, s);
-      this.formEditID           = copy.id,
-      this.formEditName         = copy.name,
-      this.formEditManagers     = copy.managers,
-      this.formEditDescription  = copy.description,
-      this.formEditUrl          = copy.url,
-      this.formEditActive       = copy.active,
-      this.formEditDeployment   = copy.deployment,
-      this.formEditBuild        = copy.standard_build,
-      this.formEditPublic       = copy.public,
-      this.formEditInternal     = copy.internal,
-      this.formEditVersion      = copy.version,
-      this.formEditPrimaryPOC   = copy.primary_poc,
-      this.formEditSecondaryPOC = copy.secondary_poc,
-      this.formEditDeveloper    = copy.developer;
+      this.editServiceData.formEditID           = copy.id,
+      this.editServiceData.formEditName         = copy.name,
+      this.editServiceData.formEditManagers     = copy.managers,
+      this.editServiceData.formEditDescription  = copy.description,
+      this.editServiceData.formEditUrl          = copy.url,
+      this.editServiceData.formEditActive       = copy.active,
+      this.editServiceData.formEditDeployment   = copy.deployment,
+      this.editServiceData.formEditBuild        = copy.standard_build,
+      this.editServiceData.formEditPublic       = copy.public,
+      this.editServiceData.formEditInternal     = copy.internal,
+      this.editServiceData.formEditVersion      = copy.version,
+      this.editServiceData.formEditPrimaryPOC   = copy.primary_poc,
+      this.editServiceData.formEditSecondaryPOC = copy.secondary_poc,
+      this.editServiceData.formEditDeveloper    = copy.developer;
     },
     editService(i) {
       let fD = new FormData();

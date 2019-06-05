@@ -3,7 +3,7 @@ import {
   updateField }     from 'vuex-map-fields';
 
 export const servicesState = () => ({
-  services:             [],
+  services:         null,
 })
 
 const state = () => servicesState();
