@@ -443,9 +443,12 @@ export default {
                  uid.includes(this.adDataSearch.toLowerCase()) ||
                  employeeID.includes(this.adDataSearch.toLowerCase())
         })
-        // .sort((a, b) => new Date(b.requested) - new Date(a.requested))
+        .sort((a, b) => a.sn.localeCompare(b.sn))
+        .sort((a, b) => b.enabled-a.enabled)
       } else {
         return this.removeADNulls
+        .sort((a, b) => a.sn.localeCompare(b.sn))
+        .sort((a, b) => b.enabled-a.enabled)
       }
     },
   }
