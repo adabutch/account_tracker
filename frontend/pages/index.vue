@@ -117,6 +117,11 @@
         </template>
 
         <template v-if="resultType === 'directory'">
+          <div class="no-results" v-if="!filteredADResults.length">
+            <h4>No results for, <strong>"{{adDataSearch}}"</strong>.</h4>
+            <fn1-button @click.native="goCreateAccountRequest">New Account Request</fn1-button>
+          </div>
+
           <DynamicScroller
             :items="filteredADResults"
             :min-item-size="64"
