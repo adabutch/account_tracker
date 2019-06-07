@@ -248,11 +248,11 @@ export default {
     margin: 40px auto 0 auto;
     display: block;
 
-    /deep/ .step-title {
+    ::v-deep .step-title {
       display: none;
     }
 
-    /deep/ ul:not(.extras) {
+    ::v-deep ul:not(.extras) {
       column-count: 2;
 
       // li {

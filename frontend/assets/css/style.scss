@@ -123,7 +123,7 @@ pre, code {
   }
 }
 
-/deep/ label,
+::v-deep label,
 span.label {
   // background-color: teal;
   color: $text-color;
@@ -173,7 +173,7 @@ span.label {
   }
 }
 
-/deep/ table {
+::v-deep table {
   &.fixed-header {
     table-layout: fixed;
 
@@ -258,7 +258,8 @@ span.label {
   }
 
   &.completed,
-  &.active {
+  &.active,
+  &.enabled {
     background-color: $color-green;
   }
 
@@ -266,7 +267,8 @@ span.label {
     background-color: $color-vermilion-darker;
   }
 
-  &.inactive {
+  &.inactive,
+  &.disabled {
     background-color: $text-color;
     color: white;
   }

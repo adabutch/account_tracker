@@ -595,7 +595,7 @@ export default {
   }
 
   .navigation-dropdown {
-    /deep/ ul {
+    ::v-deep ul {
       width: auto !important;
 
       li {
@@ -677,7 +677,7 @@ export default {
     }
   }
 
-  /deep/ .tabs-group {
+  ::v-deep .tabs-group {
 
     .tabs {
       ul {

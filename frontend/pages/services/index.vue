@@ -925,7 +925,7 @@ export default {
       }
     }
 
-    /deep/ .field-group {
+    ::v-deep .field-group {
       width: 100%;
       margin: 0;
 
@@ -972,7 +972,7 @@ export default {
         }
       }
 
-      /deep/ button {
+      ::v-deep button {
         height: fit-content;
         display: flex;
         align-items: center;
@@ -1010,7 +1010,7 @@ export default {
         }
       }
 
-      /deep/ button {
+      ::v-deep button {
         margin: 0 0 10px 0;
       }
 
@@ -1144,7 +1144,7 @@ export default {
           border: none;
         }
 
-        /deep/ button {
+        ::v-deep button {
           margin: 0 0 0 10px;
           padding: 0;
           background-color: transparent;
@@ -1205,7 +1205,7 @@ export default {
           }
 
           &:hover {
-            /deep/ button {
+            ::v-deep button {
               color: $color-green;
             }
           }
@@ -1216,7 +1216,7 @@ export default {
               margin: 0 10px 0 0;
               border-right: 1px solid lighten($text-color, 50%);
 
-              /deep/ button {
+              ::v-deep button {
                 color: lighten($text-color, 20%);
                 margin: 0 20px 0 0;
                 line-height: 16px;
@@ -1241,7 +1241,7 @@ export default {
 
   .editServiceModal,
   .addServiceModal {
-    /deep/ .modal-wrapper {
+    ::v-deep .modal-wrapper {
       .modal-container {
         width: 675px;
 
@@ -1253,7 +1253,7 @@ export default {
   }
 
   .removeServiceManagerModal {
-    /deep/ .modal-wrapper {
+    ::v-deep .modal-wrapper {
       .modal-container {
         width: 375px;
 
@@ -1264,7 +1264,7 @@ export default {
     }
   }
 
-  /deep/ .modal-wrapper {
+  ::v-deep .modal-wrapper {
     .modal-container {
 
       .modal-body {
@@ -1360,7 +1360,7 @@ export default {
         }
       }
 
-      /deep/ .modal-footer{
+      ::v-deep .modal-footer{
         display: flex;
         align-items: center;
 

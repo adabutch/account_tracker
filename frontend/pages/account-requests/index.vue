@@ -837,7 +837,7 @@ export default {
       }
     }
 
-    /deep/ .navigation-dropdown {
+    ::v-deep .navigation-dropdown {
       summary {
         background-color: darken($color-silver, 10%);
       }
@@ -906,7 +906,7 @@ export default {
     .tabs-group {
       flex: 1;
 
-      /deep/ .tabs {
+      ::v-deep .tabs {
         ul {
           li {
             position: relative;
@@ -947,7 +947,7 @@ export default {
         }
       }
 
-      /deep/ .tab-content {
+      ::v-deep .tab-content {
         padding: 20px 0 0 0;
       }
     }
@@ -1029,8 +1029,8 @@ export default {
 
       button,
       .button,
-      /deep/ div > button,
-      /deep/ div > .button {
+      ::v-deep div > button,
+      ::v-deep div > .button {
         margin: 0 10px 0 0;
         padding: 5px 10px;
         border-radius: $radius-default;

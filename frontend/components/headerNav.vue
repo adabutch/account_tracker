@@ -142,7 +142,7 @@ header {
   top: 0;
   z-index: 0 !important;
 
-  /deep/ nav {
+  ::v-deep nav {
     &[role="navigation"] {
       ul {
         li {
@@ -157,7 +157,7 @@ header {
     }
   }
 
-  /deep/ button {
+  ::v-deep button {
     font-size: $size-s;
     line-height: $size-s;
     padding: 10px 15px;

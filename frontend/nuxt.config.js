@@ -64,7 +64,8 @@ module.exports = {
     { src: '~/plugins/api-methods' },
     { src: '~/plugins/ttApi-methods' },
     { src: '~/plugins/localStorage', ssr: false },
-    { src: '~/plugins/croppie.js',   ssr: false }
+    { src: '~/plugins/croppie.js',   ssr: false },
+    { src: '~/plugins/vue-virtual-scroller.js' }
   ],
 
   modules: [
@@ -113,6 +114,12 @@ module.exports = {
       target: 'http://127.0.0.1:8000/api/',
       pathRewrite: {
         '^/api/': ''
+      }
+    },
+    '/ad/': {
+      target: 'https://dhcp-vm-218.bloomington.in.gov:5004/',
+      pathRewrite: {
+        '^/ad/': ''
       }
     },
     '/accounts/login/': {

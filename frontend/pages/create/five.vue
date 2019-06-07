@@ -284,8 +284,8 @@ export default {
     }
   }
 
-  /deep/ fieldset {
-    /deep/ legend {
+  ::v-deep fieldset {
+    ::v-deep legend {
       color: $text-color;
       font-size: 18px;
     }

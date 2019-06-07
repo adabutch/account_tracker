@@ -1460,7 +1460,7 @@ export default {
     flex: 1;
     height: 100%;
 
-    /deep/ .tabs {
+    ::v-deep .tabs {
       ul {
         li {
           position: relative;
@@ -1472,7 +1472,7 @@ export default {
       }
     }
 
-    /deep/ .tab-content {
+    ::v-deep .tab-content {
       padding: 0;
       height: calc(100% - 36px);
 
@@ -1551,7 +1551,7 @@ export default {
           flex-wrap: wrap;
           align-items: center;
 
-          /deep/ button {
+          ::v-deep button {
             margin: 0 10px 0 0;
             background-color: transparent;
             border-radius: 0;
@@ -1568,7 +1568,7 @@ export default {
           li {
             &:hover {
               .actions {
-                /deep/ button {
+                ::v-deep button {
                   color: $color-vermilion;
                 }
               }
@@ -1647,7 +1647,7 @@ export default {
             width: auto;
           }
 
-          /deep/ button {
+          ::v-deep button {
             background-color: $color-green;
             margin-left: auto;
           }
@@ -1669,7 +1669,7 @@ export default {
           .actions {
             div {
               &:first-of-type {
-                /deep/ button {
+                ::v-deep button {
                   &:hover {
                     color: $text-color;
                   }
@@ -1677,7 +1677,7 @@ export default {
               }
 
               &:last-of-type {
-                /deep/ button {
+                ::v-deep button {
                   &:hover {
                     color: $color-vermilion;
                   }
@@ -1702,7 +1702,7 @@ export default {
             margin: 0 10px 0 0;
             border-right: 1px solid lighten($text-color, 50%);
 
-            /deep/ button {
+            ::v-deep button {
               color: lighten($text-color, 20%);
               margin: 0 20px 0 0;
               line-height: 16px;
@@ -1741,7 +1741,7 @@ export default {
 
               li {
                 &:hover {
-                  /deep/ button {
+                  ::v-deep button {
                     color: $color-green;
                   }
                 }
@@ -1862,7 +1862,7 @@ export default {
           margin: 15px 25px 0 25px;
           padding: 0 25px 0 0;
 
-          /deep/ fieldset {
+          ::v-deep fieldset {
             padding: 0;
 
             legend {

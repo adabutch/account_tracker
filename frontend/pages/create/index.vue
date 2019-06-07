@@ -326,7 +326,7 @@ export default {
       width: 180px;
       margin: 0 40px 0 0;
 
-      /deep/ .croppie-container {
+      ::v-deep .croppie-container {
         position: relative;
         // background-color: teal;
         // padding: 10px;
@@ -405,11 +405,11 @@ export default {
       padding: 0 0 0 1px;
     }
 
-    /deep/  ol, ul {
+    ::v-deep  ol, ul {
       margin: 10px 0;
       padding: 0 0 0 20px;
 
-      /deep/ li {
+      ::v-deep li {
         margin: 0 0 16px 0;
       }
     }
