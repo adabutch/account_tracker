@@ -159,6 +159,16 @@ span.label {
   }
 }
 
+.alert {
+  &.warning {
+    color: #6b4d00;
+
+    p {
+      color: #6b4d00;
+    }
+  }
+}
+
 .vdp-datepicker__calendar {
   font-family: $font-text;
 

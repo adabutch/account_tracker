@@ -405,7 +405,7 @@ export default {
       padding: 0 0 0 1px;
     }
 
-    ::v-deep  ol, ul {
+    ol, ul {
       margin: 10px 0;
       padding: 0 0 0 20px;
 

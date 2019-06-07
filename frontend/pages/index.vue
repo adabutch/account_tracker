@@ -16,6 +16,7 @@
           </p>
 
           <fn1-input v-model="acctReqSearch"
+                     ref="acctReqSearch"
                      label="Account Request Search"
                      :placeholder="searchPlaceholder"
                      name="acct-req-search"
@@ -36,6 +37,7 @@
           </p>
 
           <fn1-input v-model="adDataSearch"
+                     ref="adDataSearch"
                      label="Active Directory Search"
                      :placeholder="searchPlaceholder"
                      name="ad-data-search"
@@ -125,7 +127,7 @@
           <DynamicScroller
             :items="filteredADResults"
             :min-item-size="64"
-            :prerender="10"
+            :prerender="200"
             key-field="sAMAccountName"
             class="scroller">
 
@@ -302,8 +304,7 @@
 import { mapFields }   from 'vuex-map-fields'
 import axios           from 'axios'
 import mockAD          from 'static/json/mock-AD.json'
-
-import exampleModal   from '~/components/exampleModal'
+import exampleModal    from '~/components/exampleModal'
 
 export default {
   layout:           'search',
@@ -329,7 +330,13 @@ export default {
       ],
     }
   },
+  created() {
+
+    // this.$nextTick(() => this.$refs.acctReqSearch.$el.focus())
+  },
   mounted() {
+    this.$refs.acctReqSearch.$el.focus()
+
     this.getAccountRequests();
 
     // this.$axios
