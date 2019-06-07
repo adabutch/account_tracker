@@ -2,23 +2,45 @@
   <div>
     <div class="search">
       <div class="wrapper">
-        <fn1-input v-if="resultType === 'requests'"
-                   v-model="acctReqSearch"
-                   label="Account Request Search"
-                   :placeholder="searchPlaceholder"
-                   name="acct-req-search"
-                   id="acct-req-search" />
+        <template v-if="resultType === 'requests'">
+          <p v-if="filteredAcctReqs.length && acctReqSearch !== ''"
+             class="result-length">
+            {{filteredAcctReqs.length}}
+            <template v-if="filteredAcctReqs.length >= 2">
+              results
+            </template>
 
-        <fn1-input v-if="resultType === 'directory'"
-                   v-model="adDataSearch"
-                   label="Active Directory Search"
-                   :placeholder="searchPlaceholder"
-                   name="ad-data-search"
-                   id="ad-data-search" />
+            <template v-if="filteredAcctReqs.length < 2">
+              result
+            </template>
+          </p>
 
-        <!-- <p v-if="filteredAcctReqs.length && acctReqSearch !== ''">
-          {{filteredAcctReqs.length}} results
-        </p> -->
+          <fn1-input v-model="acctReqSearch"
+                     label="Account Request Search"
+                     :placeholder="searchPlaceholder"
+                     name="acct-req-search"
+                     id="acct-req-search" />
+        </template>
+
+        <template v-if="resultType === 'directory'">
+          <p v-if="filteredADResults.length && adDataSearch !== ''"
+             class="result-length">
+            {{filteredADResults.length}}
+            <template v-if="filteredADResults.length >= 2">
+              results
+            </template>
+
+            <template v-if="filteredADResults.length < 2">
+              result
+            </template>
+          </p>
+
+          <fn1-input v-model="adDataSearch"
+                     label="Active Directory Search"
+                     :placeholder="searchPlaceholder"
+                     name="ad-data-search"
+                     id="ad-data-search" />
+        </template>
 
         <div class="form-group inline">
           <fieldset>
@@ -95,45 +117,29 @@
         </template>
 
         <template v-if="resultType === 'directory'">
-          <!-- <RecycleScroller class="scroller"
-                           :items="mockADData"
-                           :item-size="64"
-                           key-field="sAMAccountName"
-                           :prerender="10"
-                           v-slot="{ item, index, active }">
-
-            <div :class="['result directory', {'enabled': item.enabled === true, 'disabled': item.enabled === false}]">
-
-              <div>
-                <p>{{item.givenName}} {{item.sn}}</p>
-                <p>{{item.userPrincipalName}}</p>
-              </div>
-
-              <div>
-                <p>{{item.title}}</p>
-                <p>{{item.department}}</p>
-              </div>
-
-              <div>
-              </div>
-            </div>
-          </RecycleScroller> -->
-
           <DynamicScroller
             :items="filteredADResults"
             :min-item-size="64"
-            key-field="sAMAccountName"
             :prerender="10"
+            key-field="sAMAccountName"
             class="scroller">
 
             <template v-slot="{ item, index, active }">
               <DynamicScrollerItem
+                :data-index="index"
                 :item="item"
                 :active="active"
-                :size-dependencies="[item.givenName, item.sn, item.userPrincipalName, item.title, item.department]"
-                :data-index="index">
+                :size-dependencies="[
+                  item.givenName,
+                  item.sn,
+                  item.userPrincipalName,
+                  item.title,
+                  item.department
+                ]">
 
-                <div :class="['result directory', {'enabled': item.enabled === true, 'disabled': item.enabled === false}]">
+                <div :class="['result directory',
+                  {'enabled': item.enabled === true,
+                   'disabled': item.enabled === false}]">
 
                   <div>
                     <p>{{item.givenName}} {{item.sn}}</p>
@@ -146,6 +152,7 @@
                   </div>
 
                   <div>
+                    <fn1-button @click.native="viewADUser(item)">view</fn1-button>
                   </div>
                 </div>
               </DynamicScrollerItem>
@@ -346,8 +353,11 @@ export default {
         this.$router.push(this.paths.accountRequests + id.id);
       }
     },
+    viewADUser(user) {
+      console.dir(JSON.stringify(user));
+    },
     allAccountRequests() {
-      console.dir(this.authLevel);
+      // console.dir(this.authLevel);
       if(this.authLevel.regular || this.authLevel.support) {
         var master = [...this.accountRequests.approved,...this.accountRequests.denied,...this.accountRequests.inProgress];
       } else {
@@ -459,10 +469,12 @@ export default {
       margin: 0;
 
       p {
-        position: absolute;
-        bottom: 15px;
-        color: white;
-        font-style: italic;
+        &.result-length {
+          position: absolute;
+          top: 25px;
+          right: 100px;
+          color: white;
+        }
       }
 
       .form-group {
@@ -610,8 +622,14 @@ export default {
     }
   }
 
+  .vue-recycle-scroller__item-view {
+    &:hover,
+    &.hover {
+      background-color: rgba(255, 255, 255, 15%);
+    }
+  }
+
   .result {
-    // background-color: pink;
     margin: 0;
     padding: 15px 20px;
     display: flex;
@@ -645,15 +663,11 @@ export default {
       border-left-color: $text-color;
     }
 
-    &:hover {
-      background-color: rgba(255, 255, 255, 15%);
-    }
-
-    // &:last-of-type {
-    //   border-bottom: none;
-    // }
-
     &.requests {
+      &:hover {
+        background-color: rgba(255, 255, 255, 15%);
+      }
+
       div {
         display: flex;
         flex-wrap: wrap;
@@ -700,18 +714,19 @@ export default {
           margin-left: auto;
 
           div {
+            background-color: red;
             margin: 0;
             padding: 0;
             border: none;
             width: auto;
+          }
 
-            ::v-deep button {
-              background-color: $color-green;
-              margin: 0;
+          button {
+            background-color: $color-green;
+            margin: 0;
 
-              &:hover {
-                background-color: darken($color-green, 5%);
-              }
+            &:hover {
+              background-color: darken($color-green, 5%);
             }
           }
         }
