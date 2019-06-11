@@ -39,16 +39,17 @@ import exampleDropdown from '~/components/exampleDropdown'
 import exampleHeader   from '~/components/exampleHeader'
 
 export default {
+  created() {
+    // this.$store.dispatch("auth/resetAuthState");
+  },
   mounted(context) {
     console.log(`%c Made with ❤️ via City of Bloomington, ITS `,
       this.consoleLog.info)
 
     this.routeParam = this.$route.name;
 
-    // this.clearAuth();
-
     this.$nextTick()
-    .then(() =>
+    .then(() => {
       this.checkAuthLevel
       .then((resolve) => {
         this.navItems();
@@ -59,7 +60,7 @@ export default {
                     this.consoleLog.error,
                     `\n\n ${reject} \n\n`);
       })
-    );
+    });
   },
   components: {
     exampleDropdown,

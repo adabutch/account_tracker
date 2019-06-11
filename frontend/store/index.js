@@ -79,6 +79,8 @@ export const actions = {
 
     if (sessID) {
       try {
+        commit('auth/RESET_AUTH_STATE');
+
         let user = await
         this.$axios.get(`${process.env.api}${process.env.user}`)
 

@@ -209,9 +209,9 @@
                         {{r.sn}}
                       </template>
 
-                      <fn1-badge :class="[
-                        {'enabled': r.enabled === true,'disabled': r.enabled === false}
-                        ]">
+                      <fn1-badge :class="[{
+                          'enabled': r.enabled === true,
+                          'disabled': r.enabled === false}]">
                         <template v-if="r.enabled">enabled</template>
                         <template v-if="!r.enabled">disabled</template>
                       </fn1-badge>
@@ -272,7 +272,7 @@ import {
   mapGetters,
   mapActions }         from 'vuex'
 import {
-  mapFields }          from 'vuex-map-fields';
+  mapFields }          from 'vuex-map-fields'
 
 import exampleModal    from '~/components/exampleModal'
 import mockAD          from 'static/json/mock-AD.json'

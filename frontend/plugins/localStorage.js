@@ -14,6 +14,11 @@ export default ({store, isHMR}) => {
         //   setItem: (key, value) => Cookies.set('auth', value, {expires: 3}),
         //   removeItem: key => Cookies.remove('auth')
         // }
+        reducer (state, paths) {
+          const reducer = Object.assign({}, state);
+            delete reducer.auth;
+          return reducer;
+        }
       })(store)
     });
   }
