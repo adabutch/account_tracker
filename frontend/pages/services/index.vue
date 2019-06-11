@@ -136,141 +136,6 @@
             Cancel
           </fn1-button>
         </exampleModal>
-
-        <!-- <exampleModal ref="addServiceModal"
-                      title="Add - Service"
-                      launchButtonText="+ add service">
-
-          <template slot="body">
-            <form>
-              <div class="row">
-                <exampleSelect v-model="formDeployment"
-                             label="Deployment"
-                             name="deployment"
-                             id="deployment"
-                             :options="serviceDeploymentOptions" />
-
-                <div class="form-group inline">
-                  <fieldset>
-                    <legend>Active?</legend>
-                    <div v-for="r, i in tfRadios">
-                      <input type="radio"
-                             name="active-radio"
-                             id="active-radio"
-                             :value="r.value"
-                             v-model="formActive">
-                      <label for="active-radio">{{r.text}}</label>
-                    </div>
-                  </fieldset>
-                </div>
-
-                <div class="form-group inline">
-                  <fieldset>
-                    <legend>Standard Build?</legend>
-                    <div v-for="r, i in tfRadios">
-                      <input type="radio"
-                             name="standard-build"
-                             id="standard-build"
-                             :value="r.value"
-                             v-model="formBuild">
-                      <label for="standard-build">{{r.text}}</label>
-                    </div>
-                  </fieldset>
-                </div>
-
-                <div class="form-group inline">
-                  <fieldset>
-                    <legend>Public?</legend>
-                    <div v-for="r, i in tfRadios">
-                      <input type="radio"
-                             name="public"
-                             id="public"
-                             :value="r.value"
-                             v-model="formPublic">
-                      <label for="public">{{r.text}}</label>
-                    </div>
-                  </fieldset>
-                </div>
-
-                <div class="form-group inline">
-                  <fieldset>
-                    <legend>Internal?</legend>
-                    <div v-for="r, i in tfRadios">
-                      <input type="radio"
-                             name="internal"
-                             id="internal"
-                             :value="r.value"
-                             v-model="formInternal">
-                      <label for="internal">{{r.text}}</label>
-                    </div>
-                  </fieldset>
-                </div>
-              </div>
-
-              <fn1-input v-model="formName"
-                         label="Name"
-                         placeholder="Name"
-                         name="name"
-                         id="name" />
-
-              <fn1-input v-model="formUrl"
-                         label="URL"
-                         placeholder="URL"
-                         name="formUrl"
-                         id="formUrl" />
-
-              <div class="row">
-                <fn1-input v-model="formDeveloper"
-                         label="Developer"
-                         placeholder="Developer"
-                         name="developer"
-                         id="developer" />
-
-                <fn1-input v-model="formVersion"
-                         label="Version"
-                         placeholder="Version"
-                         name="version"
-                         id="version" />
-              </div>
-
-              <div class="row">
-                <fn1-input v-model="formPrimaryPOC"
-                         label="Primary POC"
-                         placeholder="Primary Point of Contact"
-                         name="primary-poc"
-                         id="primary-poc" />
-
-                <fn1-input v-model="formSecondaryPOC"
-                           label="Secondary POC"
-                           placeholder="Secondary Point of Contact"
-                           name="secondary-poc"
-                           id="secondary-poc" />
-              </div>
-
-              <div class="field-group">
-                <label for="description">Description</label>
-                <textarea v-model="formDescription"
-                          type="textarea"
-                          id="description"
-                          placeholder="An optional Service description."></textarea>
-              </div>
-            </form>
-          </template>
-
-          <fn1-button slot="footer"
-                      class="confirm"
-                      title="Confirm - Remove Service"
-                      @click.native="addService()">
-            Confirm
-          </fn1-button>
-
-          <fn1-button slot="footer"
-                      class="cancel"
-                      title="Cancel - Remove Service"
-                      @click.native="closeModal('addServiceModal')">
-            Cancel
-          </fn1-button>
-        </exampleModal> -->
       </div>
 
       <div class="sidebar">
@@ -299,261 +164,304 @@
           <h4>Loading Services . . .</h4>
         </div>
 
-        <div v-if="allServices" v-for="s, i in filteredServices"
-             class="result"
-             :class="{'active': s.active, 'inactive': !s.active}">
+        <exampleModal
+          ref="editServiceModal"
+          class="editServiceModal"
+          :title="`Edit - Service: ${editServiceData.formEditName}`">
 
-          <div class="col">
-            <p class="label">{{s.name}}</p>
-          </div>
+          <template
+            slot="body"
+            ref="editServiceFormBody"
+            slot-scope="editServiceDataScope">
 
-          <div class="col">
-            <p class="label">Last Update</p>
-            <p v-if="s.updated">{{MMDYYYYDateFormat(s.updated)}}</p>
-            <p v-if="s.updated">{{timeAgo(s.updated)}}</p>
-          </div>
+            <template v-if="addingServiceManager">
+              <div class="search-wrapper">
+                <fn1-input v-model="serviceManagerSearch"
+                           label="Search Service Managers"
+                           autocomplete="off"
+                           placeholder="Search Service Managers"
+                           name="service-manager-search"
+                           id="service-manager-search" />
 
-          <div class="col">
-            <p class="label">
-              Manager<template v-if="s.managers.length > 1">s</template>
-            </p>
-            <template v-if="s.managers.length === 0">
-              <p>--</p>
-            </template>
-            <template v-for="sm, i in s.managers">
-              <p>{{sm.first_name}} {{sm.last_name}}</p>
-            </template>
-          </div>
-
-          <div class="col actions">
-            <exampleModal ref="editServiceModal"
-                          class="editServiceModal"
-                          :title="`Edit - Service: ${s.name}`"
-                          @displayModal="editModalHandler(s, i)"
-                          launchButtonText="edit">
-
-              <template slot="body"
-                        ref="editServiceFormBody"
-                        slot-scope="editServiceDataScope">
-                <template v-if="addingServiceManager">
-                  <div class="search-wrapper">
-                    {{editServiceData}}
-                    <fn1-input v-model="serviceManagerSearch"
-                               label="Search Service Managers"
-                               autocomplete="off"
-                               placeholder="Search Service Managers"
-                               name="service-manager-search"
-                               id="service-manager-search" />
-
-                      <ul class="search-results" v-if="serviceManagerSearch">
-                        <li v-for="m, i in filteredEmployees"
-                            :key="i">
-                          <div class="edit-wrapper">
-                            <div class="actions">
-                              <fn1-button
-                                @click.native="addServiceManager(s, m)">
-                                + add
-                              </fn1-button>
-                            </div>
-                          </div>
-                          {{m.first_name}} {{m.last_name}}
-                        </li>
-                      </ul>
-                    }
-                  </div>
-                </template>
-
-                <form v-show="!addingServiceManager">
-                  <!-- {{editServiceData}} -->
-                  <div class="left">
-                    <exampleSelect v-model="editServiceData.formEditDeployment"
-                                 label="Deployment"
-                                 name="deployment"
-                                 id="deployment"
-                                 :options="serviceDeploymentOptions" />
-
-                    <div class="form-group inline">
-                      <fieldset>
-                        <legend>Active?</legend>
-                        <div v-for="r, i in tfRadios">
-                          <input type="radio"
-                                 name="active-radio"
-                                 id="active-radio"
-                                 :value="r.value"
-                                 v-model="editServiceData.formEditActive">
-                          <label for="active-radio">{{r.text}}</label>
-                        </div>
-                      </fieldset>
-                    </div>
-
-                    <div class="form-group inline">
-                      <fieldset>
-                        <legend>Standard Build?</legend>
-                        <div v-for="r, i in tfRadios">
-                          <input type="radio"
-                                 name="standard-build"
-                                 id="standard-build"
-                                 :value="r.value"
-                                 v-model="editServiceData.formEditBuild">
-                          <label for="standard-build">{{r.text}}</label>
-                        </div>
-                      </fieldset>
-                    </div>
-
-                    <div class="form-group inline">
-                      <fieldset>
-                        <legend>Public?</legend>
-                        <div v-for="r, i in tfRadios">
-                          <input type="radio"
-                                 name="public"
-                                 id="public"
-                                 :value="r.value"
-                                 v-model="editServiceData.formEditPublic">
-                          <label for="public">{{r.text}}</label>
-                        </div>
-                      </fieldset>
-                    </div>
-
-                    <div class="form-group inline">
-                      <fieldset>
-                        <legend>Internal?</legend>
-                        <div v-for="r, i in tfRadios">
-                          <input type="radio"
-                                 name="internal"
-                                 id="internal"
-                                 :value="r.value"
-                                 v-model="editServiceData.formEditInternal">
-                          <label for="internal">{{r.text}}</label>
-                        </div>
-                      </fieldset>
-                    </div>
-
-                    <ul>
-                      <li>
-                        <span class="label">Managers</span>
-
-                        <fn1-button @click.native="showAddServiceManager(s,i)">
-                          Add
+                <ul class="search-results" v-if="serviceManagerSearch">
+                  <li v-for="m, i in filteredEmployees"
+                      :key="i">
+                    <div class="edit-wrapper">
+                      <div class="actions">
+                        <fn1-button
+                          @click.native="addServiceManager(editServiceData, m)">
+                          + add
                         </fn1-button>
-                      </li>
-
-                      <template v-for="m, i in s.managers">
-                        <li>
-                          {{m.first_name}} {{m.last_name}}
-
-                          <exampleModal ref="removeServiceManagerModal"
-                                        class="removeServiceManagerModal"
-                                        title="Remove - Service Manager"
-                                        launchButtonText="✕">
-
-                            <p slot="body">Remove <strong>{{m.id}}: {{m.first_name}} {{m.last_name}}</strong> as a manager from <strong>{{s.name}}</strong>?</p>
-
-                            <fn1-button slot="footer"
-                                        class="confirm"
-                                        title="Confirm - Remove Service"
-                                        @click.native="removeServiceManager(m, s, i)">
-                              Confirm
-                            </fn1-button>
-
-                            <fn1-button slot="footer"
-                                        class="cancel"
-                                        title="Cancel - Remove Service"
-                                        @click.native="closeModal('removeServiceManagerModal', i)">
-                              Cancel
-                            </fn1-button>
-                          </exampleModal>
-                        </li>
-                      </template>
-                    </ul>
-                  </div>
-
-                  <div class="right">
-                    <fn1-input v-model="editServiceData.formEditName"
-                               label="Name"
-                               placeholder="Name"
-                               name="name"
-                               id="name" />
-
-                    <fn1-input v-model="editServiceData.formEditUrl"
-                               label="URL"
-                               placeholder="URL"
-                               name="formUrl"
-                               id="formUrl" />
-
-                    <div class="row">
-                      <fn1-input v-model="editServiceData.formEditDeveloper"
-                               label="Developer"
-                               placeholder="Developer"
-                               name="developer"
-                               id="developer" />
-
-                      <fn1-input v-model="editServiceData.formEditVersion"
-                               label="Version"
-                               placeholder="Version"
-                               name="version"
-                               id="version" />
+                      </div>
                     </div>
+                    {{m.first_name}} {{m.last_name}}
+                  </li>
+                </ul>
+              </div>
+            </template>
 
-                    <div class="field-group">
-                      <label for="description">Description</label>
-                      <textarea v-model="editServiceData.formEditDescription"
-                                type="textarea"
-                                id="description"
-                                placeholder="An optional Service description."></textarea>
+            <form v-show="!addingServiceManager">
+              <!-- {{editServiceData}} -->
+              <div class="left">
+                <exampleSelect v-model="editServiceData.formEditDeployment"
+                             label="Deployment"
+                             name="deployment"
+                             id="deployment"
+                             :options="serviceDeploymentOptions" />
+
+                <div class="form-group inline">
+                  <fieldset>
+                    <legend>Active?</legend>
+                    <div v-for="r, i in tfRadios">
+                      <input type="radio"
+                             name="active-radio"
+                             id="active-radio"
+                             :value="r.value"
+                             v-model="editServiceData.formEditActive">
+                      <label for="active-radio">{{r.text}}</label>
                     </div>
-                  </div>
-                </form>
-              </template>
+                  </fieldset>
+                </div>
 
-              <template v-if="addingServiceManager">
-                <fn1-button slot="footer"
-                            class="cancel"
-                            title="Cancel - Add Service Manager"
-                            @click.native="cancelAddServiceManager()">
-                  Cancel - Add Service Manager
-                </fn1-button>
-              </template>
+                <div class="form-group inline">
+                  <fieldset>
+                    <legend>Standard Build?</legend>
+                    <div v-for="r, i in tfRadios">
+                      <input type="radio"
+                             name="standard-build"
+                             id="standard-build"
+                             :value="r.value"
+                             v-model="editServiceData.formEditBuild">
+                      <label for="standard-build">{{r.text}}</label>
+                    </div>
+                  </fieldset>
+                </div>
 
-              <template v-if="!addingServiceManager">
-                <fn1-button slot="footer"
-                            class="confirm"
-                            title="Confirm - Edit Service"
-                            @click.native="editService(i)">
-                  Confirm
-                </fn1-button>
+                <div class="form-group inline">
+                  <fieldset>
+                    <legend>Public?</legend>
+                    <div v-for="r, i in tfRadios">
+                      <input type="radio"
+                             name="public"
+                             id="public"
+                             :value="r.value"
+                             v-model="editServiceData.formEditPublic">
+                      <label for="public">{{r.text}}</label>
+                    </div>
+                  </fieldset>
+                </div>
 
-                <fn1-button slot="footer"
-                            class="cancel"
-                            title="Cancel - Edit Service"
-                            @click.native="closeModal('editServiceModal', i)">
-                  Cancel
-                </fn1-button>
-              </template>
-              <p slot="footer">Last Updated: <small>{{timeAgo(s.updated)}}</small></p>
-            </exampleModal>
+                <div class="form-group inline">
+                  <fieldset>
+                    <legend>Internal?</legend>
+                    <div v-for="r, i in tfRadios">
+                      <input type="radio"
+                             name="internal"
+                             id="internal"
+                             :value="r.value"
+                             v-model="editServiceData.formEditInternal">
+                      <label for="internal">{{r.text}}</label>
+                    </div>
+                  </fieldset>
+                </div>
 
-            <exampleModal ref="removeServiceModal"
-                          title="Remove - Service"
-                          launchButtonText="✕">
+                <ul>
+                  <li>
+                    <span class="label">Managers</span>
 
-              <p slot="body">Remove <strong>{{s.name}}</strong>?</p>
+                    <fn1-button @click.native="showAddServiceManager(editServiceData)">
+                      Add
+                    </fn1-button>
+                  </li>
 
-              <fn1-button slot="footer"
-                          class="confirm"
-                          title="Confirm - Remove Service"
-                          @click.native="removeService(s, i)">
-                Confirm
-              </fn1-button>
+                  <template v-for="m, i in editServiceData.formEditManagers">
+                    <li>
+                      {{m.first_name}} {{m.last_name}}
 
-              <fn1-button slot="footer"
-                          class="cancel"
-                          title="Cancel - Remove Service"
-                          @click.native="closeModal('removeServiceModal', i)">
-                Cancel
-              </fn1-button>
-            </exampleModal>
-          </div>
-        </div>
+                      <exampleModal ref="removeServiceManagerModal"
+                                    class="removeServiceManagerModal"
+                                    title="Remove - Service Manager"
+                                    launchButtonText="✕">
+
+                        <p slot="body">Remove <strong>{{m.id}}: {{m.first_name}} {{m.last_name}}</strong> as a manager from <strong>{{editServiceData.formEditName}}</strong>?</p>
+
+                        <fn1-button slot="footer"
+                                    class="confirm"
+                                    title="Confirm - Remove Service"
+                                    @click.native="removeServiceManager(m, editServiceData)">
+                          Confirm
+                        </fn1-button>
+
+                        <fn1-button slot="footer"
+                                    class="cancel"
+                                    title="Cancel - Remove Service"
+                                    @click.native="closeModal('removeServiceManagerModal')">
+                          Cancel
+                        </fn1-button>
+                      </exampleModal>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+
+              <div class="right">
+                <fn1-input v-model="editServiceData.formEditName"
+                           label="Name"
+                           placeholder="Name"
+                           name="name"
+                           id="name" />
+
+                <fn1-input v-model="editServiceData.formEditUrl"
+                           label="URL"
+                           placeholder="URL"
+                           name="formUrl"
+                           id="formUrl" />
+
+                <div class="row">
+                  <fn1-input v-model="editServiceData.formEditDeveloper"
+                           label="Developer"
+                           placeholder="Developer"
+                           name="developer"
+                           id="developer" />
+
+                  <fn1-input v-model="editServiceData.formEditVersion"
+                           label="Version"
+                           placeholder="Version"
+                           name="version"
+                           id="version" />
+                </div>
+
+                <div class="field-group">
+                  <label for="description">Description</label>
+                  <textarea v-model="editServiceData.formEditDescription"
+                            type="textarea"
+                            id="description"
+                            placeholder="An optional Service description."></textarea>
+                </div>
+              </div>
+            </form>
+          </template>
+
+          <template v-if="addingServiceManager">
+            <fn1-button slot="footer"
+                        class="cancel"
+                        title="Cancel - Add Service Manager"
+                        @click.native="cancelAddServiceManager()">
+              Cancel - Add Service Manager
+            </fn1-button>
+          </template>
+
+          <template v-if="!addingServiceManager">
+            <fn1-button slot="footer"
+                        class="confirm"
+                        title="Confirm - Edit Service"
+                        @click.native="editService(i)">
+              Confirm
+            </fn1-button>
+
+            <fn1-button slot="footer"
+                        class="cancel"
+                        title="Cancel - Edit Service"
+                        @click.native="closeModal('editServiceModal')">
+              Cancel
+            </fn1-button>
+          </template>
+          <p slot="footer">Last Updated: <small>{{timeAgo(editServiceData.updated)}}</small></p>
+        </exampleModal>
+
+        <exampleModal ref="removeServiceModal"
+                      :title="`Remove - Service: ${editServiceData.formEditName}`">
+
+          <p slot="body">Remove <strong>{{editServiceData.name}}</strong>?</p>
+
+          <fn1-button slot="footer"
+                      class="confirm"
+                      title="Confirm - Remove Service"
+                      @click.native="removeService(editServiceData)">
+            Confirm
+          </fn1-button>
+
+          <fn1-button slot="footer"
+                      class="cancel"
+                      title="Cancel - Remove Service"
+                      @click.native="closeModal('removeServiceModal')">
+            Cancel
+          </fn1-button>
+        </exampleModal>
+
+        <DynamicScroller
+          :items="filteredServices"
+          :min-item-size="75"
+          :prerender="400"
+          key-field="id"
+          class="scroller">
+
+          <template v-slot="{ item, index, active }">
+            <DynamicScrollerItem
+              :data-index="index"
+              :item="item"
+              :active="active"
+              :size-dependencies="[
+                item.id,
+                item.managers,
+                item.name,
+                item.description,
+                item.url,
+                item.active,
+                item.deployment,
+                item.deployed,
+                item.standard_build,
+                item.public,
+                item.internal,
+                item.version,
+                item.primary_poc,
+                item.secondary_poc,
+                item.developer,
+                item.created,
+                item.updated,
+              ]">
+
+              <div :class="[
+                   'result',
+                   {'active': item.active,
+                    'inactive': !item.active}]">
+                <div class="col">
+                  <p class="label">{{item.name}}</p>
+                </div>
+
+                <div class="col">
+                  <p class="label">Last Update</p>
+                  <p v-if="item.updated">{{MMDYYYYDateFormat(item.updated)}}</p>
+                  <p v-if="item.updated">{{timeAgo(item.updated)}}</p>
+                </div>
+
+                <div class="col">
+                  <p class="label">
+                    Manager<template v-if="item.managers.length > 1">s</template>
+                  </p>
+
+                  <template v-if="item.managers.length === 0">
+                    <p>--</p>
+
+                  </template>
+                  <template v-for="sm, i in item.managers">
+                    <p>{{sm.first_name}} {{sm.last_name}}</p>
+                  </template>
+                </div>
+
+                <div class="col actions">
+                  <fn1-button @click.native="editModalHandler(item, index)">
+                    edit
+                  </fn1-button>
+
+                  <fn1-button @click.native="removeService(item, index)">
+                    ✕
+                  </fn1-button>
+                </div>
+              </div>
+            </DynamicScrollerItem>
+          </template>
+        </DynamicScroller>
       </div>
     </div>
   </div>
@@ -735,7 +643,7 @@ export default {
       this.addingServiceManager = false;
       this.serviceManagerSearch = '';
     },
-    removeServiceManager(manager, service, i) {
+    removeServiceManager(manager, service) {
       let serviceID = service.id,
       managerID     = manager.id;
 
@@ -753,13 +661,15 @@ export default {
     },
     closeModal(modalRef, i) {
       if(modalRef === 'editServiceModal')
-        this.$refs.editServiceModal[i].showModal = false;
+        // this.$refs.editServiceModal[i].showModal = false;
+        this.$refs.editServiceModal.showModal = false;
       if(modalRef === 'removeServiceModal')
-        this.$refs.removeServiceModal[i].showModal = false;
+        // this.$refs.removeServiceModal[i].showModal = false;
+        this.$refs.removeServiceModal.showModal = false;
       if(modalRef === 'addServiceModal')
         this.$refs.addServiceModal.showModal = false;
       if(modalRef === 'removeServiceManagerModal')
-        this.$refs.removeServiceManagerModal[i].showModal = false;
+        this.$refs.removeServiceManagerModal.showModal = false;
     },
     addService() {
       let fD = new FormData();
@@ -787,10 +697,12 @@ export default {
       });
     },
     removeService(s, i) {
+      alert('got here')
+      this.$refs.removeServiceModal.showModal = true;
       this.$axios
       .delete(`${process.env.api}${process.env.service}${s.id}/`)
       .then((res) => {
-        this.$refs.removeServiceModal[i].showModal = false;
+        this.$refs.removeServiceModal.showModal = false;
         this.loadServices();
         console.log(`%c removeService 👌 `, this.consoleLog.success);
       })
@@ -820,6 +732,10 @@ export default {
       });
     },
     editModalHandler(s, i) {
+      this.$refs.editServiceModal.showModal = true;
+
+      this.editServiceData = {};
+
       let copy = Object.assign({}, s);
       this.editServiceData.formEditID           = copy.id,
       this.editServiceData.formEditName         = copy.name,
@@ -851,9 +767,9 @@ export default {
       fD.append(`developer`,      this.editServiceData.formEditDeveloper);
 
       this.$axios
-      .patch(`${process.env.api}${process.env.service}${this.formEditID}/`,fD)
+      .patch(`${process.env.api}${process.env.service}${this.editServiceData.formEditID}/`,fD)
       .then((res) => {
-        this.$refs.editServiceModal[i].showModal = false;
+        this.$refs.editServiceModal.showModal = false;
         this.loadServices();
         console.log(`%c editService 👌 `, this.consoleLog.success);
       })
@@ -1108,9 +1024,9 @@ export default {
       background-color: rgba(255, 255, 255, 15%);
     }
 
-    &:last-of-type {
-      border-bottom: none;
-    }
+    // &:last-of-type {
+    //   border-bottom: none;
+    // }
 
     .col {
       display: flex;
