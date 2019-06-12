@@ -189,7 +189,9 @@
                     <div class="edit-wrapper">
                       <div class="actions">
                         <fn1-button
-                          @click.native="addServiceManager(editServiceData, m)">
+                          @click.native="addServiceManager(editServiceData, m)"
+                          class="add"
+                          >
                           + add
                         </fn1-button>
                       </div>
@@ -269,7 +271,9 @@
                   <li>
                     <span class="label">Managers</span>
 
-                    <fn1-button @click.native="showAddServiceManager(editServiceData)">
+                    <fn1-button
+                      @click.native="showAddServiceManager(editServiceData)"
+                      class="add">
                       Add
                     </fn1-button>
                   </li>
@@ -283,19 +287,21 @@
                                     title="Remove - Service Manager"
                                     launchButtonText="✕">
 
-                        <p slot="body">Remove <strong>{{m.id}}: {{m.first_name}} {{m.last_name}}</strong> as a manager from <strong>{{editServiceData.formEditName}}</strong>?</p>
+                        <p slot="body">
+                          Remove <strong>{{m.first_name}} {{m.last_name}}</strong> as a manager from <strong>{{editServiceData.formEditName}}</strong>?
+                        </p>
 
                         <fn1-button slot="footer"
                                     class="confirm"
                                     title="Confirm - Remove Service"
-                                    @click.native="removeServiceManager(m, editServiceData)">
+                                    @click.native="removeServiceManager(m, editServiceData, i)">
                           Confirm
                         </fn1-button>
 
                         <fn1-button slot="footer"
                                     class="cancel"
                                     title="Cancel - Remove Service"
-                                    @click.native="closeModal('removeServiceManagerModal')">
+                                    @click.native="closeModal('removeServiceManagerModal', i)">
                           Cancel
                         </fn1-button>
                       </exampleModal>
@@ -370,7 +376,8 @@
         </exampleModal>
 
         <exampleModal ref="removeServiceModal"
-                      :title="`Remove - Service: ${editServiceData.formEditName}`">
+                      class="removeServiceModal"
+                      :title="`Remove - Service: ${editServiceData.name}`">
 
           <p slot="body">Remove <strong>{{editServiceData.name}}</strong>?</p>
 
@@ -454,7 +461,7 @@
                     edit
                   </fn1-button>
 
-                  <fn1-button @click.native="removeService(item, index)">
+                  <fn1-button @click.native="removeServiceHandler(item, index)">
                     ✕
                   </fn1-button>
                 </div>
@@ -507,10 +514,12 @@ export default {
         {text: 'Mobile',  value: 'mobile'},
         {text: 'Cloud',   value: 'cloud'},
       ],
+
       tfRadios:     [
         { text: 'True',  value: true },
         { text: 'False', value: false }
       ],
+
       // Form - New
       formActive:       null,
       formName:         null,
@@ -524,33 +533,7 @@ export default {
       formDeveloper:    null,
 
       // Form - Edit
-      editServiceData: {
-        // formEditID:           null,
-        // formEditName:         null,
-        // formEditManagers:     null,
-        // formEditDescription:  null,
-        // formEditUrl:          null,
-        // formEditActive:       null,
-        // formEditDeployment:   null,
-        // formEditBuild:        null,
-        // formEditPublic:       null,
-        // formEditInternal:     null,
-        // formEditVersion:      null,
-        // formEditDeveloper:    null,
-      },
-
-      // formEditID:           null,
-      //   formEditName:         null,
-      //   formEditManagers:     null,
-      //   formEditDescription:  null,
-      //   formEditUrl:          null,
-      //   formEditActive:       null,
-      //   formEditDeployment:   null,
-      //   formEditBuild:        null,
-      //   formEditPublic:       null,
-      //   formEditInternal:     null,
-      //   formEditVersion:      null,
-      //   formEditDeveloper:    null,
+      editServiceData: {},
     }
   },
   computed: {
@@ -624,8 +607,9 @@ export default {
     showAddServiceManager() {
       this.addingServiceManager = true;
     },
-    addServiceManager(service,manager) {
-      let serviceID = service.id,
+    addServiceManager(service, manager) {
+
+      let serviceID = service.formEditID,
       managerID     = manager.id;
 
       this.$axios
@@ -633,43 +617,68 @@ export default {
       .then((res) => {
         this.addingServiceManager = false;
         this.loadServices();
+
+        this.$axios
+        .get(`${process.env.api}${process.env.service}${serviceID }/`)
+        .then((res) => {
+          this.editServiceData.formEditManagers = res.data.managers;
+        })
+        .catch((e) => {
+          console.log(`%c (add) update selected service manager 🛑 `,
+                        this.consoleLog.error,
+                        `\n\n ${e} \n\n`);
+        });
         console.log(`%c addServiceManager 👌 `, this.consoleLog.success);
       })
       .catch((e) => {
-        console.log(`%c addServiceManager 🛑 `, this.errLogStyle);
+        console.log(`%c addServiceManager 🛑 `,
+                        this.consoleLog.error,
+                        `\n\n ${e} \n\n`);
       });
     },
     cancelAddServiceManager() {
       this.addingServiceManager = false;
       this.serviceManagerSearch = '';
     },
-    removeServiceManager(manager, service) {
-      let serviceID = service.id,
+    removeServiceManager(manager, service, index) {
+      let serviceID = service.formEditID,
       managerID     = manager.id;
 
       this.$axios
       .post(`${process.env.api}${process.env.service}${serviceID }/remove_manager/${managerID}/`)
       .then((res) => {
         this.loadServices();
-        console.log(res);
+
+        this.$axios
+        .get(`${process.env.api}${process.env.service}${serviceID }/`)
+        .then((res) => {
+          this.editServiceData.formEditManagers = res.data.managers;
+          this.$refs.removeServiceManagerModal[index].showModal = false;
+        })
+        .catch((e) => {
+          console.log(`%c (remove) update selected service manager 🛑 `,
+                        this.consoleLog.error,
+                        `\n\n ${e} \n\n`);
+        });
+
         console.log(`%c removeServiceManager 👌 `, this.consoleLog.success);
       })
       .catch((e) => {
-        console.log(e);
-        console.log(`%c removeServiceManager 🛑 `, this.errLogStyle);
+        console.log(`%c removeServiceManager 🛑 `,
+                        this.consoleLog.error,
+                        `\n\n ${e} \n\n`);
       });
     },
     closeModal(modalRef, i) {
       if(modalRef === 'editServiceModal')
-        // this.$refs.editServiceModal[i].showModal = false;
         this.$refs.editServiceModal.showModal = false;
       if(modalRef === 'removeServiceModal')
-        // this.$refs.removeServiceModal[i].showModal = false;
         this.$refs.removeServiceModal.showModal = false;
       if(modalRef === 'addServiceModal')
         this.$refs.addServiceModal.showModal = false;
-      if(modalRef === 'removeServiceManagerModal')
-        this.$refs.removeServiceManagerModal.showModal = false;
+      if(modalRef === 'removeServiceManagerModal'){
+        this.$refs.removeServiceManagerModal[i].showModal = false;
+      }
     },
     addService() {
       let fD = new FormData();
@@ -692,13 +701,17 @@ export default {
         console.log(`%c addService 👌 `, this.consoleLog.success);
       })
       .catch((e) => {
-        console.log(e);
-        console.log(`%c addService 🛑 `, this.errLogStyle);
+        console.log(`%c addService 🛑 `,
+                        this.consoleLog.error,
+                        `\n\n ${e} \n\n`);
       });
     },
-    removeService(s, i) {
-      alert('got here')
+    removeServiceHandler(s, i) {
       this.$refs.removeServiceModal.showModal = true;
+      this.editServiceData = s;
+    },
+    removeService(s) {
+      alert(JSON.stringify(s))
       this.$axios
       .delete(`${process.env.api}${process.env.service}${s.id}/`)
       .then((res) => {
@@ -774,8 +787,9 @@ export default {
         console.log(`%c editService 👌 `, this.consoleLog.success);
       })
       .catch((e) => {
-        console.log(e);
-        console.log(`%c editService 🛑 `, this.errLogStyle);
+        console.log(`%c editService 🛑 `,
+                        this.consoleLog.error,
+                        `\n\n ${e} \n\n`);
       });
     },
     getEmployees() {
@@ -786,8 +800,9 @@ export default {
         console.log(`%c getEmployees 👌 `, this.consoleLog.success);
       })
       .catch((e) => {
-        console.log(e);
-        console.log(`%c getEmployees 🛑 `, this.errLogStyle);
+        console.log(`%c getEmployees 🛑 `,
+                        this.consoleLog.error,
+                        `\n\n ${e} \n\n`);
       });
     },
   },
@@ -1168,7 +1183,24 @@ export default {
     }
   }
 
+  .editServiceModal,
+  .removeServiceModal {
+    ::v-deep button:not(.confirm):not(.cancel):not(.add):not(.remove) {
+      display: none;
+    }
+  }
+
   .removeServiceManagerModal {
+    ::v-deep button {
+      display: block !important;
+    }
+
+    ::v-deep button {
+      padding: 0;
+      background-color: transparent;
+      color: $text-color;
+    }
+
     ::v-deep .modal-wrapper {
       .modal-container {
         width: 375px;
@@ -1276,7 +1308,7 @@ export default {
         }
       }
 
-      ::v-deep .modal-footer{
+      .modal-footer{
         display: flex;
         align-items: center;
 
