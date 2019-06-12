@@ -4,6 +4,14 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from .serializers import UserSerializer, GroupSerializer
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        instance.groups.add(Group.objects.get(name='Regular'))
+
 
 class CurrentUserViewSet(viewsets.ModelViewSet):
     model = User
@@ -34,13 +42,13 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 
-# class UserViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows users to be viewed or edited.
-#     """
-#     queryset = User.objects.all().order_by('-date_joined')
-#     serializer_class = UserSerializer
-#
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     """

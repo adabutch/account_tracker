@@ -127,7 +127,7 @@
           <DynamicScroller
             :items="filteredADResults"
             :min-item-size="64"
-            :prerender="200"
+            :prerender="500"
             key-field="sAMAccountName"
             class="scroller">
 
@@ -174,7 +174,7 @@
 <script>
 import { mapFields }   from 'vuex-map-fields'
 import axios           from 'axios'
-import mockAD          from 'static/json/mock-AD.json'
+// import mockAD          from 'static/json/mock-AD.json'
 import exampleModal    from '~/components/exampleModal'
 
 export default {
@@ -190,7 +190,7 @@ export default {
   // },
   data() {
     return {
-      mockADData:   mockAD,
+      activeDirectory:   [],
       acctReqSearch: '',
       adDataSearch:  '',
       searchPlaceholder: 'Search by Name, Job, Department or Group',
@@ -210,14 +210,17 @@ export default {
 
     this.getAccountRequests();
 
-    // this.$axios
-    // .get(`https://dhcp-vm-218.bloomington.in.gov:5004/api/NovellDirectory/*`)
-    // .then((res) => {
-    //   console.log(res);
-    // })
-    // .catch((e) => {
-    //   console.log(e);
-    // });
+    this.$axios
+    .get(`https://dhcp-vm-218.bloomington.in.gov:5004/api/NovellDirectory/*`)
+    .then((res) => {
+      this.activeDirectory = res.data;
+      console.log(`%c getActiveDirectory 👌 `, this.consoleLog.success);
+    })
+    .catch((e) => {
+      console.log(`%c getActiveDirectory 🛑 `,
+                    this.consoleLog.error,
+                    `\n\n ${e} \n\n`);
+    });
   },
   updated() {
     this.authLevel;
@@ -289,14 +292,14 @@ export default {
       }
     },
     removeADNulls() {
-      this.mockADData.forEach(item => {
+      this.activeDirectory.forEach(item => {
         for(var key in item){
           if(item[key] == null)
             item[key] = ""
             // delete item[key]
         }
       });
-      return this.mockADData;
+      return this.activeDirectory;
     },
     filteredADResults() {
       if(this.adDataSearch.length) {
