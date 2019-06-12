@@ -119,12 +119,18 @@
         </template>
 
         <template v-if="resultType === 'directory'">
-          <div class="no-results" v-if="!filteredADResults.length">
+          <div class="no-results" v-if="!filteredADResults.length && !authLevel.regular">
             <h4>No results for, <strong>"{{adDataSearch}}"</strong>.</h4>
             <fn1-button @click.native="goCreateAccountRequest">New Account Request</fn1-button>
           </div>
 
+          <div class="no-results" v-if="authLevel.regular">
+            <h4><strong>Oops! </strong>Insufficient access level.</h4>
+            <fn1-button @click.native="goCreateAccountRequest">New Account Request</fn1-button>
+          </div>
+
           <DynamicScroller
+            v-if="!authLevel.regular"
             :items="filteredADResults"
             :min-item-size="64"
             :prerender="500"
@@ -173,8 +179,6 @@
 
 <script>
 import { mapFields }   from 'vuex-map-fields'
-import axios           from 'axios'
-// import mockAD          from 'static/json/mock-AD.json'
 import exampleModal    from '~/components/exampleModal'
 
 export default {
@@ -182,48 +186,50 @@ export default {
   components: {
     exampleModal
   },
-  // async asyncData () {
-
-  //   let { res } = await axios.get(`https://dhcp-vm-218.bloomington.in.gov:5004/api/NovellDirectory/*`)
-  //   console.dir(res);
-  //   return { adData: res }
-  // },
   data() {
     return {
       activeDirectory:   [],
-      acctReqSearch: '',
-      adDataSearch:  '',
+      acctReqSearch:     '',
+      adDataSearch:      '',
       searchPlaceholder: 'Search by Name, Job, Department or Group',
-      resultType:    'requests',
+      resultType:        'requests',
       resultTypeOptions: [
         { text: 'Account Requests', value: 'requests' },
         { text: 'Active Directory', value: 'directory' }
       ],
     }
   },
-  created() {
-
-    // this.$nextTick(() => this.$refs.acctReqSearch.$el.focus())
-  },
+  created() {},
   mounted() {
-    this.$refs.acctReqSearch.$el.focus()
-
     this.getAccountRequests();
 
-    this.$axios
-    .get(`https://dhcp-vm-218.bloomington.in.gov:5004/api/NovellDirectory/*`)
-    .then((res) => {
-      this.activeDirectory = res.data;
-      console.log(`%c getActiveDirectory 👌 `, this.consoleLog.success);
-    })
-    .catch((e) => {
-      console.log(`%c getActiveDirectory 🛑 `,
+    this.$nextTick()
+    .then(() => {
+      // this.$refs.acctReqSearch.focus();
+      this.checkAuthLevel
+      .then((resolve) => {
+        if(this.authLevel.admin ||
+           this.authLevel.support) {
+          this.getAllActiveDirectoryUsers()
+          .then((res) => {
+            this.activeDirectory = res;
+            console.log(`%c getActiveDirectory 👌 `, this.consoleLog.success);
+          })
+          .catch((e)  => {
+            console.log(`%c getActiveDirectory 🛑 `,
+                          this.consoleLog.error,
+                          `\n\n ${e} \n\n`);
+          });
+        }
+      })
+      .catch((reject) => {
+        console.log(`%c checkAuthLevel (via getAllActiveDirectoryUsers) 🛑 `,
                     this.consoleLog.error,
-                    `\n\n ${e} \n\n`);
+                    `\n\n ${reject} \n\n`);
+      })
     });
   },
   updated() {
-    this.authLevel;
     this.allAccountRequests();
   },
   methods: {
@@ -243,7 +249,6 @@ export default {
       console.dir(JSON.stringify(user));
     },
     allAccountRequests() {
-      // console.dir(this.authLevel);
       if(this.authLevel.regular || this.authLevel.support) {
         var master = [...this.accountRequests.approved,...this.accountRequests.denied,...this.accountRequests.inProgress];
       } else {

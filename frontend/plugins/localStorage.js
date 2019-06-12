@@ -8,12 +8,6 @@ export default ({store, isHMR}) => {
   if (process.client) {
     window.onNuxtReady((nuxt) => {
       createPersistedState({
-        // storage: window.sessionStorage
-        // storage: {
-        //   getItem: key => Cookies.get('auth'),
-        //   setItem: (key, value) => Cookies.set('auth', value, {expires: 3}),
-        //   removeItem: key => Cookies.remove('auth')
-        // }
         reducer (state, paths) {
           const reducer = Object.assign({}, state);
             delete reducer.auth;

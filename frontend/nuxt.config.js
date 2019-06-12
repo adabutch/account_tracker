@@ -47,6 +47,9 @@ module.exports = {
     jobService:     process.env.TT_API_JOB_SERVICE      || `JobTitleService`,
     posService:     process.env.TT_API_POSITION_SERVICE || `PositionService`,
     managerService: process.env.TT_API_MANAGER_SERVICE  || `ManagerService`,
+
+    adApi:          process.env.AD_API || `https://dhcp-vm-218.bloomington.in.gov:5004/api/NovellDirectory/`,
+    allUsers:       process.env.AD_API_ALL_USERS || `*`
   },
 
   loading: { color: '#fff' },
@@ -63,6 +66,7 @@ module.exports = {
     { src: '~/plugins/clearStorage' },
     { src: '~/plugins/api-methods' },
     { src: '~/plugins/ttApi-methods' },
+    { src: '~/plugins/adApi-methods' },
     { src: '~/plugins/localStorage', ssr: false },
     { src: '~/plugins/croppie.js',   ssr: false },
     { src: '~/plugins/vue-virtual-scroller.js' }
