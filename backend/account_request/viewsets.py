@@ -50,7 +50,8 @@ class AccountRequestViewSet(viewsets.ModelViewSet):
                                 ',OU=' + 'Departments' +
                                 ',DC=' + 'cob' +
                                 ',DC=' + 'bloomington' +
-                                ',DC=' + 'in')
+                                ',DC=' + 'in' +
+                                ',DC=' + 'gov')
 
         ad_sAMAccountName   = (ar.first_name.lower() + '.' +
                                ar.last_name.lower())
