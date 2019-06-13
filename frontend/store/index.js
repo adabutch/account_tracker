@@ -35,7 +35,7 @@ export const defaultState = () => ({
   requestStatuses:  ['pending','in-progress','approved','completed','inactive','denied'],
   paths: {
     createAccountRequest: '/create/',
-    accountRequests:      '/account-requests/'
+    accounts:       '/accounts/'
   },
   consoleLog: {
     info:           ['background: rgb(30, 90, 174)',

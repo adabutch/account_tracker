@@ -179,7 +179,7 @@
                 </template>
               </th>
               <th>
-                <nuxt-link class="button" :to="'/account-requests/'+item.id">
+                <nuxt-link class="button" :to="'/accounts/'+item.id">
                   view
                 </nuxt-link>
               </th>
@@ -268,7 +268,7 @@
             </th>
             <th>
               <nuxt-link class="button"
-                         :to="'/account-requests/'+item.id">
+                         :to="'/accounts/'+item.id">
                 view
               </nuxt-link>
             </th>
@@ -436,7 +436,7 @@ const { mapFields } = createHelpers({
 });
 
 export default {
-  layout:           'account-requests',
+  layout:           'accounts',
   components: {
     exampleSelect,
     exampleDropdown,

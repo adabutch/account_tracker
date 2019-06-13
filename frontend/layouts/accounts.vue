@@ -1,5 +1,5 @@
 <template>
-  <div class="account-requests-wrapper">
+  <div class="accounts-wrapper">
     <headerNav />
 
     <div class="page-wrapper">
@@ -21,7 +21,7 @@ export default {
 
 <style lang="scss" scoped>
 
-.account-requests-wrapper {
+.accounts-wrapper {
   background: $color-grey-lighter;
 
   /deep/ .page-wrapper {

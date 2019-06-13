@@ -335,7 +335,7 @@ import exampleSelect   from '~/components/exampleSelect'
 import exampleDropdown from '~/components/exampleDropdown'
 
 export default {
-  layout:           'account-requests',
+  layout:           'accounts',
   validate({ params }) {
     return !isNaN(+params.id)
   },
@@ -355,7 +355,7 @@ export default {
   updated() {
     if(this.acctReq){
       if(this.acctReqIsPending && !this.authLevel.admin) {
-        this.$router.push({ path: this.paths.accountRequests });
+        this.$router.push({ path: this.paths.accounts });
       }
     }
   },
@@ -417,7 +417,7 @@ export default {
   },
   methods: {
     goBack() {
-      this.$router.push({ path: this.paths.accountRequests });
+      this.$router.push({ path: this.paths.accounts });
     },
     /**
      * Loads init page data required to fire up

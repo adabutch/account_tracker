@@ -239,10 +239,10 @@ export default {
     viewAccountRequest(id) {
       if(this.authLevel.admin && id.request_status == "pending") {
         this.$router.push(
-          { name: `account-requests`, params: { 'pending': id.id }}
+          { name: `accounts`, params: { 'pending': id.id }}
         );
       } else {
-        this.$router.push(this.paths.accountRequests + id.id);
+        this.$router.push(this.paths.accounts + id.id);
       }
     },
     viewADUser(user) {
@@ -516,7 +516,7 @@ export default {
     }
   }
 
-  .vue-recycle-scroller__item-view {
+  ::v-deep .vue-recycle-scroller__item-view {
     &:hover,
     &.hover {
       background-color: rgba(255, 255, 255, 15%);

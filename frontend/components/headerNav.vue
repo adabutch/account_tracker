@@ -70,7 +70,7 @@ export default {
     return {
       routeParam:   '',
       routes: {
-        accountReq: ['index','account-requests','account-requests-id','create'],
+        accountReq: ['index','accounts','accounts-id','create'],
         serviceReq: ['service-requests'],
         services:   ['services'],
         profiles:   ['profiles'],

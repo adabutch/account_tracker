@@ -29,37 +29,28 @@ class AccountRequestViewSet(viewsets.ModelViewSet):
     def inprogress(self, request, *args, **kwargs):
         ar = self.get_object()
 
+        def get_full_name(ar):
+
+            if ar.nickname:
+                beginning = "%s (%s)" % (ar.first_name, ar.nickname)
+            else:
+                beginning = ar.first_name
+
+            if ar.middle_name:
+                fn = "%s %s %s" % (beginning, ar.middle_name, ar.last_name)
+            else:
+                fn = "%s %s" % (beginning, ar.last_name)
+
+            if ar.suffix:
+                fn += " " + ar.suffix
+            return fn
+
         ad_distinguishedName = ('CN=' + ar.first_name + ' ' + ar.last_name +
                                 ',OU=' + 'Account Tests' +
                                 ',OU=' + 'Departments' +
                                 ',DC=' + 'cob' +
                                 ',DC=' + 'bloomington' +
-                                ',DC=' + 'in'
-                                ',DC=' + 'gov')
-
-        # ad_distinguishedName = ('CN=' + ar.first_name + ' ' + ar.last_name +
-        #                         ',OU=' + ar.department +
-        #                         ',OU=' + 'City Hall' +
-        #                         ',OU=' + 'Departments' +
-        #                         ',DC=' + 'seth' +
-        #                         ',DC=' + 'test')
-
-        # note: Charles - I need some `displayName` syntactic sugar below
-        # if ar.nickname != '' or ar.nickname != null and ar.suffix == '' or ar.suffix == null:
-        #     ad_displayName  = (ar.first_name + ' ' + '(' +
-        #                        ar.nickname + ')' + ' ' +
-        #                        ar.middle_name + ' ' +
-        #                        ar.last_name)
-
-        # elif ar.nickname != '' or ar.nickname != null and ar.suffix != '' or ar.suffix != null:
-        #      ad_displayName = (ar.first_name + ' ' + '(' +
-        #                        ar.nickname + ')' + ' ' +
-        #                        ar.middle_name + ' ' +
-        #                        ar.last_name + ',' + ' ' +
-        #                        ar.suffix)
-
-        # else:
-        ad_displayName = (ar.first_name + ' ' + ar.last_name)
+                                ',DC=' + 'in')
 
         ad_sAMAccountName   = (ar.first_name.lower() + '.' +
                                ar.last_name.lower())
@@ -69,29 +60,23 @@ class AccountRequestViewSet(viewsets.ModelViewSet):
                                '@bloomington.in.gov')
 
         ad_payload = {
+            "serialNumber":         ar.id,
             "sAMAccountName":       ad_sAMAccountName,
             "userPrincipalName":    ad_mail,
             "distinguishedName":    ad_distinguishedName,
             "givenName":            ar.first_name,
-            "displayName":          ad_displayName,
+            "displayName":          get_full_name(ar),
             "sn":                   ar.last_name,
             "countryCode":          0,
             "mail":                 ad_mail,
-            #"description":          null,
             "telephoneNumber":      ar.employee_phone,
-            #"pager":                null,
-            #"facsimileTelephoneNumber": null,
-            #"info":                 null,
-            #"physicalDeliveryOfficeName": null,
             "title":                ar.job,
             "department":           ar.department,
-            #"uid":                  null,
-            #"employeeID":           null,
-            #"employeeNumber":       null
         }
 
-        r = requests.post('http://10.20.20.218:5000/api/NovellDirectory', json=ad_payload)
+        r = requests.post('https://dhcp-vm-218.bloomington.in.gov:5004/api/NovellDirectory', json=ad_payload)
         r.raise_for_status()
+        print(ad_payload)
         print(r)
         print(r.text)
         print(r.json())
