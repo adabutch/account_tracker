@@ -23,7 +23,7 @@ class Service(models.Model):
     standard_build = models.BooleanField(default=False)
     public = models.BooleanField(default=False)
     internal = models.BooleanField(default=False)
-
+    premium = models.BooleanField(default=False)
     version = models.CharField(max_length=50, blank=True, null=True)
 
     # point of contact (PoC)

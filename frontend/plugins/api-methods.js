@@ -206,6 +206,24 @@ Vue.mixin({
     /**
      * A Promise returning a User by ID
      *
+     * @promise     getEmployees
+     * @resolve     { Array }
+     * @reject      { Error }
+     * @return      { Promise <Object[]> } Returns an Array of Objects
+     *              for each Employee.
+     *
+     */
+    getEmployees() {
+      return new Promise((resolve, reject) => {
+        this.$axios
+        .get(`${process.env.api}${process.env.employee}`)
+        .then(res => resolve(res.data.results))
+        .catch(e  => reject(e));
+      })
+    },
+    /**
+     * A Promise returning a User by ID
+     *
      * @promise     getUserById
      * @param       { Number } id - ID of the Account Request
      * @resolve     { Array }

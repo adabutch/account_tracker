@@ -296,19 +296,18 @@ export default {
         .sort((a, b) => new Date(b.requested) - new Date(a.requested))
       }
     },
-    removeADNulls() {
+    removeActiveDirectoryNulls() {
       this.activeDirectory.forEach(item => {
         for(var key in item){
           if(item[key] == null)
             item[key] = ""
-            // delete item[key]
         }
       });
       return this.activeDirectory;
     },
     filteredADResults() {
       if(this.adDataSearch.length) {
-        return this.removeADNulls
+        return this.removeActiveDirectoryNulls
         .filter(user => {
           let sAMAccountName = user.sAMAccountName.toLowerCase(),
               firstName      = user.givenName.toLowerCase(),
@@ -332,7 +331,7 @@ export default {
         .sort((a, b) => a.sn.localeCompare(b.sn))
         .sort((a, b) => b.enabled-a.enabled)
       } else {
-        return this.removeADNulls
+        return this.removeActiveDirectoryNulls
         .sort((a, b) => a.sn.localeCompare(b.sn))
         .sort((a, b) => b.enabled-a.enabled)
       }

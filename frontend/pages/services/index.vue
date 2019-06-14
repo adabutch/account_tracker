@@ -82,6 +82,20 @@
                     </div>
                   </fieldset>
                 </div>
+
+                <div class="form-group inline">
+                  <fieldset>
+                    <legend>Premium?</legend>
+                    <div v-for="r, i in tfRadios">
+                      <input type="radio"
+                             name="premium"
+                             id="premium"
+                             :value="r.value"
+                             v-model="formPremium">
+                      <label for="premium">{{r.text}}</label>
+                    </div>
+                  </fieldset>
+                </div>
               </div>
 
               <div class="right">
@@ -176,6 +190,7 @@
 
             <template v-if="addingServiceManager">
               <div class="search-wrapper">
+                <fn1-alert class="warning"><strong>Note: </strong>Users become available after logging into <strong>Account Tracker</strong> for the first time.</fn1-alert>
                 <fn1-input v-model="serviceManagerSearch"
                            label="Search Service Managers"
                            autocomplete="off"
@@ -184,7 +199,7 @@
                            id="service-manager-search" />
 
                 <ul class="search-results" v-if="serviceManagerSearch">
-                  <li v-for="m, i in filteredEmployees"
+                  <li v-for="m, i in filteredAccountTrackerEmployees"
                       :key="i">
                     <div class="edit-wrapper">
                       <div class="actions">
@@ -200,6 +215,32 @@
                   </li>
                 </ul>
               </div>
+
+              <!-- <div class="search-wrapper">
+                <fn1-input v-model="serviceManagerSearch"
+                           label="Search Service Managers"
+                           autocomplete="off"
+                           placeholder="Search Service Managers"
+                           name="service-manager-search"
+                           id="service-manager-search" />
+
+                <ul class="search-results" v-if="serviceManagerSearch">
+                  <li v-for="m, i in filteredADResults"
+                      :key="i">
+                    <div class="edit-wrapper">
+                      <div class="actions">
+                        <fn1-button
+                          @click.native="addServiceManager(editServiceData, m)"
+                          class="add"
+                          >
+                          + add
+                        </fn1-button>
+                      </div>
+                    </div>
+                    {{m.givenName}} {{m.sn}}
+                  </li>
+                </ul>
+              </div> -->
             </template>
 
             <form v-show="!addingServiceManager">
@@ -263,6 +304,20 @@
                              :value="r.value"
                              v-model="editServiceData.formEditInternal">
                       <label for="internal">{{r.text}}</label>
+                    </div>
+                  </fieldset>
+                </div>
+
+                <div class="form-group inline">
+                  <fieldset>
+                    <legend>Premium?</legend>
+                    <div v-for="r, i in tfRadios">
+                      <input type="radio"
+                             name="premium"
+                             id="premium"
+                             :value="r.value"
+                             v-model="editServiceData.formEditPremium">
+                      <label for="premium">{{r.text}}</label>
                     </div>
                   </fieldset>
                 </div>
@@ -500,21 +555,20 @@ export default {
   },
   data() {
     return {
-      yoTesTest:        null,
-      loading:          false,
-      allServices:      [],
-      serviceManagers:  [],
-      addingServiceManager: false,
-      serviceManagerSearch: '',
-      employees:        [],
+      loading:               false,
+      allServices:           [],
+      serviceManagers:       [],
+      addingServiceManager:  false,
+      serviceManagerSearch:  '',
+      employees:             [],
+      activeDirectory:       [],
       editServiceBodyHeight: null,
-      serviceSearch:    '',
+      serviceSearch:         '',
       serviceDeploymentOptions: [
         {text: 'Desktop', value: 'desktop'},
         {text: 'Mobile',  value: 'mobile'},
         {text: 'Cloud',   value: 'cloud'},
       ],
-
       tfRadios:     [
         { text: 'True',  value: true },
         { text: 'False', value: false }
@@ -529,6 +583,7 @@ export default {
       formDeployment:   null,
       formBuild:        null,
       formInternal:     null,
+      formPremium:      null,
       formVersion:      null,
       formDeveloper:    null,
 
@@ -590,8 +645,8 @@ export default {
       });
       return servicesXManager;
     },
-    filteredEmployees() {
-      return this.employees
+    filteredAccountTrackerEmployees() {
+      return this.accountTrackerEmployees
       .filter(e => {
         let firstName  = e.first_name.toLowerCase(),
         lastName       = e.last_name.toLowerCase(),
@@ -600,6 +655,38 @@ export default {
         return firstName.includes(this.serviceManagerSearch.toLowerCase()) ||
                lastName.includes(this.serviceManagerSearch.toLowerCase()) ||
                userName.includes(this.serviceManagerSearch.toLowerCase())
+      })
+    },
+    removeActiveDirectoryNulls() {
+      this.activeDirectory.forEach(item => {
+        for(var key in item){
+          if(item[key] == null)
+            item[key] = ""
+        }
+      });
+      return this.activeDirectory;
+    },
+    filteredADResults() {
+      return this.removeActiveDirectoryNulls
+      .filter(user => {
+        let sAMAccountName = user.sAMAccountName.toLowerCase(),
+            firstName      = user.givenName.toLowerCase(),
+            lastName       = user.sn.toLowerCase(),
+            fullName       = user.displayName.toLowerCase(),
+            jobTitle       = user.title.toLowerCase(),
+            department     = user.department.toLowerCase(),
+            uid            = user.uid.toLowerCase(),
+            employeeID     = user.employeeID.toLowerCase();
+
+
+        return sAMAccountName.includes(this.serviceManagerSearch.toLowerCase()) ||
+               firstName.includes(this.serviceManagerSearch.toLowerCase()) ||
+               lastName.includes(this.serviceManagerSearch.toLowerCase()) ||
+               fullName.includes(this.serviceManagerSearch.toLowerCase()) ||
+               jobTitle.includes(this.serviceManagerSearch.toLowerCase()) ||
+               department.includes(this.serviceManagerSearch.toLowerCase()) ||
+               uid.includes(this.serviceManagerSearch.toLowerCase()) ||
+               employeeID.includes(this.serviceManagerSearch.toLowerCase())
       })
     },
   },
@@ -690,6 +777,7 @@ export default {
       fD.append(`deployment`,     this.formDeployment);
       fD.append(`standard_build`, this.formBuild);
       fD.append(`internal`,       this.formInternal);
+      fD.append(`premium`,        this.formPremium);
       fD.append(`version`,        this.formVersion);
       fD.append(`developer`,      this.formDeveloper);
 
@@ -729,10 +817,11 @@ export default {
       this.getServices(this.apiLimit)
       .then((resolve) => {
 
-        // this.$store.dispatch('services/setServices', resolve);
-
         this.allServices = resolve;
-        this.getEmployees();
+
+        this.loadAccountTrackerEmployees();
+        // this.loadActiveDirectoryUsers();
+
         this.loading = false;
 
         console.log(`%c getServices (loadServices) 👌 `,
@@ -760,6 +849,7 @@ export default {
       this.editServiceData.formEditBuild        = copy.standard_build,
       this.editServiceData.formEditPublic       = copy.public,
       this.editServiceData.formEditInternal     = copy.internal,
+      this.editServiceData.formEditPremium      = copy.premium,
       this.editServiceData.formEditVersion      = copy.version,
       this.editServiceData.formEditPrimaryPOC   = copy.primary_poc,
       this.editServiceData.formEditSecondaryPOC = copy.secondary_poc,
@@ -776,6 +866,7 @@ export default {
       fD.append(`deployment`,     this.editServiceData.formEditDeployment);
       fD.append(`standard_build`, this.editServiceData.formEditBuild);
       fD.append(`internal`,       this.editServiceData.formEditInternal);
+      fD.append(`premium`,        this.editServiceData.formEditPremium);
       fD.append(`version`,        this.editServiceData.formEditVersion);
       fD.append(`developer`,      this.editServiceData.formEditDeveloper);
 
@@ -792,19 +883,30 @@ export default {
                         `\n\n ${e} \n\n`);
       });
     },
-    getEmployees() {
-      this.$axios
-      .get(`${process.env.api}${process.env.employee}`)
+    loadAccountTrackerEmployees() {
+      this.getEmployees()
       .then((res) => {
-        this.employees = res.data;
-        console.log(`%c getEmployees 👌 `, this.consoleLog.success);
+        this.accountTrackerEmployees = res;
+        console.log(`%c getEmployees (loadAccountTrackerEmployees) 👌 `, this.consoleLog.success);
       })
       .catch((e) => {
-        console.log(`%c getEmployees 🛑 `,
+        console.log(`%c getEmployees (loadAccountTrackerEmployees) 🛑 `,
                         this.consoleLog.error,
                         `\n\n ${e} \n\n`);
       });
     },
+    loadActiveDirectoryUsers() {
+      this.getAllActiveDirectoryUsers()
+      .then((res) => {
+        this.activeDirectory = res;
+        console.log(`%c getActiveDirectory 👌 `, this.consoleLog.success);
+      })
+      .catch((e)  => {
+        console.log(`%c getActiveDirectory 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${e} \n\n`);
+      });
+    }
   },
 }
 </script>
@@ -1121,8 +1223,8 @@ export default {
         max-width: 100%;
         width: 100%;
         max-height: 350px;
-        position: absolute;
-        top: 60px;
+        position: relative;
+        top: -1px;
         border: 1px solid lighten($text-color, 50%);
         border-bottom-left-radius: $radius-default;
         border-bottom-right-radius: $radius-default;
@@ -1136,7 +1238,9 @@ export default {
           }
 
           &:hover {
-            ::v-deep button {
+            background-color: rgba(255, 255, 255, .5%);
+
+            button {
               color: $color-green;
             }
           }
@@ -1228,6 +1332,7 @@ export default {
           }
 
           .left {
+            border-right: 1px solid darken($color-grey-lighter, 7%);
             width: 200px;
             padding: 0 20px 0 0;
 
@@ -1302,8 +1407,6 @@ export default {
           .right {
             flex: 1;
             padding: 0 0 0 20px;
-            border-left: 1px solid darken($color-grey-lighter, 7%);
-            // background-color: yellow;
           }
         }
       }
@@ -1313,6 +1416,7 @@ export default {
         align-items: center;
 
         p {
+          font-weight: $weight-semi-bold;
           margin-left: auto;
           color: $text-color;
         }
