@@ -147,15 +147,6 @@ if LDAP_CONFIGURED:
         )
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        # By default we set everything to admin,
-        #   then open endpoints on a case-by-case basis
-        # 'rest_framework.permissions.IsAdminUser',
-
-        # Details available:
-        # https://www.django-rest-framework.org/api-guide/permissions/
-        #'rest_framework.permissions.IsAuthenticated',
-    ),
     'TEST_REQUEST_RENDERER_CLASSES': (
         'rest_framework.renderers.MultiPartRenderer',
         'rest_framework.renderers.JSONRenderer',
@@ -163,6 +154,10 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        # 'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20,
@@ -204,7 +199,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 LOGIN_REDIRECT_URL = 'https://dhcp-cityhall-101-164.bloomington.in.gov:9090/frontend/'
-LOGOUT_REDIRECT_URL = 'https://dhcp-cityhall-101-164.bloomington.in.gov:9090/accounts/login/'
+LOGOUT_REDIRECT_URL = 'https://dhcp-cityhall-101-164.bloomington.in.gov:9090/accounts/login'
 
 STATIC_ROOT = '/static/'
 STATIC_URL = '/static/'
@@ -212,6 +207,3 @@ STATICFILES_DIRS = os.path.join(BASE_DIR, 'static'),
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-# LOGIN_REDIRECT_URL = 'home'
-# LOGOUT_REDIRECT_URL = 'home'

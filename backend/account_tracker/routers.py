@@ -8,7 +8,7 @@ from service.viewsets import ServiceViewSet
 from default_profile.viewsets import DefaultProfileViewSet
 from action.viewsets import ActionViewSet
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=True)
 router.register(r'employee', UserViewSet, basename='employee')
 router.register(r'user', CurrentUserViewSet, basename='user')
 router.register(r'profile', DefaultProfileViewSet)

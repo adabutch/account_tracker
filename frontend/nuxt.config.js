@@ -76,7 +76,7 @@ module.exports = {
     ['@nuxtjs/style-resources'],
     ['@nuxtjs/axios'],
     ['@nuxtjs/redirect-module'],
-    // PWA having issues w/ nodemon
+    // @nuxtjs/pwa breaks
     // ['@nuxtjs/pwa', {
     //   icon: true,
     //   sizes: [16, 120, 144, 152, 192, 384, 512],
@@ -100,16 +100,6 @@ module.exports = {
    * for SSR dev
    *
    */
-  redirect: [
-    { from: '^/accounts/login', to: '/accounts/login/' }
-    // {
-    //   from: '^(.*)$',
-    //   to: (from, req) => {
-    //     let trailingUrl = req.url.endsWith('/') ? req.url : req.url + '/'
-    //     return trailingUrl
-    //   }
-    // }
-  ],
   axios: {
     proxy: true,
   },
@@ -120,22 +110,16 @@ module.exports = {
         '^/api/': ''
       }
     },
-    '/ad/': {
-      target: 'https://dhcp-vm-218.bloomington.in.gov:5004/',
+    '/accounts/login': {
+      target: `http://127.0.0.1:8000/accounts/login/`,
       pathRewrite: {
-        '^/ad/': ''
+        '^/accounts/login': ''
       }
     },
-    '/accounts/login/': {
-      target: 'http://127.0.0.1:8000/accounts/login/',
-      pathRewrite: {
-        '^/accounts/login/': ''
-      }
-    },
-    '/accounts/logout/': {
+    '/accounts/logout': {
       target: 'http://127.0.0.1:8000/accounts/logout/',
       pathRewrite: {
-        '^/accounts/logout/': ''
+        '^/accounts/logout': ''
       }
     },
   },
