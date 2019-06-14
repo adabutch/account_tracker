@@ -19,12 +19,21 @@
           </div>
 
           <fn1-button
-            class="image-download"
+            class="download"
             @click.native="downloadARImages(acctReq.cropped_image, acctReq.first_name + '-' + acctReq.last_name)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
               <path fill="currentColor" d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm76.45 211.36l-96.42 95.7c-6.65 6.61-17.39 6.61-24.04 0l-96.42-95.7C73.42 337.29 80.54 320 94.82 320H160v-80c0-8.84 7.16-16 16-16h32c8.84 0 16 7.16 16 16v80h65.18c14.28 0 21.4 17.29 11.27 27.36zM377 105L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9z"></path>
             </svg>
             Save Image
+          </fn1-button>
+
+          <fn1-button
+            class="download"
+            @click.native="generateADPdf(acctReq.first_name + '-' + acctReq.last_name)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+              <path fill="currentColor" d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm76.45 211.36l-96.42 95.7c-6.65 6.61-17.39 6.61-24.04 0l-96.42-95.7C73.42 337.29 80.54 320 94.82 320H160v-80c0-8.84 7.16-16 16-16h32c8.84 0 16 7.16 16 16v80h65.18c14.28 0 21.4 17.29 11.27 27.36zM377 105L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9z"></path>
+            </svg>
+            Generate PDF
           </fn1-button>
         </div>
 
@@ -532,6 +541,8 @@
 import FileSaver,
        { saveAs }      from 'file-saver'
 
+// import jsPDF           from 'jspdf'
+
 import { mapFields }   from 'vuex-map-fields'
 
 import exampleSelect   from '~/components/exampleSelect'
@@ -759,6 +770,78 @@ export default {
       let nameToLower = name.toLowerCase();
       FileSaver.saveAs(image, `${nameToLower}.jpg`);
     },
+    generateADPdf(name) {
+      const jsPDF        = require('jspdf');
+
+      let nameToLower    = name.toLowerCase();
+
+      var doc = new jsPDF({
+        format: 'letter'
+      });
+
+      doc.setFontSize(12)
+      doc.text(`Account Tracker: Account Request`, 10, 10)
+
+      doc.setFontSize(8)
+      doc.text(`ID: ${this.acctReq.id}`, 10, 15)
+      doc.text(`Full Name: ${this.acctReq.full_name}`, 10, 20)
+      doc.text(`First Name: ${this.acctReq.first_name}`, 10, 25)
+      doc.text(`Middle Name: ${this.acctReq.middle_name}`, 10, 30)
+      doc.text(`Last Name: ${this.acctReq.last_name}`, 10, 35)
+      doc.text(`Suffix: ${this.acctReq.suffix}`, 10, 40)
+      doc.text(`Nickname: ${this.acctReq.nickname}`, 10, 45)
+      doc.text(`Employee Phone: ${this.acctReq.employee_phone}`, 10, 50)
+      doc.text(`Supervisor: ${this.acctReq.supervisor}`, 10, 55)
+      doc.text(`Supervisor Phone: ${this.acctReq.supervisor_phone}`, 10, 60)
+      doc.text(`department: ${this.acctReq.department}`, 10, 65)
+      doc.text(`Group: ${this.acctReq.group}`, 10, 70)
+      doc.text(`Facility: ${this.acctReq.facility}`, 10, 75)
+      doc.text(`Clock Entry Only: ${this.acctReq.clock_entry_only}`, 10, 80)
+      doc.text(`Job: ${this.acctReq.job}`, 10, 85)
+      doc.text(`Employee Status: ${this.acctReq.employee_status}`, 10, 90)
+      doc.text(`Start Date: ${this.acctReq.start_date}`, 10, 95)
+      doc.text(`End Date: ${this.acctReq.end_date}`, 10, 100)
+      doc.text(`Dynamic Options: ${this.acctReq.dynamic_options}`, 10, 105)
+      doc.text(`Comment: ${this.acctReq.comment}`, 10, 110)
+      doc.text(`Requested Services: ${this.acctReq.requested_services}`, 10, 115)
+      doc.text(`Request Status: ${this.acctReq.request_status}`, 10, 120)
+      doc.text(`Requested: ${this.acctReq.requested}`, 10, 125)
+      doc.text(`Updated: ${this.acctReq.updated}`, 10, 130)
+      doc.text(`Created: ${this.acctReq.created}`, 10, 135)
+      doc.text(`Requester: ${this.acctReq.requester}`, 10, 140)
+
+
+      doc.addPage()
+
+      doc.setFontSize(12)
+      doc.text(`Account Tracker: Active Directory`, 10, 10)
+
+      doc.setFontSize(8)
+      doc.text(`sAMAccountName: ${this.activeDirectory.sAMAccountName}`, 10, 15)
+      doc.text(`distinguishedName: ${this.activeDirectory.distinguishedName}`, 10, 20)
+      doc.text(`givenName: ${this.activeDirectory.givenName}`, 10, 25)
+      doc.text(`sn: ${this.activeDirectory.sn}`, 10, 30)
+      doc.text(`serialNumber (Account Request ID): ${this.activeDirectory.serialNumber}`, 10, 35)
+      doc.text(`userPrincipalName: ${this.activeDirectory.userPrincipalName}`, 10, 40)
+      doc.text(`countryCode: ${this.activeDirectory.countryCode}`, 10, 45)
+      doc.text(`mail: ${this.activeDirectory.mail}`, 10, 50)
+      doc.text(`displayName: ${this.activeDirectory.displayName}`, 10, 55)
+      doc.text(`description: ${this.activeDirectory.description}`, 10, 60)
+      doc.text(`telephoneNumber: ${this.activeDirectory.telephoneNumber}`, 10, 65)
+      doc.text(`pager: ${this.activeDirectory.pager}`, 10, 70)
+      doc.text(`facsimileTelephoneNumber: ${this.activeDirectory.facsimileTelephoneNumber}`, 10, 75)
+      doc.text(`info: ${this.activeDirectory.info}`, 10, 80)
+      doc.text(`physicalDeliveryOfficeName: ${this.activeDirectory.physicalDeliveryOfficeName}`, 10, 85)
+      doc.text(`title: ${this.activeDirectory.title}`, 10, 90)
+      doc.text(`department: ${this.activeDirectory.department}`, 10, 95)
+      doc.text(`uid: ${this.activeDirectory.uid}`, 10, 100)
+      doc.text(`employeeID: ${this.activeDirectory.employeeID}`, 10, 105)
+      doc.text(`employeeNumber: ${this.activeDirectory.employeeNumber}`, 10, 110)
+      doc.text(`userAccountControl: ${this.activeDirectory.userAccountControl}`, 10, 115)
+      doc.text(`enabled: ${this.activeDirectory.enabled}`, 10, 120)
+
+      doc.save(`${name}.pdf`)
+    },
     namedServices() {
       let attachedServices = JSON.parse(this.acctReq.requested_services);
       var results = this.services.filter((s) => {
@@ -773,7 +856,7 @@ export default {
 
 <style lang="scss" scoped>
   $image-left-margin: 40px;
-  $image-width-height: 130px;
+  $image-width-height: 150px;
 
   .back-button {
     margin: 0 0 20px 0;
@@ -951,7 +1034,9 @@ export default {
 
         .left {
           margin: 0 $image-left-margin 0 0;
-          justify-content: center;
+          flex-wrap: wrap;
+          display: flex;
+          flex-direction: column;
         }
 
         .right {
@@ -972,7 +1057,8 @@ export default {
     height: $image-width-height;
   }
 
-  .image-download {
+  .download {
+    justify-content: left;
     background-color: $text-color;
     color: white;
     margin: 0 0 10px 0;
