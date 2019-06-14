@@ -416,7 +416,8 @@ export default {
   }
 
   .scroller {
-    height: 100%;
+    overflow: auto;
+    height: calc(100vw - 400px);
   }
 
   .viewADUserModal {
