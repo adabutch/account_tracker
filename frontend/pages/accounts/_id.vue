@@ -12,7 +12,7 @@
     </fn1-button>
 
     <fn1-tabs v-if="acctReq">
-      <fn1-tab name="Account" :selected="true">
+      <fn1-tab name="Account Request" :selected="true">
         <div class="left" v-if="acctReq.cropped_image">
           <div class="profile-image">
             <img :src="acctReq.cropped_image" :alt="acctReq.first_name + ' ' + acctReq.last_name">
@@ -186,6 +186,209 @@
         </div>
       </fn1-tab>
 
+      <fn1-tab name="Active Directory" v-if="activeDirectory">
+        <div class="title-row">
+          <h4><strong>Active Directory Account Status:</strong>&nbsp;</h4>
+
+          <fn1-badge :class="[
+            {'enabled': activeDirectory.enabled,
+             'disabled': !activeDirectory.enabled}]">
+
+            <template v-if="activeDirectory.enabled">
+              enabled
+            </template>
+
+            <template v-if="!activeDirectory.enabled">
+              disabled
+            </template>
+          </fn1-badge>
+        </div>
+
+        <div class="account-fields">
+          <div class="one">
+            <template v-if="activeDirectory.sAMAccountName">
+              <fn1-input v-model="activeDirectory.sAMAccountName"
+                         label="sAMAccountName"
+                         name="sAMAccountName"
+                         id="sAMAccountName"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.distinguishedName">
+              <fn1-input v-model="activeDirectory.distinguishedName"
+                         label="distinguishedName"
+                         name="distinguishedName"
+                         id="distinguishedName"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.givenName">
+              <fn1-input v-model="activeDirectory.givenName"
+                         label="givenName"
+                         name="givenName"
+                         id="givenName"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.sn">
+              <fn1-input v-model="activeDirectory.sn"
+                         label="sn"
+                         name="sn"
+                         id="sn"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.serialNumber">
+              <fn1-input v-model="activeDirectory.serialNumber"
+                         label="serialNumber"
+                         name="serialNumber"
+                         id="serialNumber"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.userPrincipalName">
+              <fn1-input v-model="activeDirectory.userPrincipalName"
+                         label="userPrincipalName"
+                         name="userPrincipalName"
+                         id="userPrincipalName"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.countryCode">
+              <fn1-input v-model="activeDirectory.countryCode"
+                         label="countryCode"
+                         name="countryCode"
+                         id="countryCode"
+                         disabled />
+            </template>
+          </div>
+
+          <div class="two">
+            <template v-if="activeDirectory.mail">
+              <fn1-input v-model="activeDirectory.mail"
+                         label="mail"
+                         name="mail"
+                         id="mail"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.displayName">
+              <fn1-input v-model="activeDirectory.displayName"
+                         label="displayName"
+                         name="displayName"
+                         id="displayName"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.description">
+              <fn1-input v-model="activeDirectory.description"
+                         label="description"
+                         name="description"
+                         id="description"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.displayName">
+              <fn1-input v-model="activeDirectory.displayName"
+                         label="Name"
+                         name="displayName"
+                         id="displayName"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.telephoneNumber">
+              <fn1-input v-model="activeDirectory.telephoneNumber"
+                         label="telephoneNumber"
+                         name="telephoneNumber"
+                         id="telephoneNumber"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.pager">
+              <fn1-input v-model="activeDirectory.pager"
+                         label="pager"
+                         name="pager"
+                         id="pager"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.facsimileTelephoneNumber">
+              <fn1-input v-model="activeDirectory.facsimileTelephoneNumber"
+                         label="facsimileTelephoneNumber"
+                         name="facsimileTelephoneNumber"
+                         id="facsimileTelephoneNumber"
+                         disabled />
+            </template>
+          </div>
+
+          <div class="three">
+            <template v-if="activeDirectory.info">
+              <fn1-input v-model="activeDirectory.info"
+                         label="info"
+                         name="info"
+                         id="info"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.physicalDeliveryOfficeName">
+              <fn1-input v-model="activeDirectory.physicalDeliveryOfficeName"
+                         label="physicalDeliveryOfficeName"
+                         name="physicalDeliveryOfficeName"
+                         id="physicalDeliveryOfficeName"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.title">
+              <fn1-input v-model="activeDirectory.title"
+                         label="title"
+                         name="title"
+                         id="title"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.department">
+              <fn1-input v-model="activeDirectory.department"
+                         label="department"
+                         name="department"
+                         id="department"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.uid">
+              <fn1-input v-model="activeDirectory.uid"
+                         label="uid"
+                         name="uid"
+                         id="uid"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.employeeID">
+              <fn1-input v-model="activeDirectory.employeeID"
+                         label="employeeID"
+                         name="employeeID"
+                         id="employeeID"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.employeeNumber">
+              <fn1-input v-model="activeDirectory.employeeNumber"
+                         label="employeeNumber"
+                         name="employeeNumber"
+                         id="employeeNumber"
+                         disabled />
+            </template>
+
+            <template v-if="activeDirectory.userAccountControl">
+              <fn1-input v-model="activeDirectory.userAccountControl"
+                         label="userAccountControl"
+                         name="userAccountControl"
+                         id="userAccountControl"
+                         disabled />
+            </template>
+          </div>
+        </div>
+      </fn1-tab>
+
       <fn1-tab name="Services" v-if="!acctReqIsPending">
         <div class="title-row">
           <h4><strong>Service Profiles</strong> associated with this <strong>Account Request</strong>.</h4>
@@ -343,6 +546,18 @@ export default {
     this.getAccountRequestByID(this.$route.params.id)
     .then((resolve) => {
       this.acctReq = resolve;
+
+      this.getActiveDirectoryUserByID(this.$route.params.id)
+      .then((resolve) => {
+        this.activeDirectory = resolve
+        console.log(`%c getActiveDirectoryUserByID 👌 `, this.consoleLog.success);
+      })
+      .catch((reject) => {
+        console.log(`%c getActiveDirectoryUserByID 🛑 `,
+                    this.consoleLog.error,
+                    `\n\n ${reject} \n\n`);
+      })
+
       this.loadData();
       console.log(`%c accountRequestbyID 👌 `, this.consoleLog.success);
     })
@@ -366,6 +581,7 @@ export default {
   data() {
     return {
       acctReq:          null,
+      activeDirectory:  null,
       serviceDetails:   [],
       servicesStatus:   [],
       acctReqActions:   [],
@@ -374,6 +590,7 @@ export default {
   },
   computed: {
     ...mapFields([
+      'directoryStatuses',
       'paths',
       'auth.authLevel',
       'auth.authUser',

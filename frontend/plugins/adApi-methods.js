@@ -26,6 +26,27 @@ Vue.mixin({
         .then(res => resolve(res.data))
         .catch(e  => reject(e));
       })
-    }
+    },
+    /**
+     * A Promise for an Account Request
+     * by ID
+     *
+     * @promise     getActiveDirectoryUserByID
+     * @param       { Number } id - Active Directory Serial Number
+     *                         (Account Request ID)
+     * @resolve     { Object }
+     * @reject      { Error }
+     * @return      { Promise <Object> } Returns the Active Directory
+     *                                   user Object.
+     *
+     */
+    getActiveDirectoryUserByID(id) {
+      return new Promise((resolve, reject) => {
+        this.$axios
+        .get(`${process.env.adApi}${id}/`)
+        .then(res => resolve(res.data[0]))
+        .catch(e =>  reject(e))
+      })
+    },
   }
 })
