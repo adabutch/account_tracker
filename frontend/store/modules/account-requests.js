@@ -7,7 +7,7 @@ export const accountRequestsState = () => ({
     pending:        [],
     inProgress:     [],
     approved:       [],
-    completed:      [],
+    active:         [],
     inactive:       [],
     denied:         [],
   },
@@ -33,8 +33,8 @@ const mutations = {
   ACCOUNT_REQUESTS_APPROVED(state, payload) {
     state.accountRequests.approved = payload
   },
-  ACCOUNT_REQUESTS_COMPLETED(state, payload) {
-    state.accountRequests.completed = payload
+  ACCOUNT_REQUESTS_ACTIVE(state, payload) {
+    state.accountRequests.active = payload
   },
   ACCOUNT_REQUESTS_INACTIVE(state, payload) {
     state.accountRequests.inactive = payload
@@ -57,8 +57,8 @@ const actions = {
   accountRequestsApproved(context, payload) {
     context.commit('ACCOUNT_REQUESTS_APPROVED', payload)
   },
-  accountRequestsCompleted(context, payload) {
-    context.commit('ACCOUNT_REQUESTS_COMPLETED', payload)
+  accountRequestsActive(context, payload) {
+    context.commit('ACCOUNT_REQUESTS_ACTIVE', payload)
   },
   accountRequestsInactive(context, payload) {
     context.commit('ACCOUNT_REQUESTS_INACTIVE', payload)

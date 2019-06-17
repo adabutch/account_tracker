@@ -29,10 +29,10 @@ export const defaultState = () => ({
     regular:        4,
     support:        5,
   },
-  startDateFormat:  "MMMM Do, YYYY",
-  serviceStatuses:  ['active','inactive'],
-  directoryStatuses: ['enabled','disabled'],
-  requestStatuses:  ['pending','in-progress','approved','completed','inactive','denied'],
+  startDateFormat:   "MMMM Do, YYYY",
+  serviceStatuses:   ['active','inactive'],
+  directoryStatuses: ['active','inactive'],
+  requestStatuses:   ['pending','in-progress','approved','active','inactive','denied'],
   paths: {
     createAccountRequest: '/create/',
     accounts:       '/accounts/'

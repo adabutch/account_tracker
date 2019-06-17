@@ -648,7 +648,7 @@ export default {
       'acctReqs.accountRequests.pending',
       'acctReqs.accountRequests.inProgress',
       'acctReqs.accountRequests.approved',
-      'acctReqs.accountRequests.completed',
+      'acctReqs.accountRequests.active',
       'acctReqs.accountRequests.inactive',
       'acctReqs.accountRequests.denied',
       'auth.authUser',

@@ -73,14 +73,14 @@ Vue.mixin({
           .catch((e) => reject(`Approved Account Requests:: ${e}`))
         });
 
-        let completedReqs = new Promise((resolve, reject) => {
-          this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=completed`)
+        let activeReqs = new Promise((resolve, reject) => {
+          this.$axios.get(`${process.env.api}${process.env.accountRequest}?limit=1000&request_status=active`)
           .then((res) => {
             resolve(
-              this.$store.dispatch('acctReqs/accountRequestsCompleted', res.data.results)
+              this.$store.dispatch('acctReqs/accountRequestsActive', res.data.results)
             )
           })
-          .catch((e) => reject(`Completed Account Requests:: ${e}`))
+          .catch((e) => reject(`Active Account Requests:: ${e}`))
         });
 
         let inActiveReqs = new Promise((resolve, reject) => {
@@ -107,7 +107,7 @@ Vue.mixin({
           [inProgressReqs,
            pendingReqs,
            approvedReqs,
-           completedReqs,
+           activeReqs,
            inActiveReqs,
            deniedReqs]
         )

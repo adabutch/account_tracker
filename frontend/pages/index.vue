@@ -129,12 +129,14 @@
             <fn1-button @click.native="goCreateAccountRequest">New Account Request</fn1-button>
           </div>
 
+          <!-- {{filteredADResults}} -->
+
           <DynamicScroller
-            v-if="!authLevel.regular"
+            v-if="filteredADResults.length && !authLevel.regular"
             :items="filteredADResults"
             :min-item-size="64"
             :prerender="500"
-            key-field="sAMAccountName"
+            key-field="uniqueIdentifier"
             class="scroller">
 
             <template v-slot="{ item, index, active }">
@@ -143,11 +145,10 @@
                 :item="item"
                 :active="active"
                 :size-dependencies="[
-                  item.givenName,
-                  item.sn,
-                  item.mail,
-                  item.title,
-                  item.department
+                  item.givenName, item.sn,
+                  item.mail, item.title,
+                  item.department, item.serialNumber,
+                  item.enabled, item.userAccountControl
                 ]">
 
                 <div :class="['result directory',
@@ -309,24 +310,16 @@ export default {
       if(this.adDataSearch.length) {
         return this.removeActiveDirectoryNulls
         .filter(user => {
-          let sAMAccountName = user.sAMAccountName.toLowerCase(),
-              firstName      = user.givenName.toLowerCase(),
+          let firstName      = user.givenName.toLowerCase(),
               lastName       = user.sn.toLowerCase(),
-              fullName       = user.displayName.toLowerCase(),
               jobTitle       = user.title.toLowerCase(),
-              department     = user.department.toLowerCase(),
-              uid            = user.uid.toLowerCase(),
-              employeeID     = user.employeeID.toLowerCase();
+              department     = user.department.toLowerCase();
 
 
-          return sAMAccountName.includes(this.adDataSearch.toLowerCase()) ||
-                 firstName.includes(this.adDataSearch.toLowerCase()) ||
+          return firstName.includes(this.adDataSearch.toLowerCase()) ||
                  lastName.includes(this.adDataSearch.toLowerCase()) ||
-                 fullName.includes(this.adDataSearch.toLowerCase()) ||
                  jobTitle.includes(this.adDataSearch.toLowerCase()) ||
-                 department.includes(this.adDataSearch.toLowerCase()) ||
-                 uid.includes(this.adDataSearch.toLowerCase()) ||
-                 employeeID.includes(this.adDataSearch.toLowerCase())
+                 department.includes(this.adDataSearch.toLowerCase())
         })
         .sort((a, b) => a.sn.localeCompare(b.sn))
         .sort((a, b) => b.enabled-a.enabled)
@@ -417,7 +410,10 @@ export default {
 
   .scroller {
     overflow: auto;
-    height: calc(100vw - 400px);
+    height: 100vw;
+    // height: calc( 100% - 340px);
+    border-bottom-left-radius: ($radius-default * 2);
+    border-bottom-right-radius: ($radius-default * 2);
   }
 
   .viewADUserModal {
@@ -440,7 +436,7 @@ export default {
 
   .results-wrapper {
     width: 100%;
-    height: calc(100vh - 320px);
+    height: calc(100vh - 340px);
     position: fixed;
     overflow-y: scroll;
     top: 324px;
@@ -448,6 +444,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+
 
     .status-legend {
       position: fixed;
@@ -528,6 +525,7 @@ export default {
     padding: 15px 20px;
     display: flex;
     flex-wrap: wrap;
+    border-right: 1px solid darken($color-grey-lighter, 7%);
     border-bottom: 1px solid darken($color-grey-lighter, 7%);
     border-left: 10px solid;
 
@@ -544,7 +542,8 @@ export default {
     }
 
     &.completed,
-    &.enabled {
+    &.enabled,
+    &.active {
       border-left-color: $color-green;
     }
 
@@ -558,6 +557,11 @@ export default {
     }
 
     &.requests {
+      &:last-of-type {
+        border-bottom-left-radius: ($radius-default * 2);
+        border-bottom-right-radius: ($radius-default * 2);
+      }
+
       &:hover {
         background-color: rgba(255, 255, 255, 15%);
       }

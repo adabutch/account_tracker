@@ -312,7 +312,7 @@ export default {
       if(this.stepActive === 1){
         let userCreationFirstName = this.first,
             userCreationLastName  = this.last,
-            masterAR = [...this.accountRequests.approved,...this.accountRequests.completed,...this.accountRequests.denied,...this.accountRequests.inProgress,...this.accountRequests.inactive,...this.accountRequests.pending];
+            masterAR = [...this.accountRequests.approved,...this.accountRequests.active,...this.accountRequests.denied,...this.accountRequests.inProgress,...this.accountRequests.inactive,...this.accountRequests.pending];
 
         this.existingARMatches = masterAR.filter((entry) => {
           return entry.first_name.toLowerCase() === userCreationFirstName.toLowerCase() &&
