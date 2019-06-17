@@ -145,7 +145,7 @@
                 :size-dependencies="[
                   item.givenName,
                   item.sn,
-                  item.userPrincipalName,
+                  item.mail,
                   item.title,
                   item.department
                 ]">
@@ -156,7 +156,7 @@
 
                   <div>
                     <p>{{item.givenName}} {{item.sn}}</p>
-                    <p>{{item.userPrincipalName}}</p>
+                    <p>{{item.mail}}</p>
                   </div>
 
                   <div>
