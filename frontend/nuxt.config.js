@@ -4,17 +4,11 @@ require('dotenv').config()
 module.exports = {
   mode: 'universal',
 
-  // buildDir: 'nuxt-dist',
-
   dev:  (process.env.NODE_ENV !== 'production'),
 
   router: {
     base: '/frontend/'
   },
-
-  // build: {
-  //   publicPath: '/frontend/'
-  // },
 
   head: {
     title: pkg.prettyName,
@@ -49,7 +43,8 @@ module.exports = {
     managerService: process.env.TT_API_MANAGER_SERVICE  || `ManagerService`,
 
     adApi:          process.env.AD_API || `https://dhcp-vm-218.bloomington.in.gov:5004/api/NovellDirectory/`,
-    allUsers:       process.env.AD_API_ALL_USERS || `*`
+    allUsers:       process.env.AD_API_ALL_USERS || `*`,
+    userAttribute:  process.env.AD_API_USER_ATTRIBUTE || `searchByAttr?attribute=`
   },
 
   loading: { color: '#fff' },

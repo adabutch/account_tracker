@@ -137,9 +137,13 @@ Vue.mixin({
     getAccountRequestByID(id) {
       return new Promise((resolve, reject) => {
         this.$axios
-        .get(`${process.env.api}${process.env.accountRequest}${id}/`)
+        .get(`${process.env.api}${process.env.accountRequest}${id}/`, {
+          validateStatus: (status) => {
+            return status < 500;
+          }
+        })
         .then(res => resolve(res.data))
-        .catch(e =>  reject(e))
+        .catch(e  =>  reject(e))
       })
     },
     /**

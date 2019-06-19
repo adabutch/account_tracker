@@ -11,8 +11,14 @@
       back
     </fn1-button>
 
-    <fn1-tabs v-if="acctReq">
-      <fn1-tab name="Account Request" :selected="true">
+    <template v-if="mountedDataComplete && !validAcctReq && activeDirectory == null">
+      <p>Sorry, no results.</p>
+    </template>
+
+    <fn1-tabs v-if="acctReq || activeDirectory">
+      <fn1-tab name="Account Request"
+               :selected="validAcctReq"
+               v-if="validAcctReq">
         <div class="left" v-if="acctReq.cropped_image">
           <div class="profile-image">
             <img :src="acctReq.cropped_image" :alt="acctReq.first_name + ' ' + acctReq.last_name">
@@ -195,7 +201,9 @@
         </div>
       </fn1-tab>
 
-      <fn1-tab name="Active Directory" v-if="activeDirectory">
+      <fn1-tab name="Active Directory"
+               :selected="!validAcctReq"
+               v-if="activeDirectory">
         <div class="title-row">
           <h4><strong>Active Directory Account Status:</strong>&nbsp;</h4>
 
@@ -398,7 +406,8 @@
         </div>
       </fn1-tab>
 
-      <fn1-tab name="Services" v-if="!acctReqIsPending">
+      <fn1-tab name="Services"
+               v-if="validAcctReq && !acctReqIsPending">
         <div class="title-row">
           <h4><strong>Service Profiles</strong> associated with this <strong>Account Request</strong>.</h4>
 
@@ -486,7 +495,8 @@
         </table>
       </fn1-tab>
 
-      <fn1-tab name="Extras" v-if="acctReq.dynamic_options.length > 3">
+      <fn1-tab name="Extras"
+               v-if="validAcctReq && acctReq.dynamic_options.length > 3">
         <div class="title-row">
           <h4><strong>Extra Q&amp;A</strong> associated with this <strong>Account Request</strong>.</h4>
         </div>
@@ -496,7 +506,8 @@
         </p><br>
       </fn1-tab>
 
-      <fn1-tab name="History">
+      <fn1-tab name="History"
+               v-if="validAcctReq">
         <div class="title-row">
           <h4><strong>Action History</strong> associated with this <strong>Account Request</strong>.</h4>
         </div>
@@ -540,9 +551,6 @@
 <script>
 import FileSaver,
        { saveAs }      from 'file-saver'
-
-// import jsPDF           from 'jspdf'
-
 import { mapFields }   from 'vuex-map-fields'
 
 import exampleSelect   from '~/components/exampleSelect'
@@ -554,36 +562,39 @@ export default {
     return !isNaN(+params.id)
   },
   mounted(context) {
+    this.getActiveDirectoryUserByAttribute('serialNumber', this.$route.params.id)
+    .then((res) => {
+      this.activeDirectory = res;
+      this.mountComplete.at = true;
+      console.log(`%c getActiveDirectoryUserByAttribute 👌 `, this.consoleLog.success);
+    })
+    .catch((e)  => {
+      console.log(`%c getActiveDirectoryUserByAttribute 🛑 `,
+                  this.consoleLog.error,
+                  `\n\n ${e} \n\n`);
+    });
+
     this.getAccountRequestByID(this.$route.params.id)
-    .then((resolve) => {
-      this.acctReq = resolve;
-
-      this.getActiveDirectoryUserByID(this.$route.params.id)
-      .then((resolve) => {
-        this.activeDirectory = resolve
-        console.log(`%c getActiveDirectoryUserByID 👌 `, this.consoleLog.success);
-      })
-      .catch((reject) => {
-        console.log(`%c getActiveDirectoryUserByID 🛑 `,
-                    this.consoleLog.error,
-                    `\n\n ${reject} \n\n`);
-      })
-
-      this.loadData();
+    .then((res) => {
+      this.acctReq = res;
+      this.mountComplete.ad = true;
+      if(this.acctReq != null) {
+        this.loadData();
+      }
       console.log(`%c accountRequestbyID 👌 `, this.consoleLog.success);
     })
-    .catch((reject) => {
+    .catch((e) => {
       console.log(`%c accountRequestbyID 🛑 `,
                     this.consoleLog.error,
-                    `\n\n ${reject} \n\n`);
+                    `\n\n ${e} \n\n`);
     });
   },
   updated() {
-    if(this.acctReq){
-      if(this.acctReqIsPending && !this.authLevel.admin) {
-        this.$router.push({ path: this.paths.accounts });
-      }
-    }
+    // if(this.acctReq){
+    //   if(this.acctReqIsPending && !this.authLevel.admin) {
+    //     this.$router.push({ path: this.paths.accounts });
+    //   }
+    // }
   },
   components: {
     exampleSelect,
@@ -591,6 +602,10 @@ export default {
   },
   data() {
     return {
+      mountComplete:    {
+        ad:             false,
+        at:             false,
+      },
       acctReq:          null,
       activeDirectory:  null,
       serviceDetails:   [],
@@ -610,6 +625,20 @@ export default {
       'requestStatuses',
       'consoleLog'
     ]),
+    mountedDataComplete() {
+      if(this.mountComplete.ad && this.mountComplete.at) {
+        return true
+      }
+    },
+    validAcctReq() {
+      if(this.acctReq) {
+        if(this.acctReq.detail == 'Not found.') {
+          return false
+        } else {
+          return true
+        }
+      }
+    },
     acctReqIsPending() {
       if(this.acctReq){
         let arStatus  = this.acctReq.request_status,
@@ -621,26 +650,30 @@ export default {
       }
     },
     historyByUpdated() {
-      return this.acctReqActions.sort(
+      if(this.acctReq){
+        return this.acctReqActions.sort(
         (a, b) => new Date(b.updated) - new Date(a.updated)
         );
+      }
     },
     usersServices() {
-      let masterServices = [];
-      if(this.serviceDetails && this.servicesStatus) {
-        this.serviceDetails.forEach((item, i) => {
-          this.servicesStatus.forEach((s, i) => {
-            if(item.id === s.service) {
-              delete item.id
-              delete item.created
-              delete item.updated
-              masterServices.push({...s,...item})
-            }
-          })
-        });
+      if(this.acctReq) {
+        let masterServices = [];
+        if(this.serviceDetails && this.servicesStatus) {
+          this.serviceDetails.forEach((item, i) => {
+            this.servicesStatus.forEach((s, i) => {
+              if(item.id === s.service) {
+                delete item.id
+                delete item.created
+                delete item.updated
+                masterServices.push({...s,...item})
+              }
+            })
+          });
+        }
+        masterServices.sort((a,b) => new Date(b.updated) - new Date(a.updated))
+        return masterServices;
       }
-      masterServices.sort((a,b) => new Date(b.updated) - new Date(a.updated))
-      return masterServices;
     },
   },
   methods: {
@@ -652,42 +685,44 @@ export default {
      * an Account Request page based on URL param ID
      */
     loadData() {
-      this.getServices(this.apiLimit)
-      .then((resolve) => {
-        console.log(`%c getServices 👌 `, this.consoleLog.success);
-        this.$store.dispatch('services/setServices', resolve);
-        this.namedServices();
-      })
-      .catch((reject) => {
-        console.log(`%c getServices 🛑 `,
-                      this.consoleLog.error,
-                      `\n\n ${reject} \n\n`);
-      });
+      if(this.acctReq) {
+        this.getServices(this.apiLimit)
+        .then((resolve) => {
+          console.log(`%c getServices 👌 `, this.consoleLog.success);
+          this.$store.dispatch('services/setServices', resolve);
+          this.namedServices();
+        })
+        .catch((reject) => {
+          console.log(`%c getServices 🛑 `,
+                        this.consoleLog.error,
+                        `\n\n ${reject} \n\n`);
+        });
 
 
 
-      this.getServiceReqsByAcctReqId(this.$route.params.id, this.apiLimit)
-      .then((resolve) => {
-        this.servicesStatus = resolve;
-        console.log(`%c getServiceReqsByAcctReqId 👌 `, this.consoleLog.success);
-      })
-      .catch((reject) => {
-        console.log(`%c getServiceReqsByAcctReqId 🛑 `,
-                      this.consoleLog.error,
-                      `\n\n ${reject} \n\n`);
-      });
+        this.getServiceReqsByAcctReqId(this.$route.params.id, this.apiLimit)
+        .then((resolve) => {
+          this.servicesStatus = resolve;
+          console.log(`%c getServiceReqsByAcctReqId 👌 `, this.consoleLog.success);
+        })
+        .catch((reject) => {
+          console.log(`%c getServiceReqsByAcctReqId 🛑 `,
+                        this.consoleLog.error,
+                        `\n\n ${reject} \n\n`);
+        });
 
-      this.getActionsByAcctReqId(this.$route.params.id, this.apiLimit)
-      .then((resolve) => {
-        console.log(`%c getActionsByAcctReqId 👌 `, this.consoleLog.success);
-        this.acctReqActions = resolve;
-        this.usersByIds();
-      })
-      .catch((reject) => {
-        console.log(`%c getActionsByAcctReqId 🛑 `,
-                      this.consoleLog.error,
-                      `\n\n ${reject} \n\n`);
-      });
+        this.getActionsByAcctReqId(this.$route.params.id, this.apiLimit)
+        .then((resolve) => {
+          console.log(`%c getActionsByAcctReqId 👌 `, this.consoleLog.success);
+          this.acctReqActions = resolve;
+          this.usersByIds();
+        })
+        .catch((reject) => {
+          console.log(`%c getActionsByAcctReqId 🛑 `,
+                        this.consoleLog.error,
+                        `\n\n ${reject} \n\n`);
+        });
+      }
     },
     /**
      * Changes the Request Status of a Service Request,
@@ -843,12 +878,14 @@ export default {
       doc.save(`${name}.pdf`)
     },
     namedServices() {
-      let attachedServices = JSON.parse(this.acctReq.requested_services);
-      var results = this.services.filter((s) => {
-        return attachedServices.includes(s.id);
-      });
-      this.serviceDetails = results;
-      this.usersServices;
+      if(this.acctReq) {
+        let attachedServices = JSON.parse(this.acctReq.requested_services);
+        var results = this.services.filter((s) => {
+          return attachedServices.includes(s.id);
+        });
+        this.serviceDetails = results;
+        this.usersServices;
+      }
     },
   },
 }

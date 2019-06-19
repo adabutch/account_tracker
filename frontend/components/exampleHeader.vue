@@ -84,7 +84,8 @@ export default {
      * State which tab is active when initiated (using name of the component).
      */
     active: {
-      required: true,
+      required: false,
+      default: null,
       type: String,
     },
     /**

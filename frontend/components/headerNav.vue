@@ -1,7 +1,6 @@
 <template>
   <div class="header-wrapper" ref="headerWrapper">
     <exampleHeader
-      :active.sync="$route.name"
       :logo="{
         url:          'https://bloomington.in.gov/',
         image:        `./city-of-bloomington-logo.svg`,

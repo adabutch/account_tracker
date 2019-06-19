@@ -247,7 +247,7 @@ export default {
       }
     },
     viewADUser(user) {
-      console.dir(JSON.stringify(user));
+      this.$router.push(this.paths.accounts + user.serialNumber);
     },
     allAccountRequests() {
       if(this.authLevel.regular || this.authLevel.support) {
