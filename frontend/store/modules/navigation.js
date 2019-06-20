@@ -9,11 +9,11 @@ export const defaultNavState = () => ({
   },
   nav: {
     admin: [
-      { name: 'Search',
-        href: `${process.env.FE_BASE}search`
-      },
       { name: 'Accounts',
         href: `${process.env.FE_BASE}accounts`
+      },
+      { name: 'Search',
+        href: `${process.env.FE_BASE}search`
       },
       { name: 'Service Requests',
         href: `${process.env.FE_BASE}service-requests`
@@ -26,19 +26,19 @@ export const defaultNavState = () => ({
       },
     ],
     regular: [
+      { name: 'Accounts',
+        href: `${process.env.FE_BASE}accounts`
+      },
       { name: 'Search',
         href: `${process.env.FE_BASE}search`
       },
-      { name: 'Accounts',
-        href: `${process.env.FE_BASE}accounts`
-      }
     ],
     support: [
-      { name: 'Search',
-        href: `${process.env.FE_BASE}search`
-      },
       { name: 'Accounts',
         href: `${process.env.FE_BASE}accounts`
+      },
+      { name: 'Search',
+        href: `${process.env.FE_BASE}search`
       },
       { name: 'Service Requests',
         href: `${process.env.FE_BASE}service-requests`
