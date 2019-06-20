@@ -24,25 +24,22 @@
           </select>
         </div>
 
-        <!-- NOTE: -->
-        <!-- No current way to get a Supervisor's phone -->
-        <!-- <div class="field-group">
+        <div class="field-group" v-if="supervisor">
           <label for="supervisor-phone">Supervisor Phone</label>
           <select name="supervisor-phone"
                   id="supervisor-phone"
-                  type="select"
                   v-model="supervisorPhone">
             <option v-for="(item, index) in managersPhone"
                     :value="item.value">
               {{ item.text }}
             </option>
           </select>
-        </div> -->
+        </div>
 
         <fn1-input v-model="employeePhone"
                    label="Employee Phone (desk)"
-                   @keyup.native="yooo"
-                   @blur.native="yooo"
+                   @keyup.native="phoneNumberFormat"
+                   @blur.native="phoneNumberFormat"
                    type="tel"
                    placeholder="123-456-7890"
                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
@@ -56,14 +53,7 @@
 
 <script>
 import {
-  mapState,
-  mapMutations,
-  mapGetters,
-  mapActions }          from 'vuex'
-import {
   mapFields }           from 'vuex-map-fields';
-
-import axios            from 'axios'
 
 import progressStepper  from '~/components/progressStepper'
 import asideComponent   from '~/components/asideComponent'
@@ -78,29 +68,48 @@ export default {
   },
   data() {
     return {
-      stepActive:   3,
-      previous:     { name: 'create-two'},
-      next:         { name: 'create-four'},
-      managers:     [],
-      phoneValue:   0,
+      stepActive:       3,
+      previous:         { name: 'create-two'},
+      next:             { name: 'create-four'},
+      managers:         [],
+      groupID:          null,
+      phoneValue:       0,
       preventIteration: false,
-      managersPhone: [
-        {"value": "123-456-7890", "text": "123-456-7890"},
-        {"value": "098-765-4321", "text": "098-765-4321"}
-      ]
+      managersPhone:    null,
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      if(this.group.id) {
-        this.getGroupManagers();
-      }
-    });
+    this.getGroupID;
   },
   watch: {
+    groupID: function(val, oldVal) {
+      if(val){
+        this.getGroupManagers()
+        .then((res) => {
+          this.managers = res;
+          console.log(`%c getGroupManagers 👌 `,
+                      this.consoleLog.success);
+        })
+        .catch((e)  => {
+          console.log(`%c getGroupManagers 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${e} \n\n`);
+        });
+      }
+    },
+    managers: function(val, oldVal) {
+      if(val || val !== oldVal) {
+        this.getManagerPhoneNumber(this.supervisor);
+      }
+    },
+    supervisor: function(val, oldVal){
+      if(val !== oldVal) {
+        this.getManagerPhoneNumber(this.supervisor);
+      }
+    }
   },
   methods: {
-    yooo(event) {
+    phoneNumberFormat(event) {
       if (['Arrow', 'Backspace', 'Shift']
          .includes(event.key)) {
           this.preventIteration = true;
@@ -118,17 +127,52 @@ export default {
       .replace(/(\d{1,3})(\d{1,3})(\d{1,4})/g, '$1-$2-$3');
     },
     getGroupManagers() {
-      axios.get(`${process.env.ttApi}${process.env.managerService}?group_id=${this.group.id}`)
-      .then((res) => {
-        this.managers = res.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+      return new Promise((resolve, reject) => {
+        this.$axios
+        .get(`${process.env.ttApi}${process.env.managerService}?group_id=${this.groupID}`)
+        .then((res) => {
+          resolve(res.data)
+        })
+        .catch((e) => {
+          reject(e)
+        })
+      });
+    },
+    emailUsername(email) {
+      return email.substring(0, email.indexOf("@"))
+    },
+    getManagerPhoneNumber(name) {
+      if((this.supervisor !== "" ) && this.managers){
+
+        let managerFilter = this.managers
+        .filter((item) =>
+          item.name === name
+        );
+
+        if(managerFilter.length) {
+          var choosenManager = this.emailUsername(managerFilter[0].email);
+        }
+
+        this.getActiveDirectoryUserByAttribute('samaccountname', choosenManager)
+        .then((res) => {
+          this.managersPhone = [{"value": res.telephoneNumber,
+                                 "text":  res.telephoneNumber}];
+
+          console.log(`%c getActiveDirectoryUserByAttribute (supervisor phone) 👌 `,
+                      this.consoleLog.success);
+        })
+        .catch((e)  => {
+          console.log(`%c getActiveDirectoryUserByAttribute (supervisor phone) 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${e} \n\n`);
+        });
+      }
     }
   },
   computed: {
     ...mapFields([
+      'consoleLog',
+      'createUser',
       'createUser.department',
       'createUser.facility',
       'createUser.division',
@@ -137,6 +181,9 @@ export default {
       'createUser.supervisorPhone',
       'createUser.employeePhone'
     ]),
+    getGroupID() {
+      return this.groupID = this.group.id;
+    },
     groupManagers() {
       let managersByGroup = [];
 
