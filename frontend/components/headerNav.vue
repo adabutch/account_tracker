@@ -3,7 +3,7 @@
     <exampleHeader
       :logo="{
         url:          'https://bloomington.in.gov/',
-        image:        `./city-of-bloomington-logo.svg`,
+        image:        `city-of-bloomington-logo.svg`,
         imageAlt:     'City of Bloomington, IN'
       }"
 
@@ -38,13 +38,7 @@ import exampleDropdown from '~/components/exampleDropdown'
 import exampleHeader   from '~/components/exampleHeader'
 
 export default {
-  created() {
-    // this.$store.dispatch("auth/resetAuthState");
-  },
   mounted(context) {
-    console.log(`%c Made with ❤️ via City of Bloomington, ITS `,
-      this.consoleLog.info)
-
     this.routeParam = this.$route.name;
 
     this.$nextTick()
@@ -60,6 +54,9 @@ export default {
                     `\n\n ${reject} \n\n`);
       })
     });
+
+    console.log(`%c Made with ❤️ via City of Bloomington, ITS `,
+                this.consoleLog.info)
   },
   components: {
     exampleDropdown,
@@ -68,29 +65,28 @@ export default {
   data() {
     return {
       routeParam:   '',
-      routes: {
-        accountReq: ['index','accounts','accounts-id','create'],
-        serviceReq: ['service-requests'],
-        services:   ['services'],
-        profiles:   ['profiles'],
-      }
     }
   },
   computed: {
     ...mapFields([
       'consoleLog',
+      'routes',
       'auth.authUser',
       'auth.authLevel',
       'auth.isAuthenticated',
       'navigation',
+      'navigation.nav',
     ]),
-
     isAccountRequestRoute() {
       if(this.routes.accountReq.includes(this.routeParam))
         return true;
     },
     isServiceRequestRoute() {
       if(this.routes.serviceReq.includes(this.routeParam))
+        return true;
+    },
+    isSearchRoute() {
+      if(this.routes.search.includes(this.routeParam))
         return true;
     },
     isServicesRoute() {
@@ -104,26 +100,23 @@ export default {
   },
   methods: {
     navItems() {
-      if(this.authLevel.admin) {
-        return this.navigation.nav.admin
-      } else if (this.authLevel.regular) {
-        return this.navigation.nav.regular
-      } else if (this.authLevel.support) {
-        return this.navigation.nav.support
+      switch (true) {
+        case this.authLevel.admin:
+          return this.nav.admin
+          break;
+        case this.authLevel.support:
+          return this.nav.support
+          break;
+        case this.authLevel.regular:
+          return this.nav.regular
+          break;
+        default:
+          return this.nav.regular
+          break;
       }
     },
     subNavItems() {
-      if(this.isAccountRequestRoute) {
-        if(this.authLevel.admin) {
-          return this.navigation.subNav.accountRequest.admin;
-        } else if(this.authLevel.regular) {
-          return this.navigation.subNav.accountRequest.regular;
-        } else if(this.authLevel.support) {
-          return this.navigation.subNav.accountRequest.support;
-        }
-      } else {
-        return [{}]
-      }
+      return []
     },
     logout() {
       this.resetGlobalStore();

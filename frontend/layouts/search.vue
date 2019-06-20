@@ -26,7 +26,7 @@ export default {
   /deep/ .page-wrapper {
     background: $color-grey-lighter;
     position: fixed;
-    top: 113px;
+    top: 99px;
     padding: 0;
     height: 100vh;
     width: 100%;

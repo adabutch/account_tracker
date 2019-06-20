@@ -5,10 +5,13 @@ import {
 export const defaultNavState = () => ({
   application: {
     name: 'Account Track',
-    url: `${process.env.FE_BASE}`,
+    url: `${process.env.FE_BASE}create`,
   },
   nav: {
     admin: [
+      { name: 'Search',
+        href: `${process.env.FE_BASE}search`
+      },
       { name: 'Accounts',
         href: `${process.env.FE_BASE}accounts`
       },
@@ -23,11 +26,17 @@ export const defaultNavState = () => ({
       },
     ],
     regular: [
+      { name: 'Search',
+        href: `${process.env.FE_BASE}search`
+      },
       { name: 'Accounts',
         href: `${process.env.FE_BASE}accounts`
       }
     ],
     support: [
+      { name: 'Search',
+        href: `${process.env.FE_BASE}search`
+      },
       { name: 'Accounts',
         href: `${process.env.FE_BASE}accounts`
       },
@@ -41,6 +50,23 @@ export const defaultNavState = () => ({
   },
   subNav: {
     accountRequest: {
+      admin: [
+        { name: 'Create Account Request',
+          href: `${process.env.FE_BASE}create`
+        }
+      ],
+      regular: [
+        { name: 'Create Account Request',
+          href: `${process.env.FE_BASE}create`
+        }
+      ],
+      support: [
+        { name: 'Create Account Request',
+          href: `${process.env.FE_BASE}create`
+        }
+      ],
+    },
+    search: {
       admin: [
         { name: 'Create Account Request',
           href: `${process.env.FE_BASE}create`

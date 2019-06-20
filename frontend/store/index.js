@@ -33,9 +33,18 @@ export const defaultState = () => ({
   serviceStatuses:   ['active','inactive'],
   directoryStatuses: ['active','inactive'],
   requestStatuses:   ['pending','in-progress','approved','active','inactive','denied'],
+  routes: {
+    accountReq: ['index','accounts','accounts-id'],
+    create:     ['create'],
+    serviceReq: ['service-requests'],
+    services:   ['services'],
+    search:     ['search'],
+    profiles:   ['profiles'],
+  },
   paths: {
-    createAccountRequest: '/create/',
-    accounts:       '/accounts/'
+    create:         '/create/',
+    accounts:       '/accounts/',
+    search:         '/search/'
   },
   consoleLog: {
     info:           ['background: rgb(30, 90, 174)',
