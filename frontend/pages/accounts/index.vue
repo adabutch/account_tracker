@@ -24,21 +24,14 @@
           </div>
         </div>
 
-        <template v-if="!newAccounts.length">
+        <template v-if="!pendingAccounts.length">
           <h1>Sorry, no results.</h1>
         </template>
 
-        <table v-if="newAccounts.length" class="fixed-header">
+        <table v-if="pendingAccounts.length" class="fixed-header">
           <caption class="sr-only">All User Requests</caption>
           <thead>
             <tr>
-              <!-- <th scope="col">
-                <input v-model="batchNewRequestApproval"
-                       id="select-all-requests"
-                       value="select-all-requests"
-                       type="checkbox"
-                       name="select-all-requests">
-              </th> -->
               <th scope="col">Status</th>
               <th scope="col">Name</th>
               <th scope="col">Dept.</th>
@@ -49,17 +42,9 @@
           </thead>
 
           <tbody>
-            <tr v-for="(item, index) in newAccounts"
+            <tr v-for="(item, index) in pendingAccounts"
                 :class="[{'active': showingUserDetails && item.id == showDetailsFor.id }]"
                 :key="index">
-              <!-- <th scope="row">
-                <input v-model="selected"
-                       :key="index"
-                       id="select-all-requests"
-                       :value="item.id"
-                       type="checkbox"
-                       name="select-all-requests">
-              </th> -->
               <th class="status">
                 <fn1-badge :class="item.request_status">
                   {{ item.request_status }}
@@ -291,12 +276,13 @@
             Approve Request
           </fn1-button>
 
-          <exampleModal ref="modal" title="Deny Account Request Confirmation"
+          <exampleModal ref="denyARModal"
+                        title="Deny: Account Request"
                         :launchButtonText="denyModalButtonText">
-            <p slot="body"><strong>Deny this Account Request?</strong></p>
+            <p slot="body">Deny this <strong>Account Request</strong>?</p>
             <ul slot="body">
               <li>
-                <span>Name:</span>-
+                <span>Name:</span>&nbsp;
                 {{showDetailsFor.first_name}}
                 {{showDetailsFor.middle_name}}
                 {{showDetailsFor.last_name}}
@@ -314,11 +300,11 @@
             </div>
 
             <fn1-button slot="footer"
-                        @click.native="confirmModal(showDetailsFor)">Confirm
+                        @click.native="confirmDenyARModal(showDetailsFor)">Confirm
             </fn1-button>
 
             <fn1-button slot="footer"
-                        @click.native="cancelModal">Cancel
+                        @click.native="cancelDenyARModal">Cancel
             </fn1-button>
           </exampleModal>
 
@@ -424,16 +410,11 @@
 
 <script>
 import {
-  createHelpers }       from 'vuex-map-fields';
+  mapFields }           from 'vuex-map-fields'
 
 import exampleSelect    from '~/components/exampleSelect'
 import exampleDropdown  from '~/components/exampleDropdown'
 import exampleModal     from '~/components/exampleModal'
-
-const { mapFields } = createHelpers({
-  getterType: `getField`,
-  mutationType: `updateField`,
-});
 
 export default {
   layout:           'accounts',
@@ -482,18 +463,16 @@ export default {
     parseExtras(extras){
       return JSON.parse(extras);
     },
-    cancelModal() {
-      this.$refs.modal.showModal = false;
+    cancelDenyARModal() {
+      this.$refs.denyARModal.showModal = false;
     },
-    confirmModal(payload) {
+    confirmDenyARModal(payload) {
       this.$axios
       .patch(`${process.env.api}${process.env.accountRequest}${payload.id}/`,{
-        "request_status": "denied",
+        "request_status": this.requestStatuses[5],
         "comment": this.denyRequestReason
       })
       .then(response => {
-        console.log(`confirmModal Denied :: `, response)
-
         this.$axios
         .post(`${process.env.api}${process.env.action}`,{
           "user":    this.authUser.id,
@@ -502,21 +481,28 @@ export default {
           "comment": this.denyRequestReason
         })
         .then(response => {
-          console.log(`ACTION AR denied :: `, response)
+          console.log(`%c Deny Account Req. (action) 👌 `,
+                      this.consoleLog.success)
         })
         .catch(e => {
-          console.log(`ACTION AR denied error :: `, e)
+          console.log(`%c  Deny Account Req. (action) 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${e} \n\n`);
         });
 
-        this.$refs.modal.showModal = false;
+        this.$refs.denyARModal.showModal = false;
         this.showDetailsFor = null;
         this.showDetailsForServices = [];
         this.denyRequestReason = "";
         this.showingUserDetails = false;
         this.getAccountRequests();
+        console.log(`%c Deny Account Req. 👌 `,
+                      this.consoleLog.success)
       })
       .catch(e => {
-        console.log(e)
+        console.log(`%c Deny Account Req. 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${e} \n\n`);
       });
     },
     showDetails(item) {
@@ -563,22 +549,24 @@ export default {
     },
     approveUserAccountRequest(payload) {
       let data = {
-        "request_status": "in-progress"
+        "request_status": this.requestStatuses[1]
       }
 
       this.$axios
       .patch(`${process.env.api}${process.env.accountRequest}${payload.id}/`, data)
       .then(response => {
+
         // note: `/inprogress/` below triggers the Service Req.
         this.$axios
         .get(`${process.env.api}${process.env.accountRequest}${payload.id}/inprogress/`)
         .then(response => {
-          console.log(`%c /inprogress/ Service Req. Kickoff 👌 `, this.consoleLog.success)
+          console.log(`%c /inprogress/ Service Req. Kickoff 👌 `,
+                      this.consoleLog.success)
         })
         .catch(e => {
           console.log(`%c /inprogress/ Service Req. Kickoff 🛑 `,
-                    this.consoleLog.error,
-                    `\n\n ${e} \n\n`);
+                      this.consoleLog.error,
+                      `\n\n ${e} \n\n`);
         });
 
         let actionData = {
@@ -591,19 +579,27 @@ export default {
         this.$axios
         .post(`${process.env.api}${process.env.action}`, actionData)
         .then(response => {
-          console.log(`ACTION AR approve :: `, response)
+          console.log(`%c Approve Account Req. (action record) 👌 `,
+                      this.consoleLog.success)
         })
         .catch(e => {
-          console.log(`ACTION AR approve error :: `, e)
+          console.log(`%c Approve Account Req. (action record) 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${e} \n\n`);
         });
 
         this.showDetailsFor = null;
         this.showDetailsForServices = [];
         this.showingUserDetails = false;
         this.getAccountRequests();
+
+        console.log(`%c Approve Account Req. (now in-progress) 👌 `,
+                      this.consoleLog.success)
       })
       .catch(e => {
-        console.log(`approveUserAccountRequest req. error :: `, e)
+        console.log(`%c Approve Account Req. (now in-progress) 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${e} \n\n`);
       })
     },
     idsToNames() {
@@ -643,6 +639,7 @@ export default {
   computed: {
     ...mapFields([
       'consoleLog',
+      'requestStatuses',
       'acctReqs',
       'acctReqs.accountRequests',
       'acctReqs.accountRequests.pending',
@@ -663,40 +660,10 @@ export default {
     pendingCount() {
       return this.inProgress.length;
     },
-    // batchPendingRequestApproval: {
-    //   get: function () {
-    //     return this.pending ? this.selected.length == this.pending.length : false;
-    //   },
-    //   set: function (value) {
-    //     var selected = [];
-
-    //     if (value) {
-    //       this.pending.forEach(function (item) {
-    //         selected.push(item.id);
-    //       });
-    //     }
-    //     this.selected = selected;
-    //   }
-    // },
-    // batchNewRequestApproval: {
-    //   get: function () {
-    //     return this.new ? this.selected.length == this.new.length : false;
-    //   },
-    //   set: function (value) {
-    //     var selected = [];
-
-    //     if (value) {
-    //       this.new.forEach(function (item) {
-    //         selected.push(item.id);
-    //       });
-    //     }
-    //     this.selected = selected;
-    //   }
-    // },
     fullName() {
       return `${user.first_name}`
     },
-    newAccounts() {
+    pendingAccounts() {
       return this.pending
       .filter(user => {
         let fullName   = user.full_name.toLowerCase(),
@@ -953,6 +920,19 @@ export default {
     }
   }
 
+  ::v-deep .modal-body {
+    ul {
+      margin: 15px 0 !important;
+      padding: 0 !important;
+
+      li,
+      span {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+    }
+  }
+
   .slideover-slide-enter-active {
     transition: all .2s ease-in-out;
   }
@@ -981,7 +961,8 @@ export default {
     width: 400px;
     background-color: lighten($text-color, 60%);
     border-left: 1px solid lighten($text-color, 50%);
-    filter: drop-shadow(10px 0 8px $text-color);
+    // `filter` below causes modal mis-alignment
+    // filter: drop-shadow(10px 0 8px $text-color);
     color: $text-color;
 
     &:after {

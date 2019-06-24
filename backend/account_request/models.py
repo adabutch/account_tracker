@@ -27,8 +27,8 @@ class AccountRequest(models.Model):
     # Ideally this would reference a User object
     supervisor = models.CharField(max_length=50)
 
-    # Leaving this as not required till we can get a way to access ...
-    supervisor_phone = models.CharField(max_length=12, blank=True, null=True)
+    # Pulled from Active Directory
+    supervisor_phone = models.CharField(max_length=12)
 
     department = models.CharField(max_length=50)
     group = models.CharField(max_length=50)
@@ -68,8 +68,7 @@ class AccountRequest(models.Model):
     # who approved the account request
     # should this simply be an action?
     # subsequent actions should be tracked in the sub-service_requests
-    # approver = models.ForeignKey(User, on_delete=models.SET_NULL,
-    #                              blank=True, null=True)
+    # approve = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     requested = models.DateTimeField(auto_now_add=True)
     # any associated logged actions could trigger an update to updated
