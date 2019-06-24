@@ -85,10 +85,13 @@
           </p>
         </fn1-alert>
 
+        <!-- {{arTabActive}} -- AR<br><br>
+        {{adTabActive}} -- AD -->
+
         <fn1-tabs>
           <fn1-tab v-if="existingARMatches.length >= 1"
                    :name="`Account Requests (${existingARMatches.length})`"
-                   :selected="existingARMatches.length >= 1 || existingADMatches.length == 0">
+                   :selected="arTabActive">
             <template v-for="r, i in existingARMatches">
               <div class="acct-req-row">
                 <div class="wrapper">
@@ -189,7 +192,7 @@
 
           <fn1-tab v-if="existingADMatches.length >= 1"
                    :name="`Active Directory (${existingADMatches.length})`"
-                   :selected="existingARMatches.length == 0 && existingADMatches.length >= 1">
+                   :selected="adTabActive">
             <template v-for="r, i in existingADMatches">
               <div class="acct-req-row">
                 <div class="wrapper">
@@ -306,6 +309,20 @@ export default {
       return this.stepActive <= this.totalSteps &&
              this.stepActive != `/create/finished`
     },
+    adTabActive() {
+      if(this.existingARMatches.length == 0) {
+        return true
+      } else {
+        return false
+      }
+    },
+    arTabActive() {
+      if(this.existingARMatches.length >= 1) {
+        return true
+      } else {
+        return false
+      }
+    },
   },
   methods: {
     checkEntries() {
@@ -313,6 +330,8 @@ export default {
         let userCreationFirstName = this.first,
             userCreationLastName  = this.last,
             masterAR = [...this.accountRequests.approved,...this.accountRequests.active,...this.accountRequests.denied,...this.accountRequests.inProgress,...this.accountRequests.inactive,...this.accountRequests.pending];
+
+        console.dir(masterAR);
 
         this.existingARMatches = masterAR.filter((entry) => {
           return entry.first_name.toLowerCase() === userCreationFirstName.toLowerCase() &&
@@ -328,6 +347,8 @@ export default {
 
         if(this.existingARMatches != 0 ||
            this.existingADMatches != 0){
+          this.arTabActive;
+          this.adTabActive;
           this.$refs.existingUserModal.showModal = true;
         } else {
 
@@ -342,6 +363,7 @@ export default {
           break;
         case 1:
           this.checkEntries();
+          this.$router.push(`/create/two`)
           break;
         case 2:
           this.checkEntries();

@@ -15,7 +15,6 @@
           <label for="supervisor">Supervisor</label>
           <select name="supervisor"
                   id="supervisor"
-                  type="select"
                   v-model="supervisor">
             <option v-for="(item, index) in groupManagers"
                     :value="item.value">
@@ -36,11 +35,11 @@
           </select>
         </div>
 
+        <!-- note: `type` prop failing -->
         <fn1-input v-model="employeePhone"
                    label="Employee Phone (desk)"
                    @keyup.native="phoneNumberFormat"
                    @blur.native="phoneNumberFormat"
-                   type="tel"
                    placeholder="123-456-7890"
                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                    maxlength="10"

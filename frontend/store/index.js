@@ -63,7 +63,18 @@ export const defaultState = () => ({
                     'color: white','display: block',
                     'border-radius: 3px',
                     'padding: 2px 0'].join(';')
-  }
+  },
+  suffixOptions: [
+    { value: 'Jr.', text: 'Jr.' },
+    { value: 'Sr.', text: 'Sr.' },
+    { value: '2nd', text: '2nd' },
+    { value: '3rd', text: '3rd' },
+    { value: 'II',  text: 'II' },
+    { value: 'III', text: 'III' },
+    { value: 'IV',  text: 'IV' },
+    { value: 'V',   text: 'V' },
+    { value: 'VI',  text: 'VI' }
+  ],
 })
 
 const state = () => defaultState();

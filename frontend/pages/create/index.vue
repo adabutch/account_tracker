@@ -18,19 +18,17 @@
           <div class="image-upload-wrapper">
             <span class="label">Profile Image</span>
             <div class="croppie-wrapper">
-              <vue-croppie
+              <no-ssr>
+                <vue-croppie
                   ref="croppieRef"
                   :enableResize="false"
                   :showZoomer="true"
                   :viewport="{ width: 180, height: 240 }"
                   :boundary="{ width: 180, height: 240 }"
                   :croppieInitialized="croppieInitialized"
-                  @result="result"
-                  @update="update">
+                  @result="result">
                 </vue-croppie>
-              <!-- <no-ssr>
-
-              </no-ssr> -->
+              </no-ssr>
             </div>
 
             <div class="image-wrapper">
@@ -89,10 +87,10 @@
 
           <div>
             <fn1-input v-model="first"
-                     label="First Name *"
-                     placeholder="First name"
-                     name="first-name"
-                     id="first-name" />
+                       label="First Name *"
+                       placeholder="First name"
+                       name="first-name"
+                       id="first-name" />
 
             <fn1-input v-model="middle"
                        label="Middle Name"
@@ -113,10 +111,10 @@
                        id="nickname" />
 
             <exampleSelect v-model="suffix"
-                          label="Suffix"
-                          name="suffix"
-                          id="suffix"
-                          :options="suffixOptions" />
+                           label="Suffix"
+                           name="suffix"
+                           id="suffix"
+                           :options="suffixOptions" />
           </div>
         </div>
       </form>
@@ -126,14 +124,7 @@
 
 <script>
 import {
-  mapState,
-  mapMutations,
-  mapGetters,
-  mapActions }          from 'vuex'
-import {
   mapFields }           from 'vuex-map-fields'
-
-import axios            from 'axios'
 
 import progressStepper  from '~/components/progressStepper'
 import asideComponent   from '~/components/asideComponent'
@@ -148,47 +139,46 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      if(this.full){
+      if(this.createUser.image.full){
         this.$refs.croppieRef.bind({
           url: this.full
         });
+      } else if(this.createUser.image.cropped) {
+        this.croppieCropped = this.cropped;
       } else {
+        this.croppieCropped = null;
         this.$refs.croppieRef.bind({
           url: this.placeholderImg
         });
       }
-      if(this.cropped != "") {
-        this.croppieCropped = this.cropped;
-      }
     });
+  },
+  updated() {
+    if(!this.createUser.image.full) {
+      this.croppieCropped = null;
+      this.$refs.croppieRef.bind({
+        url: this.placeholderImg
+      });
+    }
   },
   data() {
     return {
-      stepActive: 1,
-      next: { name: `create-two`},
-      previous: false,
-      suffixOptions: [
-        { value: 'Jr.', text: 'Jr.' },
-        { value: 'Sr.', text: 'Sr.' },
-        { value: '2nd', text: '2nd' },
-        { value: '3rd', text: '3rd' },
-        { value: 'II',  text: 'II' },
-        { value: 'III', text: 'III' },
-        { value: 'IV',  text: 'IV' },
-        { value: 'V',   text: 'V' },
-        { value: 'VI',  text: 'VI' }
-      ],
-      blob:           '',
-      placeholderImg: 'user-upload-placeholder.jpg',
-      imgOrientation: '',
-      imgOrientation2: '',
-      croppieCropped: null,
+      stepActive:       1,
+      next:             { name: `create-two`},
+      previous:         false,
+      blob:             '',
+      placeholderImg:   'user-upload-placeholder.jpg',
+      imgOrientation:   '',
+      imgOrientation2:  '',
+      croppieCropped:   null,
     }
   },
   computed: {
     ...mapFields([
       'auth.authUser',
+      'suffixOptions',
       'groupLevels',
+      'createUser',
       'createUser.name.first',
       'createUser.name.middle',
       'createUser.name.last',
@@ -200,33 +190,20 @@ export default {
   },
   methods: {
     croppieInitialized() {
-      // This method will be executed when the croppie is initialized
-      // You can use it to set the image
       this.$refs.croppieRef.bind({
         url: this.placeholderImg,
       });
-      console.log('Croppie was initialized');
     },
     crop() {
-      // let options = {
-      //   enableResize: true,
-      //   enableOrientation: true,
-      //   type:   'base64',
-      //   format: 'jpeg',
-      //   size:   { width: 1150, height: 1533 }
-      // }
-
       let options = {
         enableResize: true,
         enableOrientation: true,
-        type:   'base64',
-        format: 'jpeg',
-        size:   { width: 1150, height: 1533 }
+        type:         'base64',
+        format:       'jpeg',
+        size:         { width: 1150, height: 1533 }
       }
 
       this.$refs.croppieRef.result(options, (output) => {
-        // console.log(options);
-        // console.log(output);
         this.croppieCropped = output;
         this.cropped = output;
       });
@@ -249,9 +226,6 @@ export default {
     rotate(rotationAngle) {
       this.$refs.croppieRef.rotate(rotationAngle);
     },
-    update(val) {
-      // console.log(val);
-    },
     base64ToArrayBuffer (base64) {
         base64 = base64.replace(/^data\:([^\;]+)\;base64,/gmi, '');
         var binary_string =  window.atob(base64);
@@ -267,7 +241,7 @@ export default {
       let reader    = new FileReader();
 
       reader.onload = (e) => {
-        let img = new Image();
+        let img   = new Image();
         this.full = e.target.result;
         this.$refs.croppieRef.bind({
           url: this.full,
@@ -308,14 +282,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/css/style.scss';
   .image-upload-wrapper {
     // background-color: red;
     display: flex;
     flex-wrap: wrap;
     border-right: 1px solid lighten($text-color, 50%);
     margin: 0 40px 0 0;
-    // padding: 0 0 10px;
     align-items: flex-start;
     width: 480px;
     height: fit-content;
@@ -457,8 +429,6 @@ export default {
         @include visuallyHidden;
       }
     }
-
-
 
     .button-group {
       // background-color: red;

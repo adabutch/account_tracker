@@ -25,7 +25,7 @@
                   id="department"
                   type="select"
                   v-model="department">
-            <option v-for="(item, index) in getDepts"
+            <option v-for="(item, index) in departmentOptions"
                     :value="{id: item.value, name: item.text}">
               {{ item.text }}
             </option>
@@ -38,7 +38,7 @@
                   id="group"
                   type="select"
                   v-model="group">
-            <option v-for="(item, index) in deptGroups"
+            <option v-for="(item, index) in departmentGroupOptions"
                     :value="{id: item.value, name: item.text}">
               {{ item.text }}
             </option>
@@ -51,7 +51,7 @@
                   id="job"
                   type="select"
                   v-model="job">
-            <option v-for="(item, index) in groupJobs"
+            <option v-for="(item, index) in groupJobOptions"
                     :value="{id: item.value, name: item.text, salaryGroup: item.salaryGroup, clockInRequired: item.clockInRequired}">
               {{ item.text }} ({{item.salaryGroup}})
             </option>
@@ -73,23 +73,16 @@
 
 <script>
 import {
-  mapState,
-  mapMutations,
-  mapGetters,
-  mapActions }          from 'vuex'
-import {
   mapFields }           from 'vuex-map-fields'
 
-import axios            from 'axios'
 import moment           from 'moment'
 
 import progressStepper  from '~/components/progressStepper'
 import asideComponent   from '~/components/asideComponent'
 import exampleSelect    from '~/components/exampleSelect'
-// import Datepicker       from 'vuejs-datepicker'
 
-import flatPickr from 'vue-flatpickr-component';
-import 'flatpickr/dist/flatpickr.css';
+import flatPickr        from 'vue-flatpickr-component';
+import                       'flatpickr/dist/flatpickr.css';
 
 export default {
   layout:           'create',
@@ -104,22 +97,25 @@ export default {
     this.thursdays;
     this.fullTimeStartDays;
 
-    axios.get(`${process.env.ttApi}${process.env.deptService}`)
+    this.getDepts()
     .then((res) => {
-      this.$store.dispatch('depts/setDepartments', res.data);
+      this.$store.dispatch('depts/setDepartments', res);
+      console.log(`%c getDepts 👌 `,
+                  this.consoleLog.success)
     })
-    .catch((error) => {
-      console.log(error);
-    })
+    .catch((e)  => {
+      console.log(`%c getDepts 🛑 `,
+                  this.consoleLog.error,
+                  `\n\n ${e} \n\n`);
+    });
 
     this.$nextTick(() => {
-      console.log(`NTICK :: ${this.department.name}`);
       if(this.department.id) {
-        this.getGroups;
+        this.callGetGroups();
       }
 
       if(this.group.id) {
-        this.getJobs();
+        this.callGetJobs();
       }
     });
   },
@@ -147,8 +143,8 @@ export default {
   watch: {
     department: function(val, oldVal) {
       if(val) {
-        let newVal      = JSON.stringify(val.id);
-        let previousVal = JSON.stringify(oldVal.id);
+        let newVal      = JSON.stringify(val.id),
+            previousVal = JSON.stringify(oldVal.id);
 
         if(newVal != previousVal) {
           this.$store.dispatch('createUser/resetGroup');
@@ -157,25 +153,30 @@ export default {
           this.$store.dispatch('createUser/resetDeptExQuestions');
           this.$store.dispatch('createUser/resetGroupExQuestions');
 
-          this.getGroups;
+          this.callGetGroups();
 
-          this.getExtraDeptQuestions.then((resolve) => {
-            console.log(`dept Q resolve`, resolve);
-            let hasDeptQuestions = resolve.results[0].questions;
-            if(hasDeptQuestions != null) {
-              this.extraDeptQuestions = hasDeptQuestions;
-              this.$store.dispatch('createUser/addToTotalSteps', 5);
-            } else {
-              this.$store.dispatch('createUser/addToTotalSteps', 4);
-            }
+          this.getExtraDeptQuestions
+          .then((res) => {
+            let hasDeptQuestions = res.results[0].questions;
+            this.extraDeptQuestions = hasDeptQuestions;
+            this.$store.dispatch('createUser/addToTotalSteps', 5);
+
+            console.log(`%c getExtraDeptQuestions 👌 `,
+                      this.consoleLog.success);
+          })
+          .catch((e) => {
+            this.$store.dispatch('createUser/addToTotalSteps', 4);
+            console.log(`%c getExtraDeptQuestions 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${e} \n\n`);
           });
         }
       }
     },
     group: function(val, oldVal) {
       if(val) {
-        let newVal      = JSON.stringify(val.id);
-        let previousVal = JSON.stringify(oldVal.id);
+        let newVal      = JSON.stringify(val.id),
+            previousVal = JSON.stringify(oldVal.id);
 
         if(newVal != previousVal) {
           this.$store.dispatch('createUser/resetJob');
@@ -184,22 +185,28 @@ export default {
           this.$store.dispatch('createUser/resetRequestedServices');
           this.$store.dispatch('createUser/resetGroupExQuestions');
 
-          this.getJobs();
+          this.callGetJobs();
 
-          this.getExtraGroupQuestions.then((resolve) => {
-            console.log(`group Q resolve`, resolve);
-            let hasGroupQuestions = resolve.results[0].questions;
-            if(hasGroupQuestions != null) {
-              this.extraGroupQuestions = hasGroupQuestions;
-            }
+          this.getExtraGroupQuestions
+          .then((res) => {
+            let hasGroupQuestions = res.results[0].questions;
+            this.extraGroupQuestions = hasGroupQuestions;
+
+            console.log(`%c getExtraGroupQuestions 👌 `,
+                      this.consoleLog.success);
+          })
+          .catch((e) => {
+            console.log(`%c getExtraGroupQuestions 🛑 `,
+                      this.consoleLog.error,
+                      `\n\n ${e} \n\n`);
           });
         }
       }
     },
     job: function(val, oldVal) {
       if(val) {
-        let newVal      = JSON.stringify(val.id);
-        let previousVal = JSON.stringify(oldVal.id);
+        let newVal      = JSON.stringify(val.id),
+            previousVal = JSON.stringify(oldVal.id);
 
         if(newVal != previousVal) {
           this.$store.dispatch('createUser/resetSupervisor');
@@ -225,7 +232,7 @@ export default {
       'createUser.extraDeptQuestions',
       'createUser.extraGroupQuestions',
     ]),
-    getDepts() {
+    departmentOptions() {
       let deptSelectArray = [];
 
       let depts = this.departments.map(
@@ -267,17 +274,8 @@ export default {
 
       return facilitiesByDept;
     },
-    getGroups() {
-      axios.get(`${process.env.ttApi}${process.env.groupService}?department_id=${this.department.id}`)
-      .then((res) => {
-        console.log(`getGroups res :: `,res.data);
-        this.groups = res.data;
-      })
-      .catch((error) => {
-        console.log(`getGroups error :: `,error);
-      })
-    },
-    deptGroups() {
+
+    departmentGroupOptions () {
       let groupSelectArray = [];
 
       let groups = this.groups.map(
@@ -297,7 +295,7 @@ export default {
       });
       return groupSelectArray;
     },
-    groupJobs() {
+    groupJobOptions() {
       let jobSelectArray = [];
 
       let jobs = this.jobs.map(
@@ -330,24 +328,34 @@ export default {
       return uniqueJobs;
     },
     getExtraDeptQuestions() {
-      return new Promise((resolve) => {
-        this.$axios.get(`${process.env.api}${process.env.profile}?department_id=${this.department.id}`)
+      return new Promise((resolve, reject) => {
+        this.$axios
+        .get(`${process.env.api}${process.env.profile}?department_id=${this.department.id}`)
         .then((response) => {
-          resolve(response.data);
+          if(response.data.count >= 1) {
+            resolve(response.data);
+          } else {
+            reject('No Department Questions')
+          }
         })
         .catch((error) => {
-          console.log(`getExtraDeptQuestions error :: `, error)
+          reject('No Department Questions')
         })
       });
     },
     getExtraGroupQuestions() {
-      return new Promise((resolve) => {
-        this.$axios.get(`${process.env.api}${process.env.profile}?department_id=${this.department.id}&group_id=${this.group.id}`)
+      return new Promise((resolve, reject) => {
+        this.$axios
+        .get(`${process.env.api}${process.env.profile}?department_id=${this.department.id}&group_id=${this.group.id}`)
         .then((response) => {
-          resolve(response.data);
+          if(response.data.count >= 1) {
+            resolve(response.data);
+          } else {
+            reject('No Department Group Questions')
+          }
         })
         .catch((error) => {
-          console.log(`getExtraGroupQuestions error :: `, error)
+          reject('No Department Group Questions')
         })
       });
     },
@@ -395,24 +403,35 @@ export default {
     },
   },
   methods: {
-    ...mapActions([
-      'createUser/addToTotalSteps'
-    ]),
     customFormatter(date) {
       return moment(date).format(this.startDateFormat);
     },
-
-
-    getJobs() {
-      axios.get(`${process.env.ttApi}${process.env.jobService}?group_id=${this.group.id}`)
+    callGetGroups() {
+      this.getGroups(this.department.id)
       .then((res) => {
-        console.log(`getJobs res :: `, res.data);
-        this.jobs = res.data;
+        this.groups = res;
+        console.log(`%c getGroups 👌 `,
+                  this.consoleLog.success)
       })
-      .catch((error) => {
-        console.log(`getJobs error :: `, error);
+      .catch((e) => {
+         console.log(`%c getGroups 🛑 `,
+                  this.consoleLog.error,
+                  `\n\n ${e} \n\n`);
+      });
+    },
+    callGetJobs() {
+      this.getJobs(this.group.id)
+      .then((res) => {
+        this.jobs = res;
+        console.log(`%c getJobs 👌 `,
+                  this.consoleLog.success)
       })
-    }
+      .catch((e) => {
+         console.log(`%c getJobs 🛑 `,
+                  this.consoleLog.error,
+                  `\n\n ${e} \n\n`);
+      });
+    },
   },
 }
 </script>

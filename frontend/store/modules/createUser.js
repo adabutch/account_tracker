@@ -16,12 +16,9 @@ const defaultCUState = () => ({
   },
 
   image: {
-    full:             "",
-    cropped:          "",
+    full:             null,
+    cropped:          null,
   },
-
-  profileImage:       "",
-  profileImageCrop:   "",
 
   // Step Two
   facility:           "",
