@@ -14,13 +14,14 @@
         </h1>
 
         <exampleSelect v-model="facility"
-                        label="Facility"
-                        name="facility"
-                        id="facility"
-                        :options="deptFacilities" />
+                       :class="[{'error': facilityError}]"
+                       label="Facility *"
+                       name="facility"
+                       id="facility"
+                       :options="deptFacilities" />
 
-        <div class="field-group">
-          <label for="department">Department</label>
+        <div :class="['field-group',{'error': departmentError}]">
+          <label for="department">Department *</label>
           <select name="department"
                   id="department"
                   type="select"
@@ -32,8 +33,8 @@
           </select>
         </div>
 
-        <div class="field-group">
-          <label for="group">Group</label>
+        <div :class="['field-group',{'error': groupError}]">
+          <label for="group">Group *</label>
           <select name="group"
                   id="group"
                   type="select"
@@ -45,8 +46,8 @@
           </select>
         </div>
 
-        <div class="field-group">
-          <label for="job">Job</label>
+        <div :class="['field-group',{'error': jobError}]">
+          <label for="job">Job *</label>
           <select name="job"
                   id="job"
                   type="select"
@@ -58,8 +59,8 @@
           </select>
         </div>
 
-        <div class="field-group">
-          <label for="start-date">Start Date</label>
+        <div :class="['field-group',{'error': startDateError}]">
+          <label for="start-date">Start Date *</label>
           <flat-pickr v-model="startDate"
                       ref="datepicker"
                       :config="config"
@@ -217,6 +218,8 @@ export default {
   },
   computed: {
     ...mapFields([
+      'createUser.stepErrors.two',
+
       'startDateFormat',
       'depts.departments',
       'facilities.facilities',
@@ -232,6 +235,26 @@ export default {
       'createUser.extraDeptQuestions',
       'createUser.extraGroupQuestions',
     ]),
+    facilityError() {
+      if(this.two.errors)
+        return this.two.errors.some(i => i.facility)
+    },
+    departmentError() {
+      if(this.two.errors)
+        return this.two.errors.some(i => i.department)
+    },
+    groupError() {
+      if(this.two.errors)
+        return this.two.errors.some(i => i.group)
+    },
+    jobError() {
+      if(this.two.errors)
+        return this.two.errors.some(i => i.job)
+    },
+    startDateError() {
+      if(this.two.errors)
+        return this.two.errors.some(i => i.startDate)
+    },
     departmentOptions() {
       let deptSelectArray = [];
 
@@ -274,7 +297,6 @@ export default {
 
       return facilitiesByDept;
     },
-
     departmentGroupOptions () {
       let groupSelectArray = [];
 

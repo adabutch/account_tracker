@@ -87,6 +87,7 @@
 
           <div>
             <fn1-input v-model="first"
+                       :class="[{'error': firstNameError}]"
                        label="First Name *"
                        placeholder="First name"
                        name="first-name"
@@ -99,6 +100,7 @@
                        id="middle-name" />
 
             <fn1-input v-model="last"
+                       :class="[{'error': lastNameError}]"
                        label="Last Name *"
                        placeholder="Last name"
                        name="last-name"
@@ -179,6 +181,7 @@ export default {
       'suffixOptions',
       'groupLevels',
       'createUser',
+      'createUser.stepErrors.one',
       'createUser.name.first',
       'createUser.name.middle',
       'createUser.name.last',
@@ -187,6 +190,17 @@ export default {
       'createUser.image.full',
       'createUser.image.cropped',
     ]),
+    firstNameError() {
+      if(this.one.errors){
+        return this.one.errors.some(i => i.firstName)
+      } else {
+        return false
+      }
+    },
+    lastNameError() {
+      if(this.one.errors)
+        return this.one.errors.some(i => i.lastName)
+    }
   },
   methods: {
     croppieInitialized() {

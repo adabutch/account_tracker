@@ -121,6 +121,18 @@ pre, code {
       opacity: 1;
     }
   }
+
+  &.error {
+
+    label {
+      color: $color-vermilion-light;
+    }
+
+    input {
+      border: 1px solid $color-vermilion-light;
+      box-shadow: none;
+    }
+  }
 }
 
 ::v-deep label,

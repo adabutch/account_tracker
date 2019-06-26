@@ -35,7 +35,7 @@ module.exports = {
     serviceManager: process.env.AT_API_SERVICE_MANAGER || `api/service-manager/`,
     accountRequest: process.env.AT_API_ACCOUNT_REQUEST || `api/account-request/`,
 
-    ttApi:          process.env.TT_API || `https://tomcat2.bloomington.in.gov/timetrack/`,
+    ttApi:          process.env.TT_API || `https://outlaw.bloomington.in.gov/timetrack/`,
     deptService:    process.env.TT_API_DEPT_SERVICE     || `DepartmentService`,
     groupService:   process.env.TT_API_GROUP_SERVICE    || `GroupService`,
     jobService:     process.env.TT_API_JOB_SERVICE      || `JobTitleService`,

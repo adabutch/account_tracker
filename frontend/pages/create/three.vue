@@ -11,7 +11,7 @@
       <form>
         <h1><strong>Step Three:</strong>&nbsp;Supervisor information</h1>
 
-        <div class="field-group">
+        <div :class="['field-group',{'error': supervisorError}]">
           <label for="supervisor">Supervisor</label>
           <select name="supervisor"
                   id="supervisor"
@@ -23,7 +23,7 @@
           </select>
         </div>
 
-        <div class="field-group" v-if="supervisor">
+        <div :class="['field-group',{'error': supervisorPhoneError}]" v-if="supervisor">
           <label for="supervisor-phone">Supervisor Phone</label>
           <select name="supervisor-phone"
                   id="supervisor-phone"
@@ -35,8 +35,8 @@
           </select>
         </div>
 
-        <!-- note: `type` prop failing -->
         <fn1-input v-model="employeePhone"
+                   :class="[{'error': employeePhoneError}]"
                    label="Employee Phone (desk)"
                    @keyup.native="phoneNumberFormat"
                    @blur.native="phoneNumberFormat"
@@ -172,6 +172,7 @@ export default {
     ...mapFields([
       'consoleLog',
       'createUser',
+      'createUser.stepErrors.three',
       'createUser.department',
       'createUser.facility',
       'createUser.division',
@@ -180,6 +181,18 @@ export default {
       'createUser.supervisorPhone',
       'createUser.employeePhone'
     ]),
+    supervisorError() {
+      if(this.three.errors)
+        return this.three.errors.some(i => i.supervisor)
+    },
+    supervisorPhoneError() {
+      if(this.three.errors)
+        return this.three.errors.some(i => i.supervisorPhone)
+    },
+    employeePhoneError() {
+      if(this.three.errors)
+        return this.three.errors.some(i => i.employeePhone)
+    },
     getGroupID() {
       return this.groupID = this.group.id;
     },

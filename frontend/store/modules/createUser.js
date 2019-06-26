@@ -6,13 +6,20 @@ const defaultCUState = () => ({
   // Progress Stepper
   totalSteps:       4,
 
+  // Step Errors
+  stepErrors:   {
+    one:    {},
+    two:    {},
+    three:  {}
+  },
+
   // Step One
   name:             {
-    first:            "",
-    middle:           "",
-    last:             "",
-    suffix:           "",
-    nickname:         "",
+    first:            null,
+    middle:           null,
+    last:             null,
+    suffix:           null,
+    nickname:         null,
   },
 
   image: {
@@ -21,22 +28,22 @@ const defaultCUState = () => ({
   },
 
   // Step Two
-  facility:           "",
+  facility:           null,
   department:       {
-    id:               "",
-    name:             "",
+    id:               null,
+    name:             null,
   },
   group:            {
-    id:               "",
-    name:             "",
+    id:               null,
+    name:             null,
   },
   job:              {
-    id:               "",
-    name:             "",
-    salaryGroup:      "",
-    clockInRequired:  "",
+    id:               null,
+    name:             null,
+    salaryGroup:      null,
+    clockInRequired:  null,
   },
-  startDate:          "",
+  startDate:          null,
 
   // Step Three
   supervisor:         "",
@@ -75,6 +82,15 @@ const mutations = {
   ADD_TO_TOTAL_STEPS(state, payload) {
     state.totalSteps = payload;
   },
+  STEP_ONE_ERRORS(state, payload) {
+    state.stepErrors.one = payload;
+  },
+  STEP_TWO_ERRORS(state, payload) {
+    state.stepErrors.two = payload;
+  },
+  STEP_THREE_ERRORS(state, payload) {
+    state.stepErrors.three = payload;
+  },
   RESET_GROUP(state) {
     state.group = {id: "", name: ""}
   },
@@ -106,6 +122,15 @@ const actions = {
   },
   addToTotalSteps(context, payload) {
     context.commit("ADD_TO_TOTAL_STEPS", payload)
+  },
+  stepOneErrors(context, payload) {
+    context.commit("STEP_ONE_ERRORS", payload)
+  },
+  stepTwoErrors(context, payload) {
+    context.commit("STEP_TWO_ERRORS", payload)
+  },
+  stepThreeErrors(context, payload) {
+    context.commit("STEP_THREE_ERRORS", payload)
   },
   resetGroup({ commit }) {
     commit('RESET_GROUP')

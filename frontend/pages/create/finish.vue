@@ -158,10 +158,23 @@ export default {
       fD.append(`full_image`, blobFull, `${flToLower}-full`);
       fD.append(`cropped_image`, blobCropped, `${flToLower}-cropped`);
       fD.append(`first_name`, this.first);
-      fD.append(`middle_name`, this.middle);
       fD.append(`last_name`, this.last);
-      fD.append(`suffix`, this.suffix);
-      fD.append(`nickname`, this.nickname);
+
+      if(this.middle){
+        fD.append(`middle_name`, this.middle);
+      } else {
+        fD.append(`middle_name`, '');
+      }
+      if(this.suffix){
+        fD.append(`suffix`, this.suffix);
+      } else {
+        fD.append(`suffix`, '');
+      }
+      if(this.nickname){
+        fD.append(`nickname`, this.nickname);
+      } else {
+        fD.append(`nickname`, '');
+      }
       fD.append(`employee_phone`, this.employeePhone);
       fD.append(`supervisor`, this.supervisor);
       fD.append(`supervisor_phone`, this.supervisorPhone);
@@ -178,8 +191,9 @@ export default {
       fD.append(`requested_services`, this.checkServices());
       fD.append(`dynamic_options`, JSON.stringify(this.extraQuestionAnswers));
 
+
       this.$axios
-      .post(`${process.env.api}${process.env.accountRequest}`,fD)
+      .post(`${process.env.api}${process.env.accountRequest}`, fD)
       .then((response) => {
         console.log(`accountRequestSubmit res :: `, response.data);
 
@@ -208,9 +222,6 @@ export default {
         console.log(e.response.data.errors)
       });
     },
-    clearStore() {
-
-    }
   }
 }
 </script>

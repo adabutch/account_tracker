@@ -13,6 +13,9 @@ import headerNav    from '~/components/headerNav'
 
 export default {
   components: { headerNav },
+  mounted() {
+    this.getAccountRequests();
+  },
   data() {
     return {}
   }
@@ -53,6 +56,10 @@ export default {
       small {
         margin-left: auto;
       }
+    }
+
+    .alert {
+      margin: 0 0 $space-m 0;
     }
 
     .wrapper {
