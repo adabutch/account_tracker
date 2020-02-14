@@ -3,24 +3,48 @@
 Account Tracker manages requests for accounts on systems in use at an organization. Tracking these in a central location helps ensure that users have access to all of the resources they need. Administrators can trigger automated routines for account management when available. Manual tasks can be logged to confirm that tasks have been completed.
 
 ## Requirements
-This is a Python3 application.  It will not run using Python2.
 
-* python3
-* python3-dev
-* libldap3-dev
-* libsasl2-dev
-* libmysqlclient-dev
-* libapache2-mod-wsgi-py3
+This is a Python3 application.  
 
-```bash
-python3 -m venv venv
-. venv/bin/activate
-pip install --upgrade pip wheel setuptools
-pip install -r backend/requirements.txt
+Make sure you have pipenv installed:
+
+    pip3 install pipenv
+
+Add `.local/bin` to the PATH by editing ~/.bashrc
+
+```
+PATH="/opt/local/bin:~/.yarn/bin:~/.local/bin:${PATH}"
+export PATH
 ```
 
+    cd backend
+
+    pipenv install
+
+
 ## Configuration
+
+pipenv will load a local .env file for configuration variables. Currently, this is used to point to the ini. (TODO: consolidate to just use django-environ for configuration in .env).
+
 You will need to create your own ini conf file.  The path to this file must be declared as the OS environment variable: "ACCOUNT_TRACKER_CONF".
+
+
+## Running
+
+    pipenv run python3 manage.py runserver
+
+or you can load the virtual environment and work directly:
+
+    pipenv shell
+
+
+## Dev Server
+
+Run the dev server with:
+
+```bash
+ACCOUNT_TRACKER_CONF=/path/to/config.ini python manage.py runserver
+```
 
 ## Migrations
 
@@ -31,8 +55,36 @@ ACCOUNT_TRACKER_CONF=/path/to/config.ini python manage.py makemigrations
 ACCOUNT_TRACKER_CONF=/path/to/config.ini python manage.py migrate
 ```
 
+## User Accounts
+
+Accounts are configured 
+
+    python manage.py createsuperuser --email admin@example.com --username admin
+
+
+## Testing
+
+```bash
+ACCOUNT_TRACKER_CONF=/path/to/config.ini python manage.py test
+```
+
+
 ## Hosting with Apache
-As stated above, remember you must use the Python3 version of mod_wsgi.
+
+Running in production with Apache / MySQL requires a few additional dependencies:
+
+* python3-dev
+* libldap3-dev
+* libsasl2-dev
+* libmysqlclient-dev
+* libapache2-mod-wsgi-py3
+
+configparser
+mysqlclient
+django-auth-ldap
+
+
+Use the Python3 version of mod_wsgi.
 
 ```apache
 WSGIProcessGroup  account_tracker
@@ -48,22 +100,6 @@ WSGIScriptAlias  /account_tracker /path/to/account_tracker/public/wsgi.py proces
 </Directory>
 ```
 You will need to create your own version of the wsgi file to suit your environment.  In particular, you'll need to declare where you put your config.ini file.
-
-
-
-## Dev Server
-
-Run the dev server with:
-
-```bash
-ACCOUNT_TRACKER_CONF=/path/to/config.ini python manage.py runserver
-```
-
-## Testing
-
-```bash
-ACCOUNT_TRACKER_CONF=/path/to/config.ini python manage.py test
-```
 
 
 ## References
