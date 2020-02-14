@@ -1,7 +1,4 @@
-configparser
-mysqlclient
 Django
-django-auth-ldap
 djangorestframework
 django-cors-headers
 djangorestframework-jwt

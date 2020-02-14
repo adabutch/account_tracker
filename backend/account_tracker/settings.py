@@ -112,7 +112,7 @@ if db_pass: DATABASES['default']['PASSWORD'] = db_pass
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = ('https://dhcp-cityhall-101-164.bloomington.in.gov:9090/')
+CORS_ORIGIN_WHITELIST = ['https://dhcp-cityhall-101-164.bloomington.in.gov:9090']
 
 # Adapting from Netbox approach for configuring LDAP
 # Attempt to import LDAP configuration if it has been defined
@@ -185,6 +185,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
+
+# Be sure code matches one of: https://github.com/django/django/blob/master/django/conf/global_settings.py
 
 LANGUAGE_CODE = config['locale'].get('lang')
 TIME_ZONE     = config['locale'].get('tz'  )
