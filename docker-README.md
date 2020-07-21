@@ -42,19 +42,6 @@ and run:
 
 The same approach allows running the UI/API build step interactively. Running interactively is useful during development and debugging cycles. 
 
-### Database
-
-To restore the mongodb, connect to the container:
-
-    docker-compose -p account_tracker exec mongo bash
-
-    # will depend on how your local db files are structured... 
-    cd /srv/mongodump/mongodump/
-    
-    # the db destination will depend on how your API is written... 
-    mongorestore --host localhost --db account_tracker
-
-
 ## Starting / Stopping 
 
 Bring up the containers:
