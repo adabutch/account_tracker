@@ -1,8 +1,10 @@
-Django
+django
 djangorestframework
 django-cors-headers
 djangorestframework-jwt
 django-filter
-Pillow
+pillow
 drf-friendly-errors
 requests
+django-environ
+configparser

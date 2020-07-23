@@ -9,4 +9,25 @@ Account Tracker leverages Docker containers and docker-compose. If you're new to
 
 Start with the steps outlined for [docker configuration](docker-README.md).
 
+Then, you should be able to start in admin mode:
 
+    docker-compose -f docker-compose-admin.yml up -d
+    
+And see that everything is running:
+
+    ```
+$ docker-compose ps
+        Name                    Command           State           Ports         
+--------------------------------------------------------------------------------
+account_tracker_api_1   tail -f /dev/null         Up                            
+account_tracker_ui_1    tail -f /dev/null         Up                            
+account_tracker_web_1   /docker-entrypoint.sh     Up      127.0.0.1:8002->443/tc
+                        ngin ...                          p,                    
+                                                          127.0.0.1:8001->80/tcp
+
+    ```
+
+From here you can connect to either the `ui` container or the `api` container to run installation commands. 
+
+[ui](ui/README.md)
+[api](api/README.md)

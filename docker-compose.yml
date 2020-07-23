@@ -18,23 +18,39 @@ services:
       - .:/srv/account_tracker/
       - account_tracker_ui_modules:/srv/account_tracker/ui/node_modules
     working_dir: /srv/account_tracker/ui
-    command: npm run dev
+    # command: npm run dev
     # keeps the container running
     # then connect directly to run build interactively
-    # entrypoint: ["tail", "-f", "/dev/null"]
+    entrypoint: ["tail", "-f", "/dev/null"]
 
   api:
-    image: python:3
+    build:
+      context: ./api
+
     volumes:
       - .:/srv/account_tracker/
       #- account_tracker_api_modules:/srv/account_tracker/node_modules
+    ports:
+      - 127.0.0.1:8000:8000
+      
     working_dir: /srv/account_tracker/api
-    # command: sh -c "
-    #   mkdir -p /srv/var/log
-    #   && node ./app.js
-    #   "
-    # DEBUG=express:* node ./api/account_tracker.js
-    entrypoint: ["tail", "-f", "/dev/null"]
+    environment:
+      - ACCOUNT_TRACKER_CONF=example.conf
+    entrypoint: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    #entrypoint: ["tail", "-f", "/dev/null"]
+
+  # api:
+  #   image: python:3
+  #   volumes:
+  #     - .:/srv/account_tracker/
+  #     #- account_tracker_api_modules:/srv/account_tracker/node_modules
+  #   working_dir: /srv/account_tracker/api
+  #   # command: sh -c "
+  #   #   mkdir -p /srv/var/log
+  #   #   && node ./app.js
+  #   #   "
+  #   # DEBUG=express:* node ./api/account_tracker.js
+  #   entrypoint: ["tail", "-f", "/dev/null"]
     
   # api:
   #   image: node:12

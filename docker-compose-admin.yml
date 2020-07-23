@@ -32,14 +32,12 @@ services:
     volumes:
       - .:/srv/account_tracker/
       #- account_tracker_api_modules:/srv/account_tracker/node_modules
+    ports:
+      - 127.0.0.1:8000:8000
+      
     working_dir: /srv/account_tracker/api
-    # An example of chaining multiple commands for the container
-    # More complex customization is possible through a Dockerfile
-    # command: sh -c "
-    #   mkdir -p /srv/var/log
-    #   && node ./app.js
-    #   "
-    # DEBUG=express:* node ./api/account_tracker.js
+    environment:
+      - ACCOUNT_TRACKER_CONF=example.conf
     entrypoint: ["tail", "-f", "/dev/null"]
 
   # db:
